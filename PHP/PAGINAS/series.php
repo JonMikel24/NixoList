@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 function callAPI($url){
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL,$url);
@@ -24,20 +26,68 @@ $trending = callAPI("https://api.themoviedb.org/3/trending/tv/week?api_key=".$tm
 <title>Series</title>
 <link rel="stylesheet" href="../../CSS/styles.css">
 </head>
+<header class="header-main">
+    <div class="header-top">
+        <div class="logo-container">
+            <h1 class="logo-texto">NixoList</h1>
+        </div>
+
+        <div class="PerfilContenedor" onclick="abrirPerfil()" style="cursor:pointer;">
+            <?php
+            if (isset($_SESSION['Usuario'])) {
+                $Foto = (!empty($_SESSION['Foto'])) ? $_SESSION['Foto'] : '/Recursos/fotousuario.png';
+                echo '
+                <div class="perfil-horiz">
+                    <div class="perfil-info">
+                        <p class="perfil-nombre nombre-mio">' . htmlspecialchars($_SESSION['Usuario']) . ' <span class="flecha">▼</span></p>
+                    </div>
+                    <img src="' . htmlspecialchars($Foto) . '" class="profile-pic foto-mia" id="perfilImagen">
+                </div>
+                ';
+            } else {
+                echo '
+                <div class="auth-buttons">
+                    <a href="../Login/Index.php"><button class="login-btn">Iniciar Sesión</button></a>
+                    <a href="../Login/registrarse.php"><button class="register-btn">Registrarse</button></a>
+                </div>
+                ';
+            }
+            ?>
+        </div>
+    </div>
+</header>
 <body>
+    <?php
+    // Obtenemos el nombre del archivo actual (ej: anime.php)
+    $pagina_actual = basename($_SERVER['PHP_SELF']);
+    ?>
 
 <nav class="navbar">
-<h1>NixoList</h1>
-<div class="nav-links">
-<a href="anime.php">Anime</a>
-<a href="movies.php">Películas</a>
-<a href="series.php">Series</a>
-</div>
+        <div class="nav-links">
+            <a href="index.php" class="<?php echo ($pagina_actual == 'index.php') ? 'active' : ''; ?>">Incio</a>
+            <a href="anime.php" class="<?php echo ($pagina_actual == 'anime.php') ? 'active' : ''; ?>">Anime</a>
+            <a href="peliculas.php" class="<?php echo ($pagina_actual == 'peliculas.php') ? 'active' : ''; ?>">Películas</a>
+            <a href="series.php" class="<?php echo ($pagina_actual == 'series.php') ? 'active' : ''; ?>">Series</a>
+        </div>
+
+        <div class="search-container">
+            </div>
+
+    <div class="search-container">
+        <select class="search-select">
+            <option value="all">All</option>
+            <option value="anime">Anime</option>
+            <option value="manga">Manga</option>
+        </select>
+        <input type="text" placeholder="Search Anime, Manga, and more..." class="search-input">
+        <button type="submit" class="search-button">
+            <i>🔍</i> </button>
+    </div>
 </nav>
+
 
 <div class="container">
 
-<input type="text" placeholder="Buscar serie..." class="search">
 
 <h2>Trending</h2>
 <div class="carousel">

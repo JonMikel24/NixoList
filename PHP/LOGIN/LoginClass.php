@@ -17,9 +17,9 @@ class LoginClass {
     private function verificarUsuario() {
 
         $stmt = $this->conexion->prepare(
-            "SELECT id_usuario, Username, Password, Bio, Pfp, FechaRegistro 
+            "SELECT id_usuario, username, password_hash, bio, avatar 
              FROM usuarios 
-             WHERE Username = ?"
+             WHERE username = ?"
         );
 
         $stmt->bind_param("s", $this->usuario);
@@ -30,27 +30,20 @@ class LoginClass {
 
             $fila = $resultado->fetch_assoc();
 
-            if (password_verify($this->contrasena, $fila['Password'])) {
+            if (password_verify($this->contrasena, $fila['password_hash'])) {
 
                 session_start();
                 
 
-                $_SESSION['Usuario'] = $fila['Username'];
+                $_SESSION['Usuario'] = $fila['username'];
                 $_SESSION['id_usuario'] = $fila['id_usuario'];
-                $_SESSION['Biografia'] = $fila['Bio'];
-                $_SESSION['FechaReg'] = $fila['FechaRegistro'];
+                $_SESSION['Biografia'] = $fila['bio'];
                 $_SESSION['valid'] = true;
 
-                $_SESSION['Foto'] = !empty($fila['Pfp']) 
-                    ? $fila['Pfp'] 
+                $_SESSION['Foto'] = !empty($fila['avatar']) 
+                    ? $fila['avatar'] 
                     : '../img/default-avatar.png';
 
-                $update = $this->conexion->prepare(
-                    "UPDATE usuarios SET estado = 'Online' WHERE id_usuario = ?"
-                );
-                $update->bind_param("i", $fila['id_usuario']);
-                $update->execute();
-                $update->close();
 
                 header("Location: ../paginas/index.php");
                 exit();

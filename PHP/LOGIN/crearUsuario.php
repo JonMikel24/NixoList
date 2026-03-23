@@ -3,8 +3,6 @@ require_once("../conexion.php");
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // 3. Recibir datos del formulario
-    $nombre     = trim($_POST["nombre"]);
-    $apellido   = trim($_POST["apellido"]);
     $email      = trim($_POST["email"]);
     $usuario    = trim($_POST["usuario"]);
     $contrasena = $_POST["contrasena"];
@@ -24,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
 
 
-    $stmt = $conexion->prepare("SELECT id_usuario FROM usuarios WHERE Username = ?");
+    $stmt = $conexion->prepare("SELECT id_usuario FROM usuarios WHERE username = ?");
     $stmt->bind_param("s", $usuario);
     $stmt->execute();
     $stmt->store_result();
@@ -36,11 +34,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
 
 
-    $sql = "INSERT INTO usuarios (Nombre, Apellido, Email, Username, Password)
-            VALUES (?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO usuarios (email, username, password_hash)
+            VALUES (?, ?, ?)";
 
     $stmt = $conexion->prepare($sql);
-    $stmt->bind_param("sssss", $nombre, $apellido, $email, $usuario, $passwordHash);
+    $stmt->bind_param("sss", $email, $usuario, $passwordHash);
 
     // 6. Ejecutar
     if ($stmt->execute()) {
