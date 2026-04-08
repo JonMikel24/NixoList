@@ -1,0 +1,286 @@
+/* --- PAGINA DE DETALLE (ESTILO MYANIMELIST) --- */
+
+.main-wrapper {
+    max-width: 1100px;
+    margin: 20px auto;
+    display: flex;
+    gap: 25px;
+    padding: 0 20px;
+}
+
+/* Columna Lateral (Poster e Info técnica) */
+.side-info {
+    width: 225px;
+    flex-shrink: 0;
+}
+
+.side-info img.media-poster {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    border: 1px solid #333;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+/* BOTONES AMARILLOS CON LETRAS NEGRAS */
+.btn-action-list {
+    width: 100%;
+    margin-top: 10px; /* Un poco de margen superior */
+    padding: 12px;
+    background: #ffdd1c; /* Tu amarillo */
+    color: rgb(0, 0, 0);  /* Letras negras */
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    text-transform: uppercase;
+    display: block;
+}
+
+.btn-action-list:hover {
+    background: #e5c619; /* Oscurece un poco al pasar el ratón, sin volverse rojo */
+    transform: translateY(-2px);
+}
+
+.side-info h3 {
+    font-size: 14px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 5px;
+    margin: 25px 0 10px 0;
+    color: #ffdd1c;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.info-unit {
+    font-size: 13px;
+    margin-bottom: 10px;
+    color: #bbb;
+    line-height: 1.4;
+}
+
+.info-unit b {
+    color: #fff;
+    display: block;
+    font-size: 12px;
+    margin-bottom: 2px;
+}
+
+/* Columna Principal */
+.main-content {
+    flex-grow: 1;
+    background: #1a1a1a;
+    padding: 25px;
+    border-radius: 8px;
+    border: 1px solid #222;
+}
+
+.media-header-title {
+    border-bottom: 1px solid #333;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.media-header-title h1 {
+    margin: 0;
+    font-size: 28px;
+    color: #fff;
+}
+
+.score-box {
+    display: flex;
+    align-items: center;
+    background: #343434;
+    padding: 15px 20px;
+    border-radius: 5px;
+    margin-bottom: 25px;
+}
+
+.score-value {
+    font-size: 36px;
+    font-weight: bold;
+    color: #ffdd1c;
+    margin-right: 25px;
+    border-right: 1px solid #555;
+    padding-right: 25px;
+}
+
+.score-label {
+    font-size: 11px;
+    color: #aaa;
+    text-transform: uppercase;
+}
+
+.score-rank {
+    font-size: 20px;
+    color: #fff;
+}
+
+.synopsis-container h2 {
+    margin-top: 0;
+    font-size: 18px;
+    color: #ffdd1c;
+    border-left: 4px solid #ffdd1c;
+    padding-left: 10px;
+}
+
+.synopsis-text {
+    line-height: 1.8;
+    color: #ddd;
+    font-size: 15px;
+    text-align: justify;
+}
+
+.genre-pill {
+    display: inline-block;
+    background: #444;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    margin: 5px 5px 0 0;
+    color: #fff;
+    border: 1px solid #555;
+}
+
+/* --- ESTILOS PARA LAS PESTAÑAS (TABS) --- */
+.media-tabs {
+    display: flex;
+    gap: 5px;
+    border-bottom: 2px solid #333;
+    margin-bottom: 25px;
+}
+
+.media-tabs a {
+    padding: 12px 20px;
+    text-decoration: none;
+    color: #888;
+    font-size: 14px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.media-tabs a:hover {
+    color: #fff;
+}
+
+.media-tabs a.active {
+    color: #ffdd1c;
+    border-bottom: 3px solid #ffdd1c;
+    margin-bottom: -2px; /* Alinea con el borde inferior */
+}
+
+/* --- TABLA DE PERSONAJES (CHARACTERS) --- */
+.characters-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.char-row {
+    border-bottom: 1px solid #2a2a2a;
+    transition: background 0.2s;
+}
+
+.char-row:hover {
+    background: #252525;
+}
+
+.char-img-cell img {
+    width: 50px;
+    height: 75px;
+    object-fit: cover;
+    display: block;
+    border: 1px solid #444;
+}
+
+.char-info-cell {
+    padding: 10px 15px;
+}
+
+.char-info-cell a {
+    color: #ffdd1c;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.char-info-cell p {
+    margin: 4px 0 0;
+    font-size: 12px;
+    color: #888;
+}
+
+.char-va-cell {
+    text-align: right;
+    padding-right: 15px;
+    font-size: 12px;
+    color: #666;
+}
+
+/* --- TABLA DE EPISODIOS --- */
+.ep-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ep-table thead th {
+    background: #111;
+    color: #ffdd1c;
+    text-align: left;
+    padding: 12px;
+    font-size: 13px;
+    text-transform: uppercase;
+}
+
+.ep-table td {
+    padding: 12px;
+    border-bottom: 1px solid #2a2a2a;
+    font-size: 14px;
+}
+
+/* --- GRID DE VIDEOS --- */
+.videos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.video-item {
+    background: #111;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.video-item iframe {
+    width: 100%;
+    border-radius: 4px;
+}
+
+/* --- ESTADÍSTICAS (STATS) --- */
+.stats-list p {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #2a2a2a;
+    font-size: 14px;
+    color: #ddd;
+}
+
+.stats-list p b {
+    color: #ffdd1c;
+}
+
+/* --- REVIEWS (RESREÑAS) --- */
+.review-card {
+    background: #222;
+    padding: 20px;
+    border-radius: 5px;
+    border-left: 4px solid #ffdd1c;
+    margin-bottom: 15px;
+}
+
+.review-card b {
+    font-size: 16px;
+    color: #ffdd1c;
+}
