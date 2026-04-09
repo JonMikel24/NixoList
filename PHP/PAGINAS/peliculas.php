@@ -28,7 +28,9 @@ $trending = callAPI("https://api.themoviedb.org/3/trending/movie/week?api_key=".
 <header class="header-main">
     <div class="header-top">
         <div class="logo-container">
-            <h1 class="logo-texto">NixoList</h1>
+            <a href="index.php" class="enlace-logo">
+                <h1 class="logo-texto">NixoList</h1>
+            </a>
         </div>
 
         <div class="PerfilContenedor" onclick="abrirPerfil()" style="cursor:pointer;">
@@ -62,15 +64,41 @@ $trending = callAPI("https://api.themoviedb.org/3/trending/movie/week?api_key=".
     ?>
 
 <nav class="navbar">
-        <div class="nav-links">
-            <a href="index.php" class="<?php echo ($pagina_actual == 'index.php') ? 'active' : ''; ?>">Incio</a>
-            <a href="anime.php" class="<?php echo ($pagina_actual == 'anime.php') ? 'active' : ''; ?>">Anime</a>
-            <a href="peliculas.php" class="<?php echo ($pagina_actual == 'peliculas.php') ? 'active' : ''; ?>">Películas</a>
-            <a href="series.php" class="<?php echo ($pagina_actual == 'series.php') ? 'active' : ''; ?>">Series</a>
+    <div class="nav-links">
+        
+        <a href="index.php" class="<?php echo ($pagina_actual == 'index.php') ? 'active' : ''; ?>">Inicio</a>
+
+        <div class="menu-desplegable">
+            <a href="anime.php" class="seccion-principal <?php echo ($pagina_actual == 'anime.php') ? 'active' : ''; ?>">Anime</a>
+            <div class="sub-menu">
+                <a href="anime.php">Inicio Anime</a>
+                <a href="anime.php#recomendados">Recomendados</a>
+                <a href="anime.php#populares">Más Populares</a>
+                <a href="anime.php#top">Top Anime</a>
+            </div>
         </div>
 
-        <div class="search-container">
+        <div class="menu-desplegable">
+            <a href="peliculas.php" class="seccion-principal <?php echo ($pagina_actual == 'peliculas.php') ? 'active' : ''; ?>">Películas</a>
+            <div class="sub-menu">
+                <a href="peliculas.php">Inicio Películas</a>
+                <a href="peliculas.php#recomendadas">Recomendadas</a>
+                <a href="peliculas.php#populares">Más Populares</a>
+                <a href="peliculas.php#top">Top Rated</a>
             </div>
+        </div>
+
+        <div class="menu-desplegable">
+            <a href="series.php" class="seccion-principal <?php echo ($pagina_actual == 'series.php') ? 'active' : ''; ?>">Series</a>
+            <div class="sub-menu">
+                <a href="series.php">Inicio Series</a>
+                <a href="series.php#trending">Trending</a>
+                <a href="series.php#populares">Más Populares</a>
+                <a href="series.php#top">Top Rated</a>
+            </div>
+        </div>
+
+    </div>
 
     <div class="search-container">
         <select class="search-select">
@@ -80,7 +108,8 @@ $trending = callAPI("https://api.themoviedb.org/3/trending/movie/week?api_key=".
         </select>
         <input type="text" placeholder="Search Anime, Manga, and more..." class="search-input">
         <button type="submit" class="search-button">
-            <i>🔍</i> </button>
+            <i>🔍</i> 
+        </button>
     </div>
 </nav>
 

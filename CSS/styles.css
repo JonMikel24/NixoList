@@ -1,10 +1,18 @@
 body{
-
 margin:0;
 font-family:Arial;
 background:#111;
 color:white;
+}
 
+a {
+    color: inherit; /* Hereda el color blanco o el que le toque, nunca morado */
+    text-decoration: none; /* Quita el subrayado de los enlaces */
+}
+
+/* Quitar el borde/barra de selección naranja, azul o rojo al hacer clic */
+a:focus, a:active {
+    outline: none;
 }
 
 /* Configuración general del Nav */
@@ -292,4 +300,47 @@ border:none;
 
 .media-info button:hover{
     background:#f6121d;
+}
+
+.menu-desplegable {
+    position: relative;
+    display: inline-block;
+    height: 100%; 
+}
+
+
+.sub-menu {
+    display: none;
+    position: absolute;
+    background-color: #1e1e1e; 
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5); 
+    z-index: 100; 
+    border-radius: 5px;
+    overflow: hidden;
+    top: 100%;
+    margin-top: 0;
+}
+
+
+.sub-menu a {
+    color: #e0e0e0 !important;
+    padding: 12px 16px !important;
+    text-decoration: none;
+    /* Estos !important evitan que hereden el flex y el 100% de la barra principal */
+    display: block !important; 
+    height: auto !important;   
+    font-size: 0.9em !important;
+    font-weight: normal !important;
+}
+
+/* Hover de los enlaces del sub-menú */
+.sub-menu a:hover {
+    background-color: #333 !important;
+    color: #fff !important;
+}
+
+/* Mostrar el sub-menú al pasar el ratón */
+.menu-desplegable:hover .sub-menu {
+    display: block;
 }
