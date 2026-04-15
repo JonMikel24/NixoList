@@ -435,6 +435,7 @@ CREATE TABLE `usuarios` (
   `password_hash` varchar(255) NOT NULL,
   `bio` text,
   `avatar` varchar(255) DEFAULT NULL,
+  `banner` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_usuario`),
   UNIQUE KEY `username` (`username`),

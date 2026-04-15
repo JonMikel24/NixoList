@@ -1,0 +1,155 @@
+/* =========================================
+   1. FONDO GLOBAL Y RESETEO
+========================================= */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #0a0a0c; /* Fondo súper oscuro para toda la página */
+    color: #e0e0e0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* =========================================
+   2. CONTENEDOR PRINCIPAL DE LA LISTA
+========================================= */
+.list-container {
+    max-width: 1000px;
+    margin: 60px auto; /* Centrado con margen arriba y abajo */
+    padding: 40px;
+    background-color: #121212; /* Un gris apenas más claro que el fondo global */
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8); /* Sombra difuminada elegante */
+    border: 1px solid #1f1f1f; /* Borde muy sutil */
+}
+
+/* =========================================
+   3. TÍTULOS DE SECCIÓN (COMPLETED, ETC)
+========================================= */
+.status-section {
+    margin-bottom: 60px;
+}
+
+.status-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #ffd100; /* El amarillo de NixoList */
+    border-bottom: 3px solid #ffd100;
+    padding-bottom: 8px;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    display: inline-block; /* Hace que la línea amarilla solo subraye el texto, no toda la pantalla */
+}
+/* --- BOTÓN EDITAR BANNER --- */
+.edit-banner-form {
+    position: absolute;
+    bottom: 20¡px;
+    right: 20px;
+    z-index: 10; /* Esto lo obliga a estar por encima de la foto */
+}
+
+.btn-edit-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    background-color: rgba(18, 18, 18, 0.7); /* Fondo oscuro semitransparente */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px; /* Cuadrado con bordes suaves */
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px); /* Efecto cristal */
+}
+
+.btn-edit-banner:hover {
+    background-color: #ffd100;
+    color: #0a0a0c;
+    border-color: #ffd100;
+    transform: scale(1.05); /* Crece un poquito al pasar el ratón */
+}
+
+/* =========================================
+   4. LA TABLA DE ANIMES
+========================================= */
+.anime-table {
+    width: 100%;
+    border-collapse: separate; /* Necesario para que el border-radius funcione en tablas */
+    border-spacing: 0;
+    background-color: #1a1a1a;
+    border-radius: 8px;
+    overflow: hidden; 
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Cabecera (Title, Score, etc) */
+.anime-table th {
+    text-align: left;
+    padding: 18px 20px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #ffd100;
+    background-color: #0f0f0f; /* Cabecera casi negra */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #2a2a2a;
+}
+
+/* Filas de contenido */
+.anime-table td {
+    padding: 15px 20px;
+    border-bottom: 1px solid #222222;
+    vertical-align: middle;
+    font-size: 15px;
+    color: #b3b3b3; /* Gris claro para los números y texto secundario */
+}
+
+/* Quitar borde a la última fila para que quede limpio */
+.anime-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Efecto al pasar el ratón */
+.anime-table tr {
+    transition: background-color 0.2s ease;
+}
+
+.anime-table tr:hover {
+    background-color: #242424; /* Se ilumina ligeramente */
+}
+
+/* =========================================
+   5. DETALLES: PORTADAS Y TÍTULOS
+========================================= */
+.anime-title-col {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Separación entre foto y texto */
+}
+
+.anime-cover {
+    width: 50px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 4px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.6); /* Sombra individual a la foto */
+}
+
+.anime-name {
+    color: #ffffff;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.2s;
+}
+
+.anime-name:hover {
+    color: #ffd100;
+}
+
+/* Utilidad para centrar texto en las columnas numéricas */
+.center-text {
+    text-align: center;
+}

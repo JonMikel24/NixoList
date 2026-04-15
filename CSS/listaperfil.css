@@ -1,242 +1,223 @@
-        :root {
-            --bg-dark: #050505;
-            --bg-panel: #121212;
-            --mal-blue: #2e51a2;
-            --mal-cyan: #00ffff;
-            --text-white: #eeeeee;
-            --text-dim: #9b9b9b;
-        }
-
-
-
-
-/* Configuración general del Nav */
-.navbar {
-    background-color: #343434; /* El azul clásico de estos sitios */
-    display: flex;
-    justify-content: space-between; /* Separa links de buscador */
-    align-items: center;
-    padding: 0 15px;
-    height: 40px;
-    font-family: Arial, sans-serif;
+/* =========================================
+   DISEÑO TIPO ANILIST PARA NIXOLIST
+========================================= */
+body {
+    background-color: #0a0a0c;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0; padding: 0;
 }
 
-/* Enlaces de navegación */
-.nav-links {
-    display: flex;
-    gap: 15px;
+/* --- BANNER --- */
+.profile-banner-container {
+    width: 100%;
+    height: 320px;
+    position: relative;
+    overflow: hidden;
 }
 
-/* Modificación en los enlaces para que ocupen todo el alto */
-.nav-links {
-    display: flex;
-    height: 100%; /* Importante para que el fondo llene el nav */
-}
-
-.nav-links a {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 14px;
-    padding: 0 15px;
-    display: flex;
-    align-items: center; /* Centra el texto verticalmente */
+.banner-image {
+    width: 100%;
     height: 100%;
-    transition: background 0.2s; /* Suaviza el cambio de color */
+    object-fit: cover;
+    filter: brightness(0.8);
 }
 
-.nav-links a:hover {
-    background-color: #ffdd1c; 
-        color: #333;
-
+.banner-overlay {
+    position: absolute;
+    bottom: 0; left: 0; width: 100%; height: 50%;
+    background: linear-gradient(to top, #0a0a0c 0%, transparent 100%);
 }
 
-.nav-links a.active {
-    background-color: #ffdd1c; 
-    color: #333;
-    pointer-events: none;
-}
-.search-container {
+/* --- CABECERA (FOTO Y NOMBRE) --- */
+.profile-header-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
     display: flex;
-    align-items: center;
-    background-color: #f1f1f1; 
-    border-radius: 3px;
-    overflow: hidden; 
-    height: 26px;
-}
-/* El contenedor que envuelve a NixoList y al Perfil */
-.header-top {
-    display: flex;
-    justify-content: space-between; /* Empuja el logo a la izq y el perfil a la der */
-    align-items: center;            /* Alineación vertical perfecta */
-    padding: 10px 20px;             /* Espaciado interno */
-    background-color: #1a1a1a;      /* El color oscuro de fondo */
-    height: 60px;                   /* Ajusta el alto a tu gusto */
+    align-items: flex-end;
+    position: relative;
+    margin-top: -60px; /* Sube la foto por encima del banner */
+    z-index: 2;
+    margin-bottom: 30px;
 }
 
-/* Estilo para el título NixoList */
-.logo-texto {
-    color: white;
-    margin: 0;
-    font-size: 24px;
-    font-family: 'Arial', sans-serif;
-    letter-spacing: 1px;
+.profile-avatar-wrapper {
+    width: 160px;
+    height: 160px;
+    border-radius: 8px;
+    background-color: #121212;
+    padding: 6px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+    margin-right: 25px;
 }
 
-/* Ajustes para el contenedor del perfil */
-.perfil-horiz {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.perfil-nombre {
-    color: #fff;
-    font-weight: bold;
-    margin: 0;
-    font-size: 14px;
-}
-
-.foto-mia {
-    width: 35px;
-    height: 35px;
+.profile-avatar-main {
+    width: 100%;
+    height: 100%;
     border-radius: 4px;
-    border: 1px solid #444;
     object-fit: cover;
 }
 
-/* Estilo para los botones cuando no hay sesión */
-.auth-buttons a {
+.profile-user-info {
+    flex-grow: 1;
+    padding-bottom: 15px;
+}
+
+.profile-username {
+    font-size: 32px;
+    margin: 0 0 5px 0;
+    color: #fff;
+    font-weight: 800;
+}
+
+.profile-meta {
+    font-size: 14px;
+    color: #8ba0b2;
+}
+
+.dot-separator { margin: 0 8px; }
+.status-online { color: #ffd100; font-weight: bold; }
+
+.btn-config {
+    background-color: #ffd100;
+    color: #0a0a0c;
+    padding: 10px 20px;
+    border-radius: 4px;
     text-decoration: none;
+    font-weight: bold;
+    transition: 0.2s;
+    margin-bottom: 15px;
+    display: inline-block;
 }
+.btn-config:hover { background-color: #e6bd00; }
 
-.login-btn, .register-btn {
-    padding: 5px 12px;
-    margin-left: 5px;
-    cursor: pointer;
-    background: #333;
-    color: white;
-    border: 1px solid #555;
-    border-radius: 3px;
-}
-/* Selector (All) */
-.search-select {
-    background-color: #000;
-    color: white;
-    border: none;
-    height: 100%;
-    padding: 0 5px;
-    font-size: 12px;
-    cursor: pointer;
-}
-
-/* Input de texto */
-.search-input {
-    border: none;
-    padding: 0 10px;
-    width: 250px;
-    height: 100%;
-    font-size: 12px;
-    outline: none;
-}
-
-/* Botón de lupa */
-.search-button {
-    background-color: #ebebeb;
-    border: none;
-    border-left: 1px solid #ccc;
-    height: 100%;
-    padding: 0 8px;
-    cursor: pointer;
-    color: #333;
-}
-
-.search-button:hover {
-    background-color: #ddd;
-}
-        .container { max-width: 1050px; margin: 0 auto; display: flex; gap: 25px; }
-
-        /* SIDEBAR */
-        .sidebar { 
-            width: 260px; 
-            flex-shrink: 0; 
-        }
-        
-        .profile-pic-main { 
-            width: 100%; 
-            border: 1px solid #333; 
-            padding: 3px; 
-            background: var(--bg-panel);
-            margin-bottom: 10px;
-            height: 220px;
-        }
-        
-        .user-status-box { 
-            background: #1a1a1a; 
-            font-size: 11px; 
-            padding: 8px; 
-            border-bottom: 1px solid #333;
-        }
-
-        /* CONTENIDO PRINCIPAL */
-        .main-content { flex-grow: 1; }
-        
-        .section-title {
-            color: var(--mal-cyan);
-            border-bottom: 1px solid #333;
-            padding-bottom: 5px;
-            font-size: 16px;
-            margin: 25px 0 15px 0;
-            font-weight: normal;
-        }
-
-        .cover-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 12px;
-        }
-        .cover-item img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 2px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.7);
-        }
-
-        .stats-graph {
-            height: 15px;
-            display: flex;
-            background: #222;
-            margin: 15px 0;
-            border-radius: 2px;
-            overflow: hidden;
-        }
-        
-        .stats-graph {
+/* --- NAVEGACIÓN INTERNA --- */
+.profile-subnav {
+    max-width: 1100px;
+    margin: 0 auto 40px auto;
     display: flex;
-    height: 15px;
-    background: #333;
-    border-radius: 3px;
-    overflow: hidden;
+    gap: 30px;
+    padding: 0 20px;
+    border-bottom: 1px solid #1f1f1f;
+}
+
+.profile-subnav a {
+    color: #8ba0b2;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 15px 0;
+    transition: color 0.2s;
+}
+
+.profile-subnav a:hover { color: #fff; }
+.profile-subnav a.active {
+    color: #ffd100;
+    border-bottom: 3px solid #ffd100;
+}
+
+/* --- CUERPO DEL PERFIL (GRID) --- */
+.profile-body-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 40px;
+}
+
+/* --- TARJETAS IZQUIERDA --- */
+.content-card {
+    background-color: #121212;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 25px;
+    border: 1px solid #1a1a1a;
+}
+
+.card-title {
+    font-size: 16px;
+    color: #fff;
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #1f1f1f;
+    padding-bottom: 10px;
+}
+
+.stats-grid {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.stat-box { display: flex; flex-direction: column; }
+.stat-value { font-size: 20px; font-weight: bold; }
+.stat-label { font-size: 12px; color: #8ba0b2; margin-top: 4px; }
+
+.stats-bar-wrapper {
+    width: 100%; height: 10px;
+    background-color: #1f1f1f;
+    border-radius: 5px;
+    display: flex; overflow: hidden;
     margin-bottom: 15px;
 }
-.graph-watching { background-color: #2db039; }
-.graph-completed { background-color: #26448f; }
-.graph-dropped { background-color: #a12f31; }
-.graph-planned { background-color: #767676; }
 
-.dot {
-    height: 10px; width: 10px;
-    border-radius: 50%;
-    display: inline-block;
-    margin-right: 5px;
+.stats-bar-fill.completed { background-color: #4ade80; }
+.stats-bar-fill.watching { background-color: #3b82f6; }
+.stats-bar-fill.planned { background-color: #94a3b8; }
+
+.stats-legend {
+    display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: #b3b3b3;
 }
-.watching { background-color: #2db039; }
-.completed { background-color: #26448f; }
-.planned { background-color: #767676; }
+.legend-dot {
+    display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px;
+}
+.legend-dot.completed { background-color: #4ade80; }
+.legend-dot.watching { background-color: #3b82f6; }
+.legend-dot.planned { background-color: #94a3b8; }
+.legend-dot.dropped { background-color: #ef4444; }
 
-.stats-columns {
+/* --- COLUMNA DERECHA (PORTADAS) --- */
+.content-section { margin-bottom: 40px; }
+
+.section-header-flex {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 15px; border-bottom: 2px solid #1f1f1f; padding-bottom: 10px;
+}
+
+.section-title { font-size: 18px; color: #fff; margin: 0; }
+
+.favorite-tabs { display: flex; gap: 15px; }
+.favorite-tabs .tab {
+    font-size: 14px; color: #8ba0b2; cursor: pointer; font-weight: bold;
+}
+.favorite-tabs .tab.active { color: #ffd100; }
+
+.cover-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 15px;
 }
+
+.cover-card {
+    position: relative; border-radius: 4px; overflow: hidden;
+    transition: transform 0.2s; cursor: pointer;
+}
+.cover-card:hover { transform: scale(1.05); }
+
+.cover-card img {
+    width: 100%; height: 160px; object-fit: cover; display: block;
+}
+
+.cover-title {
+    position: absolute; bottom: 0; left: 0; width: 100%;
+    background: rgba(0,0,0,0.8); color: #fff;
+    font-size: 11px; padding: 6px; box-sizing: border-box;
+    text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Tarjetas de favoritos (sin título, solo imagen) */
+.fav-card img { height: 170px; }
+.empty-text { color: #8ba0b2; font-size: 14px; grid-column: 1 / -1; }

@@ -6,6 +6,7 @@ session_start();
 // Si está en otra, quizás sea '../config.php'
 require_once '../conexion.php'; 
 require_once '../FUNCIONALIDADES/perfil.php';
+
 // 2. VERIFICACIÓN DE SESIÓN
 
 
@@ -81,46 +82,53 @@ require_once '../FUNCIONALIDADES/perfil.php';
             <i>🔍</i> </button>
     </div>
 </nav>
+<div class="profile-banner-container">
+    <?php 
+    // 1. Prioridad a la Sesión. 2. Si no, a la DB ($userRow). 3. Si no, imagen por defecto.
+    if (!empty($_SESSION['Banner'])) {
+        $BannerFinal = ".." . $_SESSION['Banner'];
+    } elseif (!empty($userRow['banner'])) {
+        $BannerFinal = ".." . $userRow['banner'];
+    } else {
+        $BannerFinal = "https://images.unsplash.com/photo-1618336753974-aae8e04506aa?q=80&w=2070&auto=format&fit=crop";
+    }
+    ?>
+    <img src="<?php echo htmlspecialchars($BannerFinal); ?>" class="banner-image" alt="Banner">
+    <div class="banner-overlay"></div>
+</div>
 
-<div class="container">
-    <aside class="sidebar">
-        <?php $FotoFinal = (!empty($_SESSION['Foto'])) ? $_SESSION['Foto'] : '/Recursos/fotousuario.png'; ?>
-        <img src="<?php echo htmlspecialchars($FotoFinal); ?>" class="profile-pic-main">
-
-        <div class="user-status-box">
-            <div style="display:flex; justify-content:space-between; margin-bottom: 5px;">
-                <span>Joined</span>
-                <span style="color:var(--text-dim)"><?php echo date('M j, Y', strtotime($userRow['created_at'])); ?></span>
-            </div>
-            <div style="display:flex; justify-content:space-between;">
-                <span>Online</span>
-                <span style="color:var(--mal-cyan)">Now</span>
-            </div>
+<div class="profile-header-content">
+    <div class="profile-avatar-wrapper">
+        <?php 
+        // Definimos la foto: si el usuario tiene una en su sesión la usamos, si no, cargamos la por defecto
+        $FotoFinal = (!empty($_SESSION['Foto'])) ? $_SESSION['Foto'] : ''; 
+        ?>
+        <img src="<?php echo htmlspecialchars($FotoFinal); ?>" class="profile-avatar-main" alt="Avatar">
+    </div>
+    <div class="profile-user-info">
+        <h2 class="profile-username"><?php echo htmlspecialchars($_SESSION['Usuario']); ?></h2>
+        <div class="profile-meta">
+            <span>Joined <?php echo date('M j, Y', strtotime($userRow['created_at'])); ?></span>
         </div>
+    </div>
+    <div class="profile-actions">
+        <a href="configuracionperfil.php" class="btn-config">Configuración</a>
+    </div>
+</div>
 
-        <a href="#" style="display:block; background:var(--mal-blue); color:white; text-align:center; padding:8px; margin-top:10px; text-decoration:none; font-size:12px; font-weight:bold;">Anime List</a>
-        <a href="#" style="display:block; background:#333; color:white; text-align:center; padding:8px; margin-top:5px; text-decoration:none; font-size:12px;">Manga List</a>
-    </aside>
+<div class="profile-subnav">
+    <a href="#" class="active">Overview</a>
+    <a href="animelistusuario.php">Anime List</a>
+    <a href="#">Manga List</a>
+    <a href="#">Reviews</a>
+</div>
 
-    <main class="main-content">
-        <h2 style="margin-top:0;"><?php echo htmlspecialchars($_SESSION['Usuario']); ?>'s Profile</h2>
-        <a href="configuracionperfil.php">Configuracion</a>
-
-        <h3 class="section-title">Watching this season</h3>
-        <div class="cover-grid">
-            <?php if(empty($watchingList)): ?>
-                <p style="font-size:12px; color:var(--text-dim)">No estás viendo nada actualmente.</p>
-            <?php else: ?>
-                <?php foreach($watchingList as $anime): ?>
-                <div class="cover-item">
-                    <img src="<?php echo htmlspecialchars($anime['portada']); ?>" title="<?php echo htmlspecialchars($anime['titulo']); ?>">
-                </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </div>  
-
+<div class="profile-body-container">
+    
+    <div class="profile-left-col">
+        
         <?php
-        // Primero, obtenemos el conteo real de cada estado para los gráficos y la lista
+        // Tu lógica PHP de estadísticas intacta
         $stmt = $pdo->prepare("
             SELECT 
                 SUM(CASE WHEN status = 'watching' THEN 1 ELSE 0 END) as watching,
@@ -133,47 +141,81 @@ require_once '../FUNCIONALIDADES/perfil.php';
         ");
         $stmt->execute([$id_usuario]);
         $counts = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        // Evitar errores si no hay datos
         $counts = array_map(fn($v) => $v ?? 0, $counts);
         ?>
 
-        <h3 class="section-title">Anime Stats</h3>
-        <div class="stats-container-horizontal">
-            <div class="stats-graph">
-                <div class="graph-watching" style="width: <?php echo ($counts['total_entries'] > 0) ? ($counts['watching'] / $counts['total_entries'] * 100) : 0; ?>%"></div>
-                <div class="graph-completed" style="width: <?php echo ($counts['total_entries'] > 0) ? ($counts['completed'] / $counts['total_entries'] * 100) : 0; ?>%"></div>
-                <div class="graph-dropped" style="width: <?php echo ($counts['total_entries'] > 0) ? ($counts['dropped'] / $counts['total_entries'] * 100) : 0; ?>%"></div>
-                <div class="graph-planned" style="width: <?php echo ($counts['total_entries'] > 0) ? ($counts['planned'] / $counts['total_entries'] * 100) : 0; ?>%"></div>
+        <div class="content-card">
+            <h3 class="card-title">Anime Stats</h3>
+            
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span class="stat-value" style="color: #ffd100;"><?php echo $counts['total_entries']; ?></span>
+                    <span class="stat-label">Total Anime</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-value" style="color: #4ade80;"><?php echo $counts['completed']; ?></span>
+                    <span class="stat-label">Completed</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-value"><?php echo number_format($stats['puntuacion_media'], 2); ?></span>
+                    <span class="stat-label">Mean Score</span>
+                </div>
             </div>
 
-            <div class="stats-columns">
-                <div class="stat-col">
-                    <p><span class="dot watching"></span> Watching: <strong><?php echo $counts['watching']; ?></strong></p>
-                    <p><span class="dot completed"></span> Completed: <strong><?php echo $counts['completed']; ?></strong></p>
-                    <p><span class="dot planned"></span> Plan to Watch: <strong><?php echo $counts['planned']; ?></strong></p>
-                </div>
-                <div class="stat-col">
-                    <p>Total Entries: <strong><?php echo $counts['total_entries']; ?></strong></p>
-                    <p>Mean Score: <strong><?php echo number_format($stats['puntuacion_media'], 2); ?></strong></p>
-                </div>
+            <div class="stats-bar-wrapper">
+                <div class="stats-bar-fill completed" style="width: <?php echo ($counts['total_entries'] > 0) ? ($counts['completed'] / $counts['total_entries'] * 100) : 0; ?>%"></div>
+                <div class="stats-bar-fill watching" style="width: <?php echo ($counts['total_entries'] > 0) ? ($counts['watching'] / $counts['total_entries'] * 100) : 0; ?>%"></div>
+                <div class="stats-bar-fill planned" style="width: <?php echo ($counts['total_entries'] > 0) ? ($counts['planned'] / $counts['total_entries'] * 100) : 0; ?>%"></div>
+            </div>
+
+            <div class="stats-legend">
+                <span><div class="legend-dot completed"></div> <?php echo $counts['completed']; ?> Completed</span>
+                <span><div class="legend-dot watching"></div> <?php echo $counts['watching']; ?> Watching</span>
+                <span><div class="legend-dot planned"></div> <?php echo $counts['planned']; ?> Planned</span>
+                <span><div class="legend-dot dropped"></div> <?php echo $counts['dropped']; ?> Dropped</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-right-col">
+        
+        <div class="content-section">
+            <h3 class="section-title">Currently Watching</h3>
+            <div class="cover-row">
+                <?php if(empty($watchingList)): ?>
+                    <p class="empty-text">No estás viendo nada actualmente.</p>
+                <?php else: ?>
+                    <?php foreach($watchingList as $anime): ?>
+                    <div class="cover-card">
+                        <img src="<?php echo htmlspecialchars($anime['portada']); ?>" title="<?php echo htmlspecialchars($anime['titulo']); ?>">
+                        <div class="cover-title"><?php echo htmlspecialchars($anime['titulo']); ?></div>
+                    </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </div>
 
-        <h3 class="section-title">Favorites</h3>
-        <div class="cover-grid" style="grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));">
-            <?php if(empty($favorites)): ?>
-                <p style="font-size:12px; color:var(--text-dim)">Aún no tienes favoritos.</p>
-            <?php else: ?>
-                <?php foreach($favorites as $fav): ?>
-                <div class="cover-item">
-                    <img src="<?php echo htmlspecialchars($fav['portada']); ?>" style="height:120px;">
+        <div class="content-section">
+            <div class="section-header-flex">
+                <h3 class="section-title">Favorites</h3>
+                <div class="favorite-tabs">
+                    <span class="tab active">Anime</span>
+                    <span class="tab">Characters</span>
                 </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
+            </div>
+            
+            <div class="cover-row">
+                <?php if(empty($favorites)): ?>
+                    <p class="empty-text">Aún no tienes animes favoritos.</p>
+                <?php else: ?>
+                    <?php foreach($favorites as $fav): ?>
+                    <div class="cover-card fav-card">
+                        <img src="<?php echo htmlspecialchars($fav['portada']); ?>">
+                    </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
         </div>
-    </main>
+
+    </div>
 </div>
-
-</body>
-</html>

@@ -17,7 +17,7 @@ if (!isset($_SESSION['id_usuario'])) {
 $nuevo_nombre = $_POST['nuevo_usuario'];
 $nombre_antiguo = $_SESSION['Usuario'];
 
-// --- FUNCIÓN PARA REDIMENSIONAR A 225x350 ---
+// --- FUNCIÓN PARA REDIMENSIONAR A 225x350 (Mantenida por si la usas en otro lado) ---
 function procesarYRedimensionar($ruta_temporal, $ruta_destino) {
     list($ancho_orig, $alto_orig, $tipo) = getimagesize($ruta_temporal);
     
@@ -40,7 +40,7 @@ function procesarYRedimensionar($ruta_temporal, $ruta_destino) {
         imagesavealpha($lienzo, true);
     }
 
-    // Redimensionar ajustando al tamaño exacto (estirando/encogiendo para llenar el lienzo)
+    // Redimensionar ajustando al tamaño exacto
     imagecopyresampled($lienzo, $img_orig, 0, 0, 0, 0, $nuevo_ancho, $nuevo_alto, $ancho_orig, $alto_orig);
 
     // Guardar la imagen final sobreescribiendo el destino
@@ -64,14 +64,16 @@ try {
         $_SESSION['Usuario'] = $nuevo_nombre;
     }
 
-    // 2. PROCESAR SUBIDA DE FOTO
+    // 2. PROCESAR SUBIDA DE FOTO DE PERFIL
     if (isset($_FILES['nueva_foto']) && $_FILES['nueva_foto']['error'] == 0) {
         $directorio = "Recursos/fotos_perfil/";
         
-        // Creamos la carpeta si no existe
-        if (!is_dir($directorio)) { mkdir($directorio, 0777, true); }
+        // Corregido: Crear carpeta usando la ruta absoluta del servidor
+        if (!is_dir($_SERVER['DOCUMENT_ROOT'] . "/" . $directorio)) { 
+            mkdir($_SERVER['DOCUMENT_ROOT'] . "/" . $directorio, 0777, true); 
+        }
 
-        $extension = pathinfo($_FILES['nueva_foto']['name'], PATHINFO_EXTENSION);
+        $extension = strtolower(pathinfo($_FILES['nueva_foto']['name'], PATHINFO_EXTENSION));
         $nombre_archivo = "user_" . $id_usuario . "_" . time() . "." . $extension;
         $ruta_final = "/" . $directorio . $nombre_archivo;
 
@@ -85,9 +87,35 @@ try {
         }
     }
 
+    // 3. PROCESAR SUBIDA DE BANNER (¡NUEVO!)
+    if (isset($_FILES['nuevo_banner']) && $_FILES['nuevo_banner']['error'] == 0) {
+        $dir_banner = "Recursos/Banners/";
+        
+        // Creamos la carpeta de banners si no existe
+        if (!is_dir($_SERVER['DOCUMENT_ROOT'] . "/" . $dir_banner)) { 
+            mkdir($_SERVER['DOCUMENT_ROOT'] . "/" . $dir_banner, 0777, true); 
+        }
 
-    header("Location: ../Paginas/listaperfil.php?status=updated");
+        $ext_banner = strtolower(pathinfo($_FILES['nuevo_banner']['name'], PATHINFO_EXTENSION));
+        $nombre_banner = "banner_" . $id_usuario . "_" . time() . "." . $ext_banner;
+        $ruta_banner_final = "/" . $dir_banner . $nombre_banner;
+
+        if (move_uploaded_file($_FILES['nuevo_banner']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . $ruta_banner_final)) {
+            // Actualizar DB (Asegúrate de que la columna 'banner' exista en tu tabla 'usuarios')
+            $stmt = $pdo->prepare("UPDATE usuarios SET banner = ? WHERE id_usuario = ?");
+            $stmt->execute([$ruta_banner_final, $id_usuario]);
+            
+            // Actualizar Sesión para que se muestre al instante
+            $_SESSION['Banner'] = $ruta_banner_final;
+        }
+    }
+
+    // REDIRECCIÓN FINAL
+    // Nota: Revisa si quieres mandarlo a 'perfil.php' o 'listaperfil.php' según donde esté el diseño final
+    header("Location: ../PAGINAS/listaperfil.php?status=updated");
+    exit();
 
 } catch (Exception $e) {
     die("Error al actualizar: " . $e->getMessage());
 }
+?>
