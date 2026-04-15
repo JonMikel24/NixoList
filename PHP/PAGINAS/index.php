@@ -31,17 +31,18 @@ $topSeries = callAPI("https://api.themoviedb.org/3/trending/tv/week?api_key=".$t
             <h1 class="logo-texto">NixoList</h1>
         </div>
 
-        <div class="PerfilContenedor" onclick="abrirPerfil()" style="cursor:pointer;">
-            <?php
+        <div class="PerfilContenedor"> <?php
             if (isset($_SESSION['Usuario'])) {
                 $Foto = (!empty($_SESSION['Foto'])) ? $_SESSION['Foto'] : '/Recursos/fotousuario.png';
                 echo '
-                <div class="perfil-horiz">
-                    <div class="perfil-info">
-                        <p class="perfil-nombre nombre-mio">' . htmlspecialchars($_SESSION['Usuario']) . ' <span class="flecha">▼</span></p>
+                <a href="listaperfil.php" style="text-decoration: none; color: inherit;">
+                    <div class="perfil-horiz">
+                        <div class="perfil-info">
+                            <p class="perfil-nombre nombre-mio">' . htmlspecialchars($_SESSION['Usuario']) . ' <span class="flecha">▼</span></p>
+                        </div>
+                        <img src="' . htmlspecialchars($Foto) . '" class="profile-pic foto-mia" id="perfilImagen">
                     </div>
-                    <img src="' . htmlspecialchars($Foto) . '" class="profile-pic foto-mia" id="perfilImagen">
-                </div>
+                </a>
                 ';
             } else {
                 echo '
