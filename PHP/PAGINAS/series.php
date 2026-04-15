@@ -34,19 +34,20 @@ $trending = callAPI("https://api.themoviedb.org/3/trending/tv/week?api_key=".$tm
             </a>
         </div>
 
-        <div class="PerfilContenedor" onclick="abrirPerfil()" style="cursor:pointer;">
-            <?php
-            if (isset($_SESSION['Usuario'])) {
-                $Foto = (!empty($_SESSION['Foto'])) ? $_SESSION['Foto'] : '/Recursos/fotousuario.png';
-                echo '
-                <div class="perfil-horiz">
-                    <div class="perfil-info">
-                        <p class="perfil-nombre nombre-mio">' . htmlspecialchars($_SESSION['Usuario']) . ' <span class="flecha">▼</span></p>
-                    </div>
-                    <img src="' . htmlspecialchars($Foto) . '" class="profile-pic foto-mia" id="perfilImagen">
-                </div>
-                ';
-            } else {
+            <div class="PerfilContenedor"> <?php
+                if (isset($_SESSION['Usuario'])) {
+                    $Foto = (!empty($_SESSION['Foto'])) ? $_SESSION['Foto'] : '/Recursos/fotousuario.png';
+                    echo '
+                    <a href="listaperfil.php" style="text-decoration: none; color: inherit;">
+                        <div class="perfil-horiz">
+                            <div class="perfil-info">
+                                <p class="perfil-nombre nombre-mio">' . htmlspecialchars($_SESSION['Usuario']) . ' <span class="flecha">▼</span></p>
+                            </div>
+                            <img src="' . htmlspecialchars($Foto) . '" class="profile-pic foto-mia" id="perfilImagen">
+                        </div>
+                    </a>
+                    ';
+                } else {
                 echo '
                 <div class="auth-buttons">
                     <a href="../Login/Index.php"><button class="login-btn">Iniciar Sesión</button></a>

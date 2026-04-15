@@ -1,0 +1,242 @@
+        :root {
+            --bg-dark: #050505;
+            --bg-panel: #121212;
+            --mal-blue: #2e51a2;
+            --mal-cyan: #00ffff;
+            --text-white: #eeeeee;
+            --text-dim: #9b9b9b;
+        }
+
+
+
+
+/* Configuración general del Nav */
+.navbar {
+    background-color: #343434; /* El azul clásico de estos sitios */
+    display: flex;
+    justify-content: space-between; /* Separa links de buscador */
+    align-items: center;
+    padding: 0 15px;
+    height: 40px;
+    font-family: Arial, sans-serif;
+}
+
+/* Enlaces de navegación */
+.nav-links {
+    display: flex;
+    gap: 15px;
+}
+
+/* Modificación en los enlaces para que ocupen todo el alto */
+.nav-links {
+    display: flex;
+    height: 100%; /* Importante para que el fondo llene el nav */
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 0 15px;
+    display: flex;
+    align-items: center; /* Centra el texto verticalmente */
+    height: 100%;
+    transition: background 0.2s; /* Suaviza el cambio de color */
+}
+
+.nav-links a:hover {
+    background-color: #ffdd1c; 
+        color: #333;
+
+}
+
+.nav-links a.active {
+    background-color: #ffdd1c; 
+    color: #333;
+    pointer-events: none;
+}
+.search-container {
+    display: flex;
+    align-items: center;
+    background-color: #f1f1f1; 
+    border-radius: 3px;
+    overflow: hidden; 
+    height: 26px;
+}
+/* El contenedor que envuelve a NixoList y al Perfil */
+.header-top {
+    display: flex;
+    justify-content: space-between; /* Empuja el logo a la izq y el perfil a la der */
+    align-items: center;            /* Alineación vertical perfecta */
+    padding: 10px 20px;             /* Espaciado interno */
+    background-color: #1a1a1a;      /* El color oscuro de fondo */
+    height: 60px;                   /* Ajusta el alto a tu gusto */
+}
+
+/* Estilo para el título NixoList */
+.logo-texto {
+    color: white;
+    margin: 0;
+    font-size: 24px;
+    font-family: 'Arial', sans-serif;
+    letter-spacing: 1px;
+}
+
+/* Ajustes para el contenedor del perfil */
+.perfil-horiz {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.perfil-nombre {
+    color: #fff;
+    font-weight: bold;
+    margin: 0;
+    font-size: 14px;
+}
+
+.foto-mia {
+    width: 35px;
+    height: 35px;
+    border-radius: 4px;
+    border: 1px solid #444;
+    object-fit: cover;
+}
+
+/* Estilo para los botones cuando no hay sesión */
+.auth-buttons a {
+    text-decoration: none;
+}
+
+.login-btn, .register-btn {
+    padding: 5px 12px;
+    margin-left: 5px;
+    cursor: pointer;
+    background: #333;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 3px;
+}
+/* Selector (All) */
+.search-select {
+    background-color: #000;
+    color: white;
+    border: none;
+    height: 100%;
+    padding: 0 5px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+/* Input de texto */
+.search-input {
+    border: none;
+    padding: 0 10px;
+    width: 250px;
+    height: 100%;
+    font-size: 12px;
+    outline: none;
+}
+
+/* Botón de lupa */
+.search-button {
+    background-color: #ebebeb;
+    border: none;
+    border-left: 1px solid #ccc;
+    height: 100%;
+    padding: 0 8px;
+    cursor: pointer;
+    color: #333;
+}
+
+.search-button:hover {
+    background-color: #ddd;
+}
+        .container { max-width: 1050px; margin: 0 auto; display: flex; gap: 25px; }
+
+        /* SIDEBAR */
+        .sidebar { 
+            width: 260px; 
+            flex-shrink: 0; 
+        }
+        
+        .profile-pic-main { 
+            width: 100%; 
+            border: 1px solid #333; 
+            padding: 3px; 
+            background: var(--bg-panel);
+            margin-bottom: 10px;
+            height: 220px;
+        }
+        
+        .user-status-box { 
+            background: #1a1a1a; 
+            font-size: 11px; 
+            padding: 8px; 
+            border-bottom: 1px solid #333;
+        }
+
+        /* CONTENIDO PRINCIPAL */
+        .main-content { flex-grow: 1; }
+        
+        .section-title {
+            color: var(--mal-cyan);
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+            font-size: 16px;
+            margin: 25px 0 15px 0;
+            font-weight: normal;
+        }
+
+        .cover-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+        }
+        .cover-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 2px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.7);
+        }
+
+        .stats-graph {
+            height: 15px;
+            display: flex;
+            background: #222;
+            margin: 15px 0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .stats-graph {
+    display: flex;
+    height: 15px;
+    background: #333;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+.graph-watching { background-color: #2db039; }
+.graph-completed { background-color: #26448f; }
+.graph-dropped { background-color: #a12f31; }
+.graph-planned { background-color: #767676; }
+
+.dot {
+    height: 10px; width: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+}
+.watching { background-color: #2db039; }
+.completed { background-color: #26448f; }
+.planned { background-color: #767676; }
+
+.stats-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
