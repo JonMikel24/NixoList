@@ -84,17 +84,18 @@ require_once '../FUNCIONALIDADES/perfil.php';
 </nav>
 <div class="profile-banner-container">
     <?php 
-    // 1. Prioridad a la Sesión. 2. Si no, a la DB ($userRow). 3. Si no, imagen por defecto.
+    // Igual que con el avatar: usamos la sesión. 
+    // Añado $userRow como plan B por si al iniciar sesión aún no has cargado el banner en la variable de sesión.
     if (!empty($_SESSION['Banner'])) {
-        $BannerFinal = ".." . $_SESSION['Banner'];
+        $BannerFinal = $_SESSION['Banner'];
     } elseif (!empty($userRow['banner'])) {
-        $BannerFinal = ".." . $userRow['banner'];
+        $BannerFinal = $userRow['banner'];
     } else {
-        $BannerFinal = "https://images.unsplash.com/photo-1618336753974-aae8e04506aa?q=80&w=2070&auto=format&fit=crop";
+        // Imagen por defecto si no hay banner
+        $BannerFinal = '/Recursos/Banners/banner_default.jpg'; 
     }
     ?>
     <img src="<?php echo htmlspecialchars($BannerFinal); ?>" class="banner-image" alt="Banner">
-    <div class="banner-overlay"></div>
 </div>
 
 <div class="profile-header-content">

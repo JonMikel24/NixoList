@@ -198,3 +198,27 @@ input[type="file"] {
 .back-link:hover {
     color: var(--text-white);
 }
+
+.btn-logout {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px; /* Separación con el botón de guardar */
+    margin-bottom: 15px; /* Separación con el enlace de cancelar */
+    background-color: transparent;
+    color: #ff4d4d; /* Rojo claro */
+    border: 2px solid #ff4d4d;
+    border-radius: 6px; /* Ajusta esto si tus botones son más redondeados */
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.btn-logout:hover {
+    background-color: #ff4d4d;
+    color: #121212; /* El color de fondo oscuro de tu web */
+}

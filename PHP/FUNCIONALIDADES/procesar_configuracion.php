@@ -87,25 +87,25 @@ try {
         }
     }
 
-    // 3. PROCESAR SUBIDA DE BANNER (¡NUEVO!)
+// 3. PROCESAR SUBIDA DE BANNER
     if (isset($_FILES['nuevo_banner']) && $_FILES['nuevo_banner']['error'] == 0) {
-        $dir_banner = "Recursos/Banners/";
+        $directorio_banner = "Recursos/Banners/";
         
-        // Creamos la carpeta de banners si no existe
-        if (!is_dir($_SERVER['DOCUMENT_ROOT'] . "/" . $dir_banner)) { 
-            mkdir($_SERVER['DOCUMENT_ROOT'] . "/" . $dir_banner, 0777, true); 
+        // Crear carpeta usando la ruta absoluta del servidor (igual que el avatar)
+        if (!is_dir($_SERVER['DOCUMENT_ROOT'] . "/" . $directorio_banner)) { 
+            mkdir($_SERVER['DOCUMENT_ROOT'] . "/" . $directorio_banner, 0777, true); 
         }
 
-        $ext_banner = strtolower(pathinfo($_FILES['nuevo_banner']['name'], PATHINFO_EXTENSION));
-        $nombre_banner = "banner_" . $id_usuario . "_" . time() . "." . $ext_banner;
-        $ruta_banner_final = "/" . $dir_banner . $nombre_banner;
+        $extension_banner = strtolower(pathinfo($_FILES['nuevo_banner']['name'], PATHINFO_EXTENSION));
+        $nombre_banner = "banner_" . $id_usuario . "_" . time() . "." . $extension_banner;
+        $ruta_banner_final = "/" . $directorio_banner . $nombre_banner;
 
         if (move_uploaded_file($_FILES['nuevo_banner']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . $ruta_banner_final)) {
-            // Actualizar DB (Asegúrate de que la columna 'banner' exista en tu tabla 'usuarios')
+            // Actualizar DB
             $stmt = $pdo->prepare("UPDATE usuarios SET banner = ? WHERE id_usuario = ?");
             $stmt->execute([$ruta_banner_final, $id_usuario]);
             
-            // Actualizar Sesión para que se muestre al instante
+            // Actualizar Sesión
             $_SESSION['Banner'] = $ruta_banner_final;
         }
     }
