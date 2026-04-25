@@ -221,3 +221,14 @@ body {
 /* Tarjetas de favoritos (sin título, solo imagen) */
 .fav-card img { height: 170px; }
 .empty-text { color: #8ba0b2; font-size: 14px; grid-column: 1 / -1; }
+
+/* Ocultamos el título por defecto */
+.fav-card .cover-title {
+    opacity: 0;
+    transition: opacity 0.3s ease; /* Le da un efecto de aparición suave */
+}
+
+/* Lo mostramos al pasar el ratón */
+.fav-card:hover .cover-title {
+    opacity: 1;
+}

@@ -121,6 +121,8 @@ require_once '../FUNCIONALIDADES/perfil.php';
     <a href="#" class="active">Overview</a>
     <a href="animelistusuario.php">Anime List</a>
     <a href="#">Manga List</a>
+    <a href="#">TV List</a>
+    <a href="amigos.php">Friends</a>
     <a href="#">Reviews</a>
 </div>
 
@@ -196,27 +198,60 @@ require_once '../FUNCIONALIDADES/perfil.php';
             </div>
         </div>
 
-        <div class="content-section">
-            <div class="section-header-flex">
-                <h3 class="section-title">Favorites</h3>
-                <div class="favorite-tabs">
-                    <span class="tab active">Anime</span>
-                    <span class="tab">Characters</span>
-                </div>
-            </div>
-            
-            <div class="cover-row">
-                <?php if(empty($favorites)): ?>
-                    <p class="empty-text">Aún no tienes animes favoritos.</p>
-                <?php else: ?>
-                    <?php foreach($favorites as $fav): ?>
-                    <div class="cover-card fav-card">
-                        <img src="<?php echo htmlspecialchars($fav['portada']); ?>">
-                    </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
+    <div class="content-section">
+        <div class="section-header-flex">
+            <h3 class="section-title">Favorites</h3>
+            <div class="favorite-tabs">
+                <span class="tab active" onclick="cambiarPestaña('anime', this)">Anime</span>
+                <span class="tab" onclick="cambiarPestaña('personajes', this)">Characters</span>
             </div>
         </div>
+        
+        <div id="contenedor-anime" class="cover-row">
+            <?php if(empty($favorites)): ?>
+                <p class="empty-text">Aún no tienes animes favoritos.</p>
+            <?php else: ?>
+                <?php foreach($favorites as $fav): ?>
+                <div class="cover-card fav-card">
+                    <img src="<?php echo htmlspecialchars($fav['portada']); ?>" alt="Anime Cover">
+                </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+        <div id="contenedor-personajes" class="cover-row" style="display: none;">
+            <?php if(empty($favorite_characters)): ?>
+                <p class="empty-text">Aún no tienes personajes favoritos.</p>
+            <?php else: ?>
+                <?php foreach($favorite_characters as $char): ?>
+                <div class="cover-card fav-card">
+                    <img 
+                        src="<?php echo htmlspecialchars($char['personaje_imagen'] ?? ''); ?>" 
+                        alt="Character Cover"
+                    >
+                    <div class="cover-title"><?php echo htmlspecialchars($char['personaje_nombre'] ?? ''); ?></div>
+                </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+
+    <script>
+    function cambiarPestaña(tipo, elementoPestaña) {
+        // 1. Quitar la clase 'active' de todas las pestañas
+        const pestañas = document.querySelectorAll('.favorite-tabs .tab');
+        pestañas.forEach(pestaña => pestaña.classList.remove('active'));
+        
+        // 2. Ponerle la clase 'active' a la pestaña que has clickeado
+        elementoPestaña.classList.add('active');
+        
+        // 3. Ocultar todos los contenedores
+        document.getElementById('contenedor-anime').style.display = 'none';
+        document.getElementById('contenedor-personajes').style.display = 'none';
+        
+        // 4. Mostrar solo el contenedor que toca
+        // Si tu .cover-row usa flexbox o grid, cambia 'flex' por el que uses. Normalmente 'flex' o 'grid' van bien.
+        document.getElementById('contenedor-' + tipo).style.display = 'flex'; 
+    }
+    </script>
 
     </div>
 </div>

@@ -113,23 +113,26 @@ switch($view) {
             </a>
         </div>
 
-        <div class="PerfilContenedor" onclick="window.location.href='../Perfil/Index.php'" style="cursor:pointer;">
-            <?php
+        <div class="PerfilContenedor"> <?php
             if (isset($_SESSION['Usuario'])) {
                 $Foto = (!empty($_SESSION['Foto'])) ? $_SESSION['Foto'] : '/Recursos/fotousuario.png';
                 echo '
-                <div class="perfil-horiz">
-                    <div class="perfil-info">
-                        <p class="perfil-nombre nombre-mio">' . htmlspecialchars($_SESSION['Usuario']) . ' <span class="flecha">▼</span></p>
+                <a href="listaperfil.php" style="text-decoration: none; color: inherit;">
+                    <div class="perfil-horiz">
+                        <div class="perfil-info">
+                            <p class="perfil-nombre nombre-mio">' . htmlspecialchars($_SESSION['Usuario']) . ' <span class="flecha">▼</span></p>
+                        </div>
+                        <img src="' . htmlspecialchars($Foto) . '" class="profile-pic foto-mia" id="perfilImagen">
                     </div>
-                    <img src="' . htmlspecialchars($Foto) . '" class="profile-pic foto-mia">
-                </div>';
+                </a>
+                ';
             } else {
                 echo '
                 <div class="auth-buttons">
                     <a href="../Login/Index.php"><button class="login-btn">Iniciar Sesión</button></a>
                     <a href="../Login/registrarse.php"><button class="register-btn">Registrarse</button></a>
-                </div>';
+                </div>
+                ';
             }
             ?>
         </div>
@@ -309,11 +312,37 @@ switch($view) {
                 </div>
             <?php endforeach; ?>
             <?php elseif($view == 'characters'): ?>
+                    <?php 
+                    // --- 1. Averiguamos el ID del Usuario ---
+                    // (Asegúrate de tener session_start() al principio de media.php si no lo tienes)
+                    $id_usuario_actual = $_SESSION['id_usuario'] ?? 0; 
+                    
+                    // --- 2. Averiguamos el ID de la serie en TU base de datos ---
+                    // Asumimos que $id es la variable que guarda el ID de la API (Jikan o TMDB)
+                    // Cambia $pdo por $conexion si en este archivo usas MySQLi en lugar de PDO
+                    $stmt_media = $pdo->prepare("SELECT id_media FROM media WHERE tmdb_id = ? OR mal_id = ?");
+                    $stmt_media->execute([$id, $id]);
+                    $media_row = $stmt_media->fetch(PDO::FETCH_ASSOC);
+                    $id_media_actual = $media_row ? $media_row['id_media'] : 0;
+
+                    // --- 3. Buscamos los favoritos con las variables correctas ---
+                    $ids_favoritos = [];
+                    if ($id_usuario_actual > 0 && $id_media_actual > 0) {
+                        $stmt_check_favs = $pdo->prepare("SELECT personaje_id FROM personajes_usuario WHERE id_usuario = ? AND id_media = ?");
+                        $stmt_check_favs->execute([$id_usuario_actual, $id_media_actual]);
+                        $ids_favoritos = $stmt_check_favs->fetchAll(PDO::FETCH_COLUMN); 
+                    }
+                    ?>
+
                 <h2 class="section-title">Characters & Staff</h2>
                 <table class="characters-table">
                     <?php foreach(array_slice($characters, 0, 15) as $char): 
+                        $c_id = $char['character']['mal_id'] ?? $char['id'] ?? 0;
                         $c_name = $char['character']['name'] ?? $char['name'];
                         $c_img = $char['character']['images']['jpg']['image_url'] ?? ($char['profile_path'] ? "https://image.tmdb.org/t/p/w185".$char['profile_path'] : "../../Recursos/no-image.png");
+                        
+                        // --- NUEVO: Comprobar si este personaje específico está en la lista de favoritos ---
+                        $es_favorito = in_array($c_id, $ids_favoritos);
                     ?>
                     <tr class="char-row">
                         <td class="char-img-cell"><img src="<?php echo $c_img; ?>" width="50"></td>
@@ -322,7 +351,8 @@ switch($view) {
                             <span class="btn-fav-char" 
                                 data-char-id="<?php echo $c_id; ?>" 
                                 data-char-name="<?php echo htmlspecialchars($c_name); ?>"
-                                style="cursor:pointer; font-size: 18px; color: <?php echo (isset($fila['personaje_favorito_id']) && $fila['personaje_favorito_id'] == $c_id) ? '#e74c3c' : '#444'; ?>; transition: 0.3s;">
+                                data-char-img="<?php echo htmlspecialchars($c_img); ?>"
+                                style="cursor:pointer; font-size: 18px; color: <?php echo $es_favorito ? '#e74c3c' : '#444'; ?>; transition: 0.3s;">
                                 ❤
                             </span>
                         </td>
@@ -481,7 +511,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if(bF) { bF.style.backgroundColor = '#2ecc71'; bF.style.color = 'white'; bF.innerText = '❤ EN FAVORITOS'; }
     }
 
-    // Lógica para Personaje Favorito
+// Lógica para Personaje Favorito
     document.querySelectorAll('.btn-fav-char').forEach(btn => {
         btn.addEventListener('click', function() {
             const datos = new FormData();
@@ -490,8 +520,10 @@ document.addEventListener('DOMContentLoaded', function() {
             datos.append('titulo', <?php echo json_encode($title); ?>);
             datos.append('portada', '<?php echo $img; ?>');
             datos.append('action', 'fav_character');
+            
             datos.append('char_id', this.dataset.charId);
             datos.append('char_name', this.dataset.charName);
+            datos.append('char_img', this.dataset.charImg); 
 
             fetch('../funcionalidades/procesar_interaccion.php', {
                 method: 'POST',
@@ -500,15 +532,28 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(res => res.json())
             .then(res => {
                 if (res.status === 'success') {
-                    // Ponemos todos los corazones de personajes en gris
-                    document.querySelectorAll('.btn-fav-char').forEach(b => b.style.color = '#444');
-                    // Si el resultado es 'added', pintamos de rojo solo el que clicamos
+                    // Solo cambiamos el estado del botón que hemos clicado
                     if (res.result === 'added') {
-                        this.style.color = '#e74c3c';
+                        this.style.color = '#e74c3c'; // Se pone rojo al añadir
+                    } else if (res.result === 'removed') {
+                        this.style.color = '#444'; // Se vuelve gris al quitar
+                    }
+                }
+            })
+            // ... dentro del fetch ...
+            .then(res => {
+                if (res.status === 'success') {
+                    if (res.result === 'added') {
+                        this.style.color = '#e74c3c'; // Se marca en rojo
+                        console.log("Añadido a favoritos");
+                    } else if (res.result === 'removed') {
+                        this.style.color = '#444'; // Se vuelve gris
+                        console.log("Eliminado de favoritos");
                     }
                 }
             })
             .catch(err => console.error("Error:", err));
+            
         });
     });
 });

@@ -47,6 +47,11 @@ try {
     $stmtFavs->execute([$id_usuario]);
     $favorites = $stmtFavs->fetchAll();
 
+// Obtener Personajes Favoritos de la nueva tabla
+    $stmtChars = $pdo->prepare("SELECT personaje_nombre, personaje_imagen FROM personajes_usuario WHERE id_usuario = ?");
+    $stmtChars->execute([$id_usuario]);
+    $favorite_characters = $stmtChars->fetchAll();
+    
 } catch (Exception $e) {
     die("Error al cargar datos del perfil: " . $e->getMessage());
 }
