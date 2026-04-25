@@ -45,10 +45,31 @@ if($type == "anime"){
     }
 }
 
+    $mi_nota = 0;
+    $en_lista = false;
+    $es_fav = false;
+
+    if (isset($_SESSION['id_usuario'])) {
+        require_once("../conexion.php"); // Asegúrate de que la ruta a tu conexión es correcta
+        $stmt_user = $conexion->prepare("SELECT mu.puntuacion, mu.status, mu.es_favorito 
+                                        FROM media_usuario mu 
+                                        JOIN media m ON mu.id_media = m.id_media 
+                                        WHERE mu.id_usuario = ? AND (m.tmdb_id = ? OR m.mal_id = ?)");
+        $stmt_user->bind_param("iss", $_SESSION['id_usuario'], $id, $id);
+        $stmt_user->execute();
+        $res_user = $stmt_user->get_result();
+        if($fila = $res_user->fetch_assoc()) {
+            $mi_nota = $fila['puntuacion'] ?? 0;
+            $en_lista = !empty($fila['status']);
+            $es_fav = ($fila['es_favorito'] == 1);
+        }
+    }
+
 // 2. LOGICA ESPECIFICA DE CADA PESTAÑA
 $characters = []; $episodes_list = []; $videos_list = []; $reviews_list = []; $stats = [];
 
 switch($view) {
+    
     case 'characters':
         if($type == 'anime') $characters = callAPI("https://api.jikan.moe/v4/anime/".$id."/characters")["data"] ?? [];
         else $characters = callAPI("https://api.themoviedb.org/3/".$type."/".$id."/credits?api_key=".$tmdb_key)["cast"] ?? [];
@@ -195,9 +216,46 @@ switch($view) {
 
         <div class="content-body">
             <?php if($view == 'details'): ?>
-                <div class="score-box">
+                <div class="score-box" style="display: flex; align-items: center; gap: 20px;">
                     <div class="score-value">★ <?php echo $score; ?></div>
-                    <div class="score-stats"><div class="score-label">RANKING</div><div class="score-rank">#<?php echo rand(1, 2000); ?></div></div>
+                    <div class="score-stats">
+                        <div class="score-label">RANKING</div>
+                        <div class="score-rank">#<?php echo rand(1, 2000); ?></div>
+                    </div>
+
+                    <div class="score-user-rating" style="margin-left: 20px; border-left: 1px solid #444; padding-left: 20px; display: flex; align-items: center; gap: 20px;">
+                        
+                        <div>
+                            <div class="score-label" style="font-size: 10px; color: #aaa; margin-bottom: 5px;">TU NOTA</div>
+                            <div id="star-rating-container" style="display: flex; gap: 2px; cursor: pointer; font-size: 18px;">
+                                <?php for($i=1; $i<=10; $i++): 
+                                    $color = ($i <= $mi_nota) ? '#ffdd1c' : '#444';
+                                ?>
+                                    <span class="star" data-value="<?php echo $i; ?>" style="color: <?php echo $color; ?>; transition: color 0.2s;">★</span>
+                                <?php endfor; ?>
+                            </div>
+                        </div>
+
+                        <div id="status-select-container" style="display: <?php echo ($en_lista || $mi_nota > 0) ? 'block' : 'none'; ?>;">
+                            <div class="score-label" style="font-size: 10px; color: #aaa; margin-bottom: 5px;">ESTADO</div>
+                            <select id="status-media-selector" style="background: #222; color: white; border: 1px solid #444; padding: 3px 5px; border-radius: 3px; font-size: 12px; cursor: pointer;">
+                            <?php 
+                                $status_actual = $fila['status'] ?? ''; 
+                                $opciones = [
+                                    'watching'  => 'Viendo',
+                                    'completed' => 'Completado',
+                                    'paused'    => 'En espera', // Cambiado a 'paused' por tu base de datos
+                                    'dropped'   => 'Dropeado',
+                                    'planned'   => 'Planteando verlo'
+                                ];
+                                foreach($opciones as $val => $texto) {
+                                    $sel = ($status_actual == $val) ? 'selected' : '';
+                                    echo "<option value='$val' $sel>$texto</option>";
+                                }
+                            ?>
+                        </select>
+                        </div>
+                    </div>
                 </div>
                 <h2 class="section-title">Synopsis</h2>
                 <p><?php echo nl2br($desc); ?></p>
@@ -260,7 +318,14 @@ switch($view) {
                     <tr class="char-row">
                         <td class="char-img-cell"><img src="<?php echo $c_img; ?>" width="50"></td>
                         <td class="char-info-cell"><a href="#"><?php echo $c_name; ?></a><p><?php echo $char['role'] ?? 'Cast'; ?></p></td>
-                        <td class="char-va-cell">Japanese</td>
+                        <td style="text-align: right; padding-right: 15px;">
+                            <span class="btn-fav-char" 
+                                data-char-id="<?php echo $c_id; ?>" 
+                                data-char-name="<?php echo htmlspecialchars($c_name); ?>"
+                                style="cursor:pointer; font-size: 18px; color: <?php echo (isset($fila['personaje_favorito_id']) && $fila['personaje_favorito_id'] == $c_id) ? '#e74c3c' : '#444'; ?>; transition: 0.3s;">
+                                ❤
+                            </span>
+                        </td>
                     </tr>
                     <?php endforeach; ?>
                 </table>
@@ -273,14 +338,103 @@ switch($view) {
 document.addEventListener('DOMContentLoaded', function() {
     const btnList = document.getElementById('btnAddList');
     const btnFav = document.getElementById('btnFav');
+    
+    const statusContainer = document.getElementById('status-select-container');
+    const statusSelector = document.getElementById('status-media-selector');
 
     function enviarSolicitud(tipoAccion, boton) {
+    const datos = new FormData();
+    datos.append('id_api', '<?php echo $id; ?>');
+    datos.append('type', '<?php echo $type; ?>');
+    datos.append('titulo', <?php echo json_encode($title); ?>);
+    datos.append('portada', '<?php echo $img; ?>');
+    datos.append('action', tipoAccion);
+
+    if (tipoAccion === 'add_list') {
+    datos.append('nuevo_status', 'planned'); // Valor por defecto al añadir
+}
+
+    fetch('../funcionalidades/procesar_interaccion.php', {
+        method: 'POST',
+        body: datos
+    })
+    .then(res => res.json())
+    .then(res => {
+        if (res.status === 'success') {
+            if (res.result === 'added') {
+                boton.style.backgroundColor = '#2ecc71'; 
+                boton.style.color = 'white';
+                boton.innerText = (tipoAccion === 'favorite') ? '❤ EN FAVORITOS' : '✓ EN MI LISTA';
+                
+                // --- ESTO ES LO QUE FALTA ---
+                if (tipoAccion === 'add_list' && statusContainer) {
+                    statusContainer.style.display = 'block';
+                }
+                // -----------------------------
+                
+            } else {
+                boton.style.backgroundColor = '';
+                boton.style.color = '';
+                boton.innerText = (tipoAccion === 'favorite') ? '❤ AÑADIR A FAVORITOS' : '+ AÑADIR A MI LISTA';
+                
+                // Ocultar si se quita de la lista y no hay nota puesta
+                if (tipoAccion === 'add_list' && statusContainer && currentRating === 0) {
+                    statusContainer.style.display = 'none';
+                }
+            }
+        }
+    })
+    .catch(err => console.error("Error:", err));
+}
+
+    if(btnList) btnList.addEventListener('click', () => enviarSolicitud('add_list', btnList));
+    if(btnFav) btnFav.addEventListener('click', () => enviarSolicitud('favorite', btnFav));
+
+    const stars = document.querySelectorAll('#star-rating-container .star');
+    // Forzamos que sea un número entero
+    let currentRating = parseInt(<?php echo (int)$mi_nota; ?>) || 0; 
+
+    function highlightStars(value) {
+        // Convertimos el valor a número para evitar el error del "1" y "10"
+        const numValue = parseInt(value);
+        
+        stars.forEach(s => {
+            const starValue = parseInt(s.dataset.value);
+            if (starValue <= numValue) {
+                s.style.setProperty('color', '#ffdd1c', 'important');
+            } else {
+                s.style.setProperty('color', '#444', 'important');
+            }
+        });
+    }
+
+    // Ejecutar inmediatamente al cargar para limpiar la estrella 10
+    highlightStars(currentRating);
+
+    stars.forEach(star => {
+        star.addEventListener('mouseover', function() {
+            highlightStars(this.dataset.value);
+        });
+
+        star.addEventListener('mouseout', function() {
+            highlightStars(currentRating);
+        });
+
+        star.addEventListener('click', function() {
+            currentRating = parseInt(this.dataset.value);
+            highlightStars(currentRating); // Refrescar visualmente al hacer clic
+            enviarNota(currentRating);
+        });
+    });
+
+    function enviarNota(nota) {
         const datos = new FormData();
         datos.append('id_api', '<?php echo $id; ?>');
         datos.append('type', '<?php echo $type; ?>');
         datos.append('titulo', <?php echo json_encode($title); ?>);
         datos.append('portada', '<?php echo $img; ?>');
-        datos.append('action', tipoAccion);
+        datos.append('action', 'rate'); 
+        datos.append('puntuacion', nota);
 
         fetch('../funcionalidades/procesar_interaccion.php', {
             method: 'POST',
@@ -288,27 +442,75 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(res => res.json())
         .then(res => {
-            if (res.status === 'success') {
-                if (res.result === 'added') {
-                    // Estilo cuando está activo
-                    boton.style.backgroundColor = '#2ecc71'; 
-                    boton.style.color = 'white';
-                    boton.innerText = (tipoAccion === 'favorite') ? '❤ EN FAVORITOS' : '✓ EN MI LISTA';
-                } else {
-                    // Estilo original cuando se quita
-                    boton.style.backgroundColor = '';
-                    boton.style.color = '';
-                    boton.innerText = (tipoAccion === 'favorite') ? '❤ AÑADIR A FAVORITOS' : '+ AÑADIR A MI LISTA';
-                }
-            } else {
-                alert(res.message);
-            }
+            if (res.status !== 'success') alert(res.message);
         })
         .catch(err => console.error("Error:", err));
     }
 
-    if(btnList) btnList.addEventListener('click', () => enviarSolicitud('add_list', btnList));
-    if(btnFav) btnFav.addEventListener('click', () => enviarSolicitud('favorite', btnFav));
+    if (statusSelector) {
+        statusSelector.addEventListener('change', function() {
+            const nuevoEstado = this.value;
+            const datos = new FormData();
+            datos.append('id_api', '<?php echo $id; ?>');
+            datos.append('type', '<?php echo $type; ?>');
+            datos.append('titulo', <?php echo json_encode($title); ?>);
+            datos.append('portada', '<?php echo $img; ?>');
+            datos.append('action', 'update_status');
+            datos.append('nuevo_status', nuevoEstado);
+
+            fetch('../funcionalidades/procesar_interaccion.php', {
+                method: 'POST',
+                body: datos
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.status !== 'success') alert("Error al actualizar estado");
+            })
+            .catch(err => console.error("Error:", err));
+        });
+    }
+
+    // Inicialización de estados al cargar la página
+    if (<?php echo $en_lista ? 'true' : 'false'; ?>) {
+        const bL = document.getElementById('btnAddList');
+        if(bL) { bL.style.backgroundColor = '#2ecc71'; bL.style.color = 'white'; bL.innerText = '✓ EN MI LISTA'; }
+    }
+    
+    if (<?php echo $es_fav ? 'true' : 'false'; ?>) {
+        const bF = document.getElementById('btnFav');
+        if(bF) { bF.style.backgroundColor = '#2ecc71'; bF.style.color = 'white'; bF.innerText = '❤ EN FAVORITOS'; }
+    }
+
+    // Lógica para Personaje Favorito
+    document.querySelectorAll('.btn-fav-char').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const datos = new FormData();
+            datos.append('id_api', '<?php echo $id; ?>');
+            datos.append('type', '<?php echo $type; ?>');
+            datos.append('titulo', <?php echo json_encode($title); ?>);
+            datos.append('portada', '<?php echo $img; ?>');
+            datos.append('action', 'fav_character');
+            datos.append('char_id', this.dataset.charId);
+            datos.append('char_name', this.dataset.charName);
+
+            fetch('../funcionalidades/procesar_interaccion.php', {
+                method: 'POST',
+                body: datos
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.status === 'success') {
+                    // Ponemos todos los corazones de personajes en gris
+                    document.querySelectorAll('.btn-fav-char').forEach(b => b.style.color = '#444');
+                    // Si el resultado es 'added', pintamos de rojo solo el que clicamos
+                    if (res.result === 'added') {
+                        this.style.color = '#e74c3c';
+                    }
+                }
+            })
+            .catch(err => console.error("Error:", err));
+        });
+    });
 });
 </script>
 

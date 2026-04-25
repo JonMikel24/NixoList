@@ -68,6 +68,63 @@ if ($action === 'favorite') {
     }
 }
 
+if ($action === 'rate') {
+    $nota = intval($_POST['puntuacion']);
+    $sql_rate = "INSERT INTO media_usuario (id_usuario, id_media, puntuacion) 
+                 VALUES (?, ?, ?) 
+                 ON DUPLICATE KEY UPDATE puntuacion = ?";
+    $stmt_rate = $conexion->prepare($sql_rate);
+    $stmt_rate->bind_param("iiii", $id_user, $id_media, $nota, $nota);
+    $stmt_rate->execute();
+    
+    echo json_encode(['status' => 'success', 'result' => 'rated']);
+    exit; // Importante para que no ejecute el resto del código de abajo
+}
+
+// --- NUEVO: Lógica de Cambio de Estado (Selector Dropdown) ---
+if ($action === 'update_status') {
+    $nuevo_status = $_POST['nuevo_status'];
+    $sql_status = "INSERT INTO media_usuario (id_usuario, id_media, status) 
+                   VALUES (?, ?, ?) 
+                   ON DUPLICATE KEY UPDATE status = ?";
+    $stmt_status = $conexion->prepare($sql_status);
+    $stmt_status->bind_param("iiss", $id_user, $id_media, $nuevo_status, $nuevo_status);
+    $stmt_status->execute();
+    
+    echo json_encode(['status' => 'success', 'result' => 'status_updated']);
+    exit;
+}
+
+// --- NUEVO: Lógica de Personaje Favorito de la obra ---
+if ($action === 'fav_character') {
+    $char_id   = $_POST['char_id'];
+    $char_name = $_POST['char_name'];
+
+    $check = $conexion->prepare("SELECT personaje_favorito_id FROM media_usuario WHERE id_usuario = ? AND id_media = ?");
+    $check->bind_param("ii", $id_user, $id_media);
+    $check->execute();
+    $curr = $check->get_result()->fetch_assoc();
+
+    if ($curr && $curr['personaje_favorito_id'] == $char_id) {
+        $sql = "UPDATE media_usuario SET personaje_favorito_id = NULL, personaje_favorito_nombre = NULL 
+                WHERE id_usuario = ? AND id_media = ?";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("ii", $id_user, $id_media);
+        $res_type = 'removed';
+    } else {
+        $sql = "INSERT INTO media_usuario (id_usuario, id_media, personaje_favorito_id, personaje_favorito_nombre, status) 
+                VALUES (?, ?, ?, ?, 'planned') 
+                ON DUPLICATE KEY UPDATE personaje_favorito_id = ?, personaje_favorito_nombre = ?";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("iiisis", $id_user, $id_media, $char_id, $char_name, $char_id, $char_name);
+        $res_type = 'added';
+    }
+
+    $stmt->execute();
+    echo json_encode(['status' => 'success', 'result' => $res_type]);
+    exit;
+}
+
 // --- LOGICA DE LIMPIEZA ---
 
 $clean = $conexion->prepare("DELETE FROM media_usuario WHERE id_usuario = ? AND id_media = ? AND (status IS NULL OR status = '') AND (es_favorito = 0 OR es_favorito IS NULL)");
