@@ -26,13 +26,14 @@ if (isset($_FILES['nuevo_banner']) && $_FILES['nuevo_banner']['error'] === UPLOA
         $dest_path = $uploadFileDir . $newFileName;
 
         if(move_uploaded_file($fileTmpPath, $dest_path)) {
-            // RUTA PARA LA BASE DE DATOS
-            $ruta_bd = '/Recursos/Banners/' . $newFileName;
+            
+            // CORRECCIÓN: Guardamos la ruta con ../ para que HTML la encuentre desde PAGINAS
+            $ruta_bd = '../Recursos/Banners/' . $newFileName;
 
             $stmt = $pdo->prepare("UPDATE usuarios SET banner = ? WHERE id_usuario = ?");
             if($stmt->execute([$ruta_bd, $id_usuario])) {
                 
-                // ¡ESTO ES LO IMPORTANTE! Actualizar la sesión
+                // Actualizamos la sesión con la ruta correcta
                 $_SESSION['Banner'] = $ruta_bd; 
                 
                 header("Location: ../PAGINAS/listaperfil.php?status=success");
@@ -43,3 +44,4 @@ if (isset($_FILES['nuevo_banner']) && $_FILES['nuevo_banner']['error'] === UPLOA
 }
 header("Location: ../PAGINAS/listaperfil.php?status=error");
 exit();
+?>

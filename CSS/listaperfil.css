@@ -232,3 +232,314 @@ body {
 .fav-card:hover .cover-title {
     opacity: 1;
 }
+/* --- CONTENEDOR PRINCIPAL --- */
+.main-wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    color: #ffffff; /* Texto en blanco */
+    font-family: sans-serif;
+}
+
+.section-title {
+    font-size: 22px;
+    margin-bottom: 20px;
+    padding-bottom: 5px;
+    /* Línea inferior en el amarillo de tu perfil */
+    border-bottom: 2px solid #ffd000; 
+    display: inline-block;
+}
+
+/* --- BUSCADOR --- */
+.search-section {
+    margin-bottom: 40px;
+    background: #151515; /* Fondo casi negro, igual que tus stats */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+
+
+.search-box:focus {
+    border-color: #ffd000; /* Brillo amarillo al escribir */
+    box-shadow: 0 0 5px rgba(255, 208, 0, 0.2);
+}
+
+/* --- SOLICITUDES PENDIENTES --- */
+.requests-section {
+    margin-bottom: 40px;
+}
+
+.request-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #151515;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border-left: 4px solid #ffd000; /* Acento amarillo */
+}
+
+.request-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.request-info img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #333;
+}
+
+.request-info span {
+    font-weight: bold;
+    font-size: 16px;
+    color: #fff;
+}
+
+.req-buttons button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+    margin-left: 10px;
+}
+
+/* Botón Aceptar: Estilo igual a tu botón "Configuración" */
+.btn-accept { 
+    background: #ffd000; 
+    color: #000; 
+}
+.btn-accept:hover { 
+    background: #e6bc00; /* Un amarillo un poco más oscuro al pasar el ratón */
+}
+
+/* Botón Rechazar: Discreto en tonos grises para no restar protagonismo */
+.btn-reject { 
+    background: #333; 
+    color: #fff; 
+}
+.btn-reject:hover { 
+    background: #444; 
+}
+
+/* --- CUADRÍCULA DE AMIGOS --- */
+.friends-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 18px;
+}
+
+.friend-item {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    aspect-ratio: 1 / 1; 
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+    border: 2px solid transparent; /* Preparado para el hover */
+}
+
+.friend-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(255, 208, 0, 0.15); /* Sombra muy sutil amarilla */
+    border: 2px solid #ffd000; /* Borde amarillo al pasar el ratón */
+}
+
+.friend-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.friend-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60%; 
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 100%);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.friend-item:hover .friend-overlay {
+    opacity: 1;
+}
+
+.friend-name {
+    color: #ffd000; /* Nombre del amigo en amarillo para que destaque sobre el negro */
+    font-size: 15px;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0,0,0,1);
+    transform: translateY(10px);
+    transition: transform 0.3s ease;
+}
+
+.friend-item:hover .friend-name {
+    transform: translateY(0);
+}
+
+/* --- LAYOUT A DOS COLUMNAS --- */
+.friends-page-layout {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start; /* Para que la barra lateral no se estire hacia abajo */
+}
+
+.friends-main {
+    flex: 1; /* Ocupa todo el espacio sobrante a la izquierda */
+}
+
+.friends-sidebar {
+    width: 320px; /* Ancho fijo para la columna derecha */
+    flex-shrink: 0;
+}
+
+/* --- ARREGLO DEL BUSCADOR QUE SE SALÍA --- */
+.search-box {
+    width: 100%;
+    box-sizing: border-box; /* ESTO ES LA MAGIA QUE EVITA QUE SE SALGA */
+    padding: 12px 15px;
+    border-radius: 6px;
+    border: 1px solid #333;
+    background: #222;
+    color: #fff;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Modificaciones para las tarjetas de solicitud en formato compacto */
+.request-card {
+    display: flex;
+    flex-direction: column; /* Apila el nombre y los botones para que quepan bien */
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.req-buttons {
+    width: 100%;
+    display: flex;
+    gap: 5px;
+}
+
+.req-buttons button {
+    flex: 1; /* Los botones ocupan el mismo espacio */
+    margin: 0;
+}
+
+/* --- RESPONSIVE PARA MÓVILES --- */
+@media (max-width: 768px) {
+    .friends-page-layout {
+        flex-direction: column-reverse; /* En móvil, el buscador aparece arriba */
+    }
+    .friends-sidebar {
+        width: 100%;
+    }
+}
+
+/* --- CONTENEDOR DE RESULTADOS DE BÚSQUEDA --- */
+#search-results {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Tarjeta individual de cada usuario buscado */
+.search-result-item {
+    display: flex;
+    align-items: center; /* Centra verticalmente */
+    justify-content: space-between; /* Manda el botón a la derecha del todo */
+    background: #1a1a1a;
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid #333;
+}
+
+/* Agrupamos la foto y el nombre a la izquierda */
+.search-result-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Foto cuadrada */
+.search-result-info img {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 4px; /* Un valor pequeño (4px u 8px) hace que sea cuadrada pero sin picos cortantes. Pon 0 si la quieres totalmente cuadrada */
+    border: 1px solid #444;
+}
+
+.search-result-info span {
+    font-weight: bold;
+    color: #fff;
+    font-size: 15px;
+}
+
+/* --- ESTILOS PARA LOS BOTONES DEL BUSCADOR --- */
+.btn-search-action {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 13px;
+}
+
+/* Botón de "Añadir" (Amarillo) */
+.btn-search-add {
+    background: #ffd000;
+    color: #000;
+}
+.btn-search-add:hover {
+    background: #e6bc00;
+}
+
+/* Botón de "Pendiente" o deshabilitado (Gris oscuro) */
+.btn-search-pending {
+    background: #333;
+    color: #888;
+    cursor: not-allowed;
+}
+
+/* --- CABECERA DE ESTADÍSTICAS --- */
+.stats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 100%; /* Aseguramos que ocupe el ancho correcto de la tarjeta */
+}
+
+.stats-select {
+    background: #222;
+    color: #fff;
+    border: 1px solid #444;
+    padding: 6px 12px;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.stats-select:hover {
+    border-color: #ffd000; /* Le damos tu toque amarillo al pasar el ratón */
+}

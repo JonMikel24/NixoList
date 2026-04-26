@@ -15,11 +15,10 @@ if (!isset($_SESSION['id_usuario'])) {
     $_SESSION['id_usuario'] = $userRow['id_usuario'];
 }
 
-// 👇 EL CAMBIO CLAVE ESTÁ AQUÍ 👇
-// Leemos la ID de la URL (si es que estás visitando a un amigo). Si no, usamos la tuya.
+// 👇 EL CAMBIO CLAVE: Leer el ID de la URL si existe, sino usar el propio 👇
 $id_usuario_lista = isset($_GET['id']) ? (int)$_GET['id'] : $_SESSION['id_usuario'];
 
-// 2. CONSULTA MODIFICADA: Solo traemos lo que tenga type = 'ANIME'
+// 2. CONSULTA MODIFICADA: Traemos lo que tenga type = 'pelicula' OR 'tv'
 $stmt = $pdo->prepare("
     SELECT 
         m.titulo, 
@@ -31,11 +30,11 @@ $stmt = $pdo->prepare("
         mu.episodios_vistos 
     FROM media_usuario mu
     JOIN media m ON mu.id_media = m.id_media
-    WHERE mu.id_usuario = ? AND (m.type = 'ANIME' OR m.type = 'anime')
+    WHERE mu.id_usuario = ? AND (m.type = 'pelicula' OR m.type = 'tv')
     ORDER BY FIELD(mu.status, 'watching', 'completed', 'planned', 'paused', 'dropped'), m.titulo ASC
 ");
 
-// Pasamos el nuevo ID a la consulta
+// Ejecutamos la consulta con el nuevo ID (el tuyo o el de tu amigo)
 $stmt->execute([$id_usuario_lista]);
 $animes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -48,6 +47,7 @@ $listaAgrupada = [
     'dropped' => []
 ];
 
+// (Nota: Aunque la variable se llame $animes, aquí estamos guardando películas y series de TV)
 foreach ($animes as $anime) {
     $listaAgrupada[$anime['status']][] = $anime;
 }
