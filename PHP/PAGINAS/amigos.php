@@ -32,65 +32,157 @@ $mis_amigos = $stmt_ami->get_result();
 ?>
 
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Mis Amigos - NixoList</title>
-    <link rel="stylesheet" href="../../CSS/styles.css">
-    <style>
-        body { background-color: #0d0d0d; color: white; font-family: sans-serif; }
-        .main-wrapper { max-width: 800px; margin: 40px auto; padding: 20px; }
-        .search-box { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #1a1a1a; color: white; margin-bottom: 20px; }
-        .user-card { background: #1a1a1a; padding: 15px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; border-radius: 8px; border: 1px solid #222; }
-        .user-info { display: flex; align-items: center; gap: 15px; }
-        .user-img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; background: #333; }
-        .btn-add { background: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
-        .btn-accept { background: #2ecc71; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-right: 5px; }
-        .btn-reject { background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
-        .pendiente { background: #444 !important; cursor: not-allowed; }
-    </style>
+<meta charset="UTF-8">
+<title>Anime</title>
+<link rel="stylesheet" href="../../CSS/styles.css">
+<link rel="stylesheet" href="../../CSS/listaperfil.css">
+
 </head>
+<header class="header-main">
+    <div class="header-top">
+        <div class="logo-container">
+            <a href="index.php" class="enlace-logo">
+                <h1 class="logo-texto">NixoList</h1>
+            </a>
+        </div>
+
+        <div class="PerfilContenedor"> <?php
+            if (isset($_SESSION['Usuario'])) {
+                $Foto = (!empty($_SESSION['Foto'])) ? $_SESSION['Foto'] : '/Recursos/fotousuario.png';
+                echo '
+                <a href="listaperfil.php" style="text-decoration: none; color: inherit;">
+                    <div class="perfil-horiz">
+                        <div class="perfil-info">
+                            <p class="perfil-nombre nombre-mio">' . htmlspecialchars($_SESSION['Usuario']) . ' <span class="flecha">▼</span></p>
+                        </div>
+                        <img src="' . htmlspecialchars($Foto) . '" class="profile-pic foto-mia" id="perfilImagen">
+                    </div>
+                </a>
+                ';
+            } else {
+                echo '
+                <div class="auth-buttons">
+                    <a href="../Login/Index.php"><button class="login-btn">Iniciar Sesión</button></a>
+                    <a href="../Login/registrarse.php"><button class="register-btn">Registrarse</button></a>
+                </div>
+                ';
+            }
+            ?>
+        </div>
+    </div>
+</header>
+<body>
+    <?php
+    // Obtenemos el nombre del archivo actual (ej: anime.php)
+    $pagina_actual = basename($_SERVER['PHP_SELF']);
+    ?>
+
+<nav class="navbar">
+    <div class="nav-links">
+        
+        <a href="index.php" class="<?php echo ($pagina_actual == 'index.php') ? 'active' : ''; ?>">Inicio</a>
+
+        <div class="menu-desplegable">
+            <a href="anime.php" class="seccion-principal <?php echo ($pagina_actual == 'anime.php') ? 'active' : ''; ?>">Anime</a>
+            <div class="sub-menu">
+                <a href="anime.php">Inicio Anime</a>
+                <a href="anime.php#recomendados">Recomendados</a>
+                <a href="anime.php#populares">Más Populares</a>
+                <a href="anime.php#top">Top Anime</a>
+            </div>
+        </div>
+
+        <div class="menu-desplegable">
+            <a href="peliculas.php" class="seccion-principal <?php echo ($pagina_actual == 'peliculas.php') ? 'active' : ''; ?>">Películas</a>
+            <div class="sub-menu">
+                <a href="peliculas.php">Inicio Películas</a>
+                <a href="peliculas.php#recomendadas">Recomendadas</a>
+                <a href="peliculas.php#populares">Más Populares</a>
+                <a href="peliculas.php#top">Top Rated</a>
+            </div>
+        </div>
+
+        <div class="menu-desplegable">
+            <a href="series.php" class="seccion-principal <?php echo ($pagina_actual == 'series.php') ? 'active' : ''; ?>">Series</a>
+            <div class="sub-menu">
+                <a href="series.php">Inicio Series</a>
+                <a href="series.php#trending">Trending</a>
+                <a href="series.php#populares">Más Populares</a>
+                <a href="series.php#top">Top Rated</a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="search-container">
+        <select class="search-select">
+            <option value="all">All</option>
+            <option value="anime">Anime</option>
+            <option value="manga">Manga</option>
+        </select>
+        <input type="text" placeholder="Search Anime, Manga, and more..." class="search-input">
+        <button type="submit" class="search-button">
+            <i>🔍</i> 
+        </button>
+    </div>
+</nav>
+
+
 <body>
 
-<div class="main-wrapper">
-    <h2>Buscar Usuarios</h2>
-    <input type="text" id="search-user" class="search-box" placeholder="Escribe el username de un usuario...">
-    <div id="search-results"></div>
-
-    <?php if ($solicitudes->num_rows > 0): ?>
-        <h2 style="color: #e67e22;">Solicitudes Pendientes</h2>
-        <?php while($sol = $solicitudes->fetch_assoc()): ?>
-            <div class="user-card" id="req-<?php echo $sol['id_usuario']; ?>">
-                <div class="user-info">
-                    <img src="<?php echo $sol['avatar'] ?: '../../Recursos/fotousuario.png'; ?>" class="user-img">
-                    <span><?php echo htmlspecialchars($sol['username']); ?></span>
+<div class="main-wrapper friends-page-layout">
+    
+    <div class="friends-main">
+        <div class="friends-section">
+            <h2 class="section-title">Mis Amigos</h2>
+            
+            <?php if ($mis_amigos->num_rows > 0): ?>
+                <div class="friends-grid">
+                    <?php while($amigo = $mis_amigos->fetch_assoc()): ?>
+                        <a href="listaperfil.php?id=<?php echo $amigo['id_usuario']; ?>" class="friend-item">
+                            <img src="<?php echo $amigo['avatar'] ?: '../../Recursos/fotousuario.png'; ?>" alt="<?php echo htmlspecialchars($amigo['username']); ?>">
+                            <div class="friend-overlay">
+                                <span class="friend-name"><?php echo htmlspecialchars($amigo['username']); ?></span>
+                            </div>
+                        </a>
+                    <?php endwhile; ?>
                 </div>
-                <div>
-                    <button class="btn-accept" onclick="responderSolicitud(<?php echo $sol['id_usuario']; ?>, 'aceptar')">Aceptar</button>
-                    <button class="btn-reject" onclick="responderSolicitud(<?php echo $sol['id_usuario']; ?>, 'rechazar')">Rechazar</button>
-                </div>
-            </div>
-        <?php endwhile; ?>
-    <?php endif; ?>
+            <?php else: ?>
+                <p style="color:#888; font-style: italic;">Aún no tienes amigos agregados.</p>
+            <?php endif; ?>
+        </div>
+    </div>
 
-    <h2>Mis Amigos</h2>
-    <div class="amigos-lista">
-        <?php if ($mis_amigos->num_rows > 0): ?>
-            <?php while($amigo = $mis_amigos->fetch_assoc()): ?>
-                <div class="user-card">
-                    <div class="user-info">
-                        <img src="<?php echo $amigo['avatar'] ?: '../../Recursos/fotousuario.png'; ?>" class="user-img">
-                        <span><?php echo htmlspecialchars($amigo['username']); ?></span>
+    <div class="friends-sidebar">
+        <div class="search-section">
+            <h2 class="section-title">Buscar Usuarios</h2>
+            <input type="text" id="search-user" class="search-box" placeholder="Ej: NarutoFan99...">
+            <div id="search-results"></div>
+        </div>
+
+        <?php if ($solicitudes->num_rows > 0): ?>
+        <div class="requests-section">
+            <h2 class="section-title">Solicitudes</h2>
+            
+            <?php while($sol = $solicitudes->fetch_assoc()): ?>
+                <div class="request-card" id="req-<?php echo $sol['id_usuario']; ?>">
+                    <div class="request-info">
+                        <img src="<?php echo $sol['avatar'] ?: '../../Recursos/fotousuario.png'; ?>" alt="Avatar">
+                        <span><?php echo htmlspecialchars($sol['username']); ?></span>
                     </div>
-                    <button class="btn-add" onclick="window.location.href='perfil_usuario.php?id=<?php echo $amigo['id_usuario']; ?>'">Ver Perfil</button>
+                    <div class="req-buttons">
+                        <button class="btn-accept" onclick="responderSolicitud(<?php echo $sol['id_usuario']; ?>, 'aceptar')">✓</button>
+                        <button class="btn-reject" onclick="responderSolicitud(<?php echo $sol['id_usuario']; ?>, 'rechazar')">✕</button>
+                    </div>
                 </div>
             <?php endwhile; ?>
-        <?php else: ?>
-            <p style="color:gray;">Aún no tienes amigos agregados.</p>
+        </div>
         <?php endif; ?>
     </div>
-</div>
 
+</div>
 <script>
 // BUSCADOR
 document.getElementById('search-user').addEventListener('input', function() {

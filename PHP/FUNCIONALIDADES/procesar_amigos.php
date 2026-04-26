@@ -28,16 +28,20 @@ if (isset($_GET['q'])) {
         
         $foto = !empty($u['avatar']) ? $u['avatar'] : '../../Recursos/fotousuario.png';
 
-        echo '<div class="user-card">
-                <div class="user-info">
-                    <img src="'.$foto.'" class="user-img" style="width:40px; height:40px; border-radius:50%;">
+        echo '<div class="search-result-item">
+                <div class="search-result-info">
+                    <img src="'.$foto.'" alt="Avatar">
                     <span>'.htmlspecialchars($u['username']).'</span>
                 </div>';
+                
         if (!$rel) {
-            echo '<button class="btn-add" onclick="gestionarAmigo('.$id_u.', this)">Añadir</button>';
+            // Si no hay relación, mostramos el botón amarillo de Añadir
+            echo '<button class="btn-search-action btn-search-add" onclick="gestionarAmigo('.$id_u.', this)">Añadir</button>';
         } else {
-            echo '<button class="btn-add pendiente" disabled style="background:#444;">'.ucfirst($rel['status']).'</button>';
+            // Si ya hay solicitud pendiente (o ya son amigos), mostramos el botón gris deshabilitado
+            echo '<button class="btn-search-action btn-search-pending" disabled>'.ucfirst($rel['status']).'</button>';
         }
+        
         echo '</div>';
     }
     exit;

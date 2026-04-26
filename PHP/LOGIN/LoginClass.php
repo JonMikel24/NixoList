@@ -17,7 +17,7 @@ class LoginClass {
     private function verificarUsuario() {
 
         $stmt = $this->conexion->prepare(
-            "SELECT id_usuario, username, password_hash, bio, avatar 
+            "SELECT id_usuario, username, password_hash, bio, avatar, banner
              FROM usuarios 
              WHERE username = ?"
         );
@@ -38,8 +38,11 @@ class LoginClass {
                 $_SESSION['Usuario'] = $fila['username'];
                 $_SESSION['id_usuario'] = $fila['id_usuario'];
                 $_SESSION['Biografia'] = $fila['bio'];
+                $_SESSION['Banner'] = !empty($fila['banner']) 
+                    ? $fila['banner'] 
+                    : '../Recursos/Banners/banner_default.jpg';
                 $_SESSION['valid'] = true;
-
+    
                 $_SESSION['Foto'] = !empty($fila['avatar']) 
                     ? $fila['avatar'] 
                     : '../img/default-avatar.png';
