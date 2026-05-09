@@ -10,12 +10,16 @@ function callAPI($url){
     return json_decode($response,true);
 }
 
-$topAnime = callAPI("https://api.jikan.moe/v4/top/anime?limit=10");
-$popularAnime = callAPI("https://api.jikan.moe/v4/top/anime?filter=bypopularity&limit=10");
-$upcomingAnime = callAPI("https://api.jikan.moe/v4/seasons/upcoming?limit=10");
-$recommendedAnime = callAPI("https://api.jikan.moe/v4/recommendations/anime");
+$seccion = isset($_GET['seccion']) ? $_GET['seccion'] : 'inicio';
 
+if ($seccion == 'inicio') {
+    $topAnime = callAPI("https://api.jikan.moe/v4/top/anime?limit=10");
+    $popularAnime = callAPI("https://api.jikan.moe/v4/top/anime?filter=bypopularity&limit=10");
+    $upcomingAnime = callAPI("https://api.jikan.moe/v4/seasons/upcoming?limit=10");
+    $recommendedAnime = callAPI("https://api.jikan.moe/v4/recommendations/anime"); 
+}
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -72,31 +76,31 @@ $recommendedAnime = callAPI("https://api.jikan.moe/v4/recommendations/anime");
             <a href="anime.php" class="seccion-principal <?php echo ($pagina_actual == 'anime.php') ? 'active' : ''; ?>">Anime</a>
             <div class="sub-menu">
                 <a href="anime.php">Inicio Anime</a>
-                <a href="anime.php#recomendados">Recomendados</a>
-                <a href="anime.php#populares">Más Populares</a>
-                <a href="anime.php#top">Top Anime</a>
+                <a href="anime.php?seccion=recomendados">Recomendados</a>
+                <a href="anime.php?seccion=populares">Más Populares</a>
+                <a href="anime.php?seccion=top">Top Anime</a>
             </div>
         </div>
 
         <div class="menu-desplegable">
-            <a href="peliculas.php" class="seccion-principal <?php echo ($pagina_actual == 'peliculas.php') ? 'active' : ''; ?>">Películas</a>
-            <div class="sub-menu">
-                <a href="peliculas.php">Inicio Películas</a>
-                <a href="peliculas.php#recomendadas">Recomendadas</a>
-                <a href="peliculas.php#populares">Más Populares</a>
-                <a href="peliculas.php#top">Top Rated</a>
-            </div>
+        <a href="peliculas.php" class="seccion-principal <?php echo ($pagina_actual == 'peliculas.php') ? 'active' : ''; ?>">Películas</a>
+        <div class="sub-menu">
+            <a href="peliculas.php">Inicio Películas</a>
+            <a href="peliculas.php?seccion=recomendadas">Recomendadas</a>
+            <a href="peliculas.php?seccion=populares">Más Populares</a>
+            <a href="peliculas.php?seccion=top">Top Rated</a>
         </div>
+    </div>
 
-        <div class="menu-desplegable">
-            <a href="series.php" class="seccion-principal <?php echo ($pagina_actual == 'series.php') ? 'active' : ''; ?>">Series</a>
-            <div class="sub-menu">
-                <a href="series.php">Inicio Series</a>
-                <a href="series.php#trending">Trending</a>
-                <a href="series.php#populares">Más Populares</a>
-                <a href="series.php#top">Top Rated</a>
-            </div>
+    <div class="menu-desplegable">
+        <a href="series.php" class="seccion-principal <?php echo ($pagina_actual == 'series.php') ? 'active' : ''; ?>">Series</a>
+        <div class="sub-menu">
+            <a href="series.php">Inicio Series</a>
+            <a href="series.php?seccion=trending">Trending</a>
+            <a href="series.php?seccion=populares">Más Populares</a>
+            <a href="series.php?seccion=top">Top Rated</a>
         </div>
+    </div>
 
     </div>
 
@@ -115,7 +119,7 @@ $recommendedAnime = callAPI("https://api.jikan.moe/v4/recommendations/anime");
 
 
 <div class="container">
-
+<?php if ($seccion == 'inicio') { ?>
 
 <h2>Recomendados</h2>
 <div class="carousel">
@@ -212,6 +216,45 @@ foreach(array_slice($upcomingAnime["data"],0,10) as $anime){
 ?>
 
 </div>
+
+<?php } elseif ($seccion == 'recomendados') {
+    echo "<h2>Animes Recomendados</h2>";
+    echo "<div class='grid-galeria'>";
+    $paginaRecomendados = callAPI("https://api.jikan.moe/v4/recommendations/anime");
+    
+    foreach(array_slice($paginaRecomendados["data"],0,25) as $anime){
+        $entry = $anime["entry"][0];
+        $id = $entry["mal_id"];
+        $img = $entry["images"]["jpg"]["image_url"];
+        echo "<div class='card'><a href='media.php?id=$id&type=anime'><img src='$img'></a><p>{$entry['title']}</p></div>";
+    }
+    echo "</div>";
+
+} elseif ($seccion == 'populares') {
+    echo "<h2>Animes Más Populares</h2>";
+    echo "<div class='grid-galeria'>";
+    $paginaPopulares = callAPI("https://api.jikan.moe/v4/top/anime?filter=bypopularity&limit=25");
+    
+    foreach($paginaPopulares["data"] as $anime){
+        $id = $anime["mal_id"];
+        $img = $anime["images"]["jpg"]["image_url"];
+        echo "<div class='card'><a href='media.php?id=$id&type=anime'><img src='$img'></a><p>{$anime['title']}</p></div>";
+    }
+    echo "</div>";
+
+} elseif ($seccion == 'top') {
+    echo "<h2>Top Anime de Todos los Tiempos</h2>";
+    echo "<div class='grid-galeria'>";
+    $paginaTop = callAPI("https://api.jikan.moe/v4/top/anime?limit=25");
+    
+    foreach($paginaTop["data"] as $anime){
+        $id = $anime["mal_id"];
+        $img = $anime["images"]["jpg"]["image_url"];
+        echo "<div class='card'><a href='media.php?id=$id&type=anime'><img src='$img'></a><p>{$anime['title']}</p></div>";
+    }
+    echo "</div>";
+}
+?>
 
 </div>
 

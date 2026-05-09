@@ -12,11 +12,14 @@ function callAPI($url){
 
 $tmdb_key="0537b412710df9a2b7790cada44e494e";
 
-// Endpoints TMDB
-$popular = callAPI("https://api.themoviedb.org/3/tv/popular?api_key=".$tmdb_key);
-$topRated = callAPI("https://api.themoviedb.org/3/tv/top_rated?api_key=".$tmdb_key);
-$onAir = callAPI("https://api.themoviedb.org/3/tv/on_the_air?api_key=".$tmdb_key);
-$trending = callAPI("https://api.themoviedb.org/3/trending/tv/week?api_key=".$tmdb_key);
+$seccion = isset($_GET['seccion']) ? $_GET['seccion'] : 'inicio';
+
+if ($seccion == 'inicio') {
+    $popular = callAPI("https://api.themoviedb.org/3/tv/popular?api_key=".$tmdb_key);
+    $topRated = callAPI("https://api.themoviedb.org/3/tv/top_rated?api_key=".$tmdb_key);
+    $onAir = callAPI("https://api.themoviedb.org/3/tv/on_the_air?api_key=".$tmdb_key);
+    $trending = callAPI("https://api.themoviedb.org/3/trending/tv/week?api_key=".$tmdb_key);
+}
 
 ?>
 <!DOCTYPE html>
@@ -74,31 +77,31 @@ $trending = callAPI("https://api.themoviedb.org/3/trending/tv/week?api_key=".$tm
             <a href="anime.php" class="seccion-principal <?php echo ($pagina_actual == 'anime.php') ? 'active' : ''; ?>">Anime</a>
             <div class="sub-menu">
                 <a href="anime.php">Inicio Anime</a>
-                <a href="anime.php#recomendados">Recomendados</a>
-                <a href="anime.php#populares">Más Populares</a>
-                <a href="anime.php#top">Top Anime</a>
+                <a href="anime.php?seccion=recomendados">Recomendados</a>
+                <a href="anime.php?seccion=populares">Más Populares</a>
+                <a href="anime.php?seccion=top">Top Anime</a>
             </div>
         </div>
 
         <div class="menu-desplegable">
-            <a href="peliculas.php" class="seccion-principal <?php echo ($pagina_actual == 'peliculas.php') ? 'active' : ''; ?>">Películas</a>
-            <div class="sub-menu">
-                <a href="peliculas.php">Inicio Películas</a>
-                <a href="peliculas.php#recomendadas">Recomendadas</a>
-                <a href="peliculas.php#populares">Más Populares</a>
-                <a href="peliculas.php#top">Top Rated</a>
-            </div>
+        <a href="peliculas.php" class="seccion-principal <?php echo ($pagina_actual == 'peliculas.php') ? 'active' : ''; ?>">Películas</a>
+        <div class="sub-menu">
+            <a href="peliculas.php">Inicio Películas</a>
+            <a href="peliculas.php?seccion=recomendadas">Recomendadas</a>
+            <a href="peliculas.php?seccion=populares">Más Populares</a>
+            <a href="peliculas.php?seccion=top">Top Rated</a>
         </div>
+    </div>
 
-        <div class="menu-desplegable">
-            <a href="series.php" class="seccion-principal <?php echo ($pagina_actual == 'series.php') ? 'active' : ''; ?>">Series</a>
-            <div class="sub-menu">
-                <a href="series.php">Inicio Series</a>
-                <a href="series.php#trending">Trending</a>
-                <a href="series.php#populares">Más Populares</a>
-                <a href="series.php#top">Top Rated</a>
-            </div>
+    <div class="menu-desplegable">
+        <a href="series.php" class="seccion-principal <?php echo ($pagina_actual == 'series.php') ? 'active' : ''; ?>">Series</a>
+        <div class="sub-menu">
+            <a href="series.php">Inicio Series</a>
+            <a href="series.php?seccion=trending">Trending</a>
+            <a href="series.php?seccion=populares">Más Populares</a>
+            <a href="series.php?seccion=top">Top Rated</a>
         </div>
+    </div>
 
     </div>
 
@@ -118,6 +121,7 @@ $trending = callAPI("https://api.themoviedb.org/3/trending/tv/week?api_key=".$tm
 
 <div class="container">
 
+<?php if ($seccion == 'inicio') { ?>
 
 <h2>Trending</h2>
 <div class="carousel">
@@ -182,6 +186,46 @@ foreach(array_slice($topRated["results"],0,10) as $s){
 ?>
 </div>
 
+<?php } elseif ($seccion == 'trending') {
+    echo "<h2>Series en Tendencia</h2>";
+    echo "<div class='grid-galeria'>";
+    $paginaTrending = callAPI("https://api.themoviedb.org/3/trending/tv/week?api_key=".$tmdb_key);
+    
+    foreach($paginaTrending["results"] as $s){
+        $id = $s["id"];
+        $img = "https://image.tmdb.org/t/p/w500" . $s["poster_path"];
+        $title = $s["name"];
+        echo "<div class='card'><a href='media.php?id=$id&type=tv'><img src='$img'></a><p>$title</p></div>";
+    }
+    echo "</div>";
+
+} elseif ($seccion == 'populares') {
+    echo "<h2>Series Más Populares</h2>";
+    echo "<div class='grid-galeria'>";
+    $paginaPopulares = callAPI("https://api.themoviedb.org/3/tv/popular?api_key=".$tmdb_key);
+    
+    foreach($paginaPopulares["results"] as $s){
+        $id = $s["id"];
+        $img = "https://image.tmdb.org/t/p/w500" . $s["poster_path"];
+        $title = $s["name"];
+        echo "<div class='card'><a href='media.php?id=$id&type=tv'><img src='$img'></a><p>$title</p></div>";
+    }
+    echo "</div>";
+
+} elseif ($seccion == 'top') {
+    echo "<h2>Top Series de Todos los Tiempos</h2>";
+    echo "<div class='grid-galeria'>";
+    $paginaTop = callAPI("https://api.themoviedb.org/3/tv/top_rated?api_key=".$tmdb_key);
+    
+    foreach($paginaTop["results"] as $s){
+        $id = $s["id"];
+        $img = "https://image.tmdb.org/t/p/w500" . $s["poster_path"];
+        $title = $s["name"];
+        echo "<div class='card'><a href='media.php?id=$id&type=tv'><img src='$img'></a><p>$title</p></div>";
+    }
+    echo "</div>";
+}
+?>
 </div>
 </body>
 

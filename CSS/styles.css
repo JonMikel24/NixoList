@@ -344,3 +344,11 @@ border:none;
 .menu-desplegable:hover .sub-menu {
     display: block;
 }
+
+/* Cuadrícula para las páginas de categorías específicas */
+.grid-galeria {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 25px;
+    padding: 20px 0;
+}
