@@ -9,27 +9,16 @@ if (!isset($_SESSION['Usuario'])) {
 
 // 3. LÓGICA DE BASE DE DATOS
 try {
-    // 👇 AQUÍ ESTÁ EL CAMBIO CLAVE 👇
     // Usamos el ID del perfil que estamos visitando (viene del archivo principal).
     // Si por algún motivo no estuviera definido, usamos tu sesión por seguridad.
     $id_usuario = isset($id_perfil_visitado) ? $id_perfil_visitado : $_SESSION['id_usuario'];
 
-    // Obtener Estadísticas
+    // --- Obtener Estadísticas ---
     $stmtStats = $pdo->prepare("SELECT * FROM estdisticas_usuario WHERE id_usuario = ?");
     $stmtStats->execute([$id_usuario]);
     $stats = $stmtStats->fetch() ?: ['puntuacion_media' => 0.00, 'animes_completados' => 0];
 
-// Obtener "Watching"
-    $stmtWatching = $pdo->prepare("
-        SELECT m.id_media, m.type, m.titulo, m.portada 
-        FROM media_usuario mu 
-        JOIN media m ON mu.id_media = m.id_media 
-        WHERE mu.id_usuario = ? AND mu.status = 'watching'
-    ");
-    $stmtWatching->execute([$id_usuario]);
-    $watchingList = $stmtWatching->fetchAll();
-
-    // --- Obtener "Watching" ---
+    // --- Obtener "Watching" --- (He dejado solo la versión correcta con mal_id y tmdb_id)
     $stmtWatching = $pdo->prepare("
         SELECT m.id_media, m.mal_id, m.tmdb_id, m.type, m.titulo, m.portada 
         FROM media_usuario mu 
@@ -48,13 +37,22 @@ try {
     ");
     $stmtFavs->execute([$id_usuario]);
     $favorites = $stmtFavs->fetchAll();
+
+    // 👇 AQUÍ ESTÁ LA SOLUCIÓN 👇
+    // --- Obtener Personajes Favoritos ---
+    $stmtChars = $pdo->prepare("
+        SELECT personaje_nombre, personaje_imagen 
+        FROM personajes_usuario 
+        WHERE id_usuario = ?
+    ");
+    $stmtChars->execute([$id_usuario]);
+    $favorite_characters = $stmtChars->fetchAll(PDO::FETCH_ASSOC);
     
 } catch (Exception $e) {
     die("Error al cargar datos del perfil: " . $e->getMessage());
 }
 
 // 4. FUNCIÓN API (Si necesitas datos externos)
-// Le añadimos un condicional por seguridad para que no dé error si se incluye dos veces
 if (!function_exists('callAPI')) {
     function callAPI($url){
         $ch = curl_init();
