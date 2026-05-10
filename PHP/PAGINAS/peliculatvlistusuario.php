@@ -121,12 +121,17 @@ require_once '../FUNCIONALIDADES/logica_peliculaslist.php';
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($lista as $item): ?>
+<?php foreach ($lista as $item): 
+                            // Calculamos qué ID usar (MyAnimeList o TMDB) según el tipo
+                            $id_para_link = (strtolower($item['type']) === 'anime') ? $item['mal_id'] : $item['tmdb_id']; 
+                        ?>
                             <tr>
                                 <td>
                                     <div class="anime-title-col">
                                         <img src="<?php echo htmlspecialchars($item['portada']); ?>" alt="Cover" class="anime-cover">
-                                        <a href="#" class="anime-name"><?php echo htmlspecialchars($item['titulo']); ?></a>
+                                        <a href="media.php?id=<?php echo urlencode($id_para_link); ?>&type=<?php echo urlencode($item['type']); ?>" class="anime-name">
+                                            <?php echo htmlspecialchars($item['titulo']); ?>
+                                        </a>
                                     </div>
                                 </td>
                                 <td class="center-text">

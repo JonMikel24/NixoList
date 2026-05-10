@@ -21,6 +21,7 @@ $id_usuario_lista = isset($_GET['id']) ? (int)$_GET['id'] : $_SESSION['id_usuari
 // 2. CONSULTA MODIFICADA: Traemos lo que tenga type = 'pelicula' OR 'tv'
 $stmt = $pdo->prepare("
     SELECT 
+        m.tmdb_id,
         m.titulo, 
         m.portada, 
         m.type, 
@@ -33,6 +34,7 @@ $stmt = $pdo->prepare("
     WHERE mu.id_usuario = ? AND (m.type = 'pelicula' OR m.type = 'tv')
     ORDER BY FIELD(mu.status, 'watching', 'completed', 'planned', 'paused', 'dropped'), m.titulo ASC
 ");
+
 
 // Ejecutamos la consulta con el nuevo ID (el tuyo o el de tu amigo)
 $stmt->execute([$id_usuario_lista]);

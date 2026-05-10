@@ -480,4 +480,92 @@ border:none;
     display: flex;
     justify-content: flex-end;
     margin-top: 20px;
+
+}
+
+body.formregistro {
+    background-color: #121212; /* Negro de fondo */
+    color: #ffffff; /* Texto principal blanco */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* O la fuente de tu web */
+    min-height: 100vh;
+    display: flex;
+    align-items: center; /* Centra verticalmente */
+    margin: 0;
+}
+
+/* Tarjeta del formulario (Card) */
+.formuregistro.card {
+    background-color: #1e1e1e; /* Gris oscuro para que resalte del fondo */
+    border: 1px solid #333333; /* Borde sutil */
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7) !important; /* Sombra profunda */
+}
+
+/* Título (Iniciar Sesión) */
+.formuregistro h3 {
+    color: #ffffff;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+/* Etiquetas (Usuario, Contraseña) */
+.formuregistro .form-label {
+    color: #cccccc; /* Gris claro */
+    font-weight: 500;
+}
+
+/* Campos de texto (Inputs) */
+.formuregistro .form-control {
+    background-color: #2a2a2a; /* Gris un poco más claro para rellenar */
+    border: 1px solid #444444;
+    color: #ffffff;
+}
+
+/* Placeholder de los inputs (texto de fondo) */
+.formuregistro .form-control::placeholder {
+    color: #888888;
+}
+
+/* Efecto al hacer clic en un input (Outline amarillo en vez de azul de Bootstrap) */
+.formuregistro .form-control:focus {
+    background-color: #2a2a2a;
+    border-color: #ffcc00; /* Amarillo NixoList */
+    box-shadow: 0 0 0 0.25rem rgba(255, 204, 0, 0.25);
+    color: #ffffff;
+}
+
+/* Botón de Ingresar */
+.boton-sesion {
+    background-color: #ffcc00 !important; /* Amarillo */
+    color: #000000 !important; /* Texto negro para contraste */
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    padding: 10px;
+    transition: all 0.3s ease;
+}
+
+/* Efecto Hover del botón */
+.boton-sesion:hover {
+    background-color: #e6b800 !important; /* Un amarillo ligeramente más oscuro */
+    transform: translateY(-2px); /* Pequeño salto hacia arriba */
+}
+
+/* Enlace "Registrarse" */
+a#registroTexto {
+    text-decoration: none;
+    display: inline-block;
+}
+
+p#registroTexto {
+    color: #aaaaaa; /* Gris apagado */
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+    margin-top: 8px;
+    margin-bottom: 0;
+}
+
+/* Hover del enlace "Registrarse" */
+a#registroTexto:hover p#registroTexto {
+    color: #ffcc00; /* Se ilumina en amarillo al pasar el ratón */
 }

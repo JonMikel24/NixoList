@@ -1,26 +1,30 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
     <head>
-        <title>Title</title>
-        <!-- Required meta tags -->
+        <title>NixoList - Registrarse</title>
         <meta charset="utf-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, shrink-to-fit=no"
-        />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-        <!-- Bootstrap CSS v5.2.1 -->
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
             rel="stylesheet"
             integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
             crossorigin="anonymous"
         />
-        <link href="../../css/estilos.css" rel="stylesheet"/>
+        <link href="../../css/styles.css" rel="stylesheet"/>
+        
+        <style>
+            .textoerror { 
+                color: #ff6b6b; /* Rojo claro para que resalte en el fondo gris */
+                font-size: 0.85rem; 
+                display: block; 
+                margin-top: 5px; 
+            }
+        </style>
     </head>
 <body class="formregistro">
-    <br> <br> <br>
-    <div class="container d-flex justify-content-center align-items-center" >
+    
+    <div class="container d-flex justify-content-center align-items-center w-100">
         <div class="card shadow p-4 formuregistro" style="width: 22rem;">
             <h3 class="text-center mb-4 formregtext">Registrarse</h3>
 
@@ -47,6 +51,7 @@
                     <label for="email" class="form-label">Email</label>
                     <input type="text" class="form-control" id="email" name="email" placeholder="Ingresa tu email">
                     <span id="error-email" class="textoerror"></span>
+                    
                     <?php if (isset($_GET['error']) && $_GET['error'] === 'email'): ?>
                         <script>
                             document.addEventListener('DOMContentLoaded', () => {
@@ -58,25 +63,22 @@
                             });
                         </script>
                     <?php endif; ?>
-                    <span id="error-email" class="textoerror"></span>
                 </div>
-
 
                 <div class="mb-3">
                     <label for="contrasena" class="form-label">Contraseña</label>
                     <input type="password" class="form-control" id="contrasena" name="contrasena" placeholder="Ingresa tu contraseña">
                     <span id="error-contra" class="textoerror"></span>
-                    <a href="index.php" id="registroTexto"><p id="registroTexto">¿Ya tienes cuenta?</p></a>
+                    
+                    <a href="index.php" id="registroTexto"><p id="registroTexto" class="mt-2">¿Ya tienes cuenta? Inicia sesión</p></a>
                 </div>
 
-                <button type="submit" class="btn btn-purple w-100 mb-2 mt-3 boton-sesion">Registrarse</button>
+                <button type="submit" class="btn w-100 mb-2 mt-3 boton-sesion">Registrarse</button>
             </form>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../js/validaciones.js"></script>
 </body>
 </html>
-
