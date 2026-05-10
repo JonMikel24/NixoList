@@ -90,9 +90,23 @@ switch($view) {
         if($type == 'anime') $stats = callAPI("https://api.jikan.moe/v4/anime/".$id."/statistics")["data"] ?? [];
         break;
     case 'reviews':
-        if($type == 'anime') $reviews_list = callAPI("https://api.jikan.moe/v4/anime/".$id."/reviews")["data"] ?? [];
-        else $reviews_list = callAPI("https://api.themoviedb.org/3/".$type."/".$id."/reviews?api_key=".$tmdb_key)["results"] ?? [];
-        break;
+    $reviews_list = [];
+    if (isset($conexion)) {
+        $stmt_rev = $conexion->prepare("
+            SELECT r.*, 
+                   r.texto_resena AS contenido, 
+                   u.username AS Usuario, 
+                   u.avatar AS Foto 
+            FROM resenas r 
+            JOIN usuarios u ON r.id_usuario = u.id_usuario 
+            JOIN media m ON r.id_media = m.id_media 
+            WHERE m.tmdb_id = ? OR m.mal_id = ?
+            ORDER BY r.created_at DESC");
+        $stmt_rev->bind_param("ss", $id, $id);
+        $stmt_rev->execute();
+        $reviews_list = $stmt_rev->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+    break;
 }
 ?>
 
@@ -304,55 +318,79 @@ switch($view) {
                 <?php else: echo "No stats available for this media."; endif; ?>
 
             <?php elseif($view == 'reviews'): ?>
-            <h2 class="section-title">User Reviews</h2>
-            <?php foreach($reviews_list as $rev): ?>
-                <div class="review-card" style="background:#1a1a1a; padding:15px; margin-bottom:10px; border-radius:5px;">
-                    <b style="color:#ffdd1c;"><?php echo $rev['user']['username'] ?? $rev['author']; ?></b>
-                    <p style="font-size:13px; color:#ccc;"><?php echo substr($rev['review'] ?? $rev['content'], 0, 500); ?>...</p>
+                <h2 class="section-title">Reseñas de la Comunidad</h2>
+
+                <?php if(isset($_SESSION['id_usuario'])): ?>
+                    <div class="write-review-container" style="background: #1a1a1a; padding: 20px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #333;">
+                        <h3 style="color: #ffdd1c; margin-top: 0;">Escribe tu reseña</h3>
+                        <textarea id="user-review-text" placeholder="¿Qué te ha parecido? (Evita spoilers si es posible)" 
+                            style="width: 100%; height: 100px; background: #000; color: white; border: 1px solid #444; padding: 10px; border-radius: 5px; resize: none;"></textarea>
+                        <button id="btnSendReview" class="btn-action-list" style="margin-top: 10px; width: auto; padding: 10px 20px;">Publicar Reseña</button>
+                    </div>
+                <?php else: ?>
+                    <p style="color: #aaa; background: #1a1a1a; padding: 15px; border-radius: 5px;">Debes <a href="../Login/Index.php" style="color: #ffdd1c;">iniciar sesión</a> para escribir una reseña.</p>
+                <?php endif; ?>
+
+                <div id="reviews-container">
+                    <?php if(!empty($reviews_list)): ?>
+                        <?php foreach($reviews_list as $rev): ?>
+                            <div class="review-card" style="background:#1a1a1a; padding:20px; margin-bottom:15px; border-radius:8px; border-left: 4px solid #ffdd1c;">
+                                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                    <img src="<?php echo !empty($rev['Foto']) ? $rev['Foto'] : '../../Recursos/fotousuario.png'; ?>" 
+                                        style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                                    <div>
+                                        <b style="color:#ffdd1c; display: block;"><?php echo htmlspecialchars($rev['Usuario']); ?></b>
+                                        <small style="color: #666;"><?php echo date("d M, Y", strtotime($rev['created_at'])); ?></small>
+                                    </div>
+                                </div>
+                                <p style="font-size:14px; color:#eee; line-height: 1.5; white-space: pre-wrap;"><?php echo htmlspecialchars($rev['contenido']); ?></p>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p style="text-align: center; color: #666; margin-top: 20px;">Aún no hay reseñas. ¡Sé el primero en escribir una!</p>
+                    <?php endif; ?>
                 </div>
-            <?php endforeach; ?>
+
             <?php elseif($view == 'characters'): ?>
-                    <?php 
-                    // --- 1. Averiguamos el ID del Usuario ---
-                    // (Asegúrate de tener session_start() al principio de media.php si no lo tienes)
-                    $id_usuario_actual = $_SESSION['id_usuario'] ?? 0; 
-                    
-                    // --- 2. Averiguamos el ID de la serie en TU base de datos ---
-                    // Asumimos que $id es la variable que guarda el ID de la API (Jikan o TMDB)
-                    // Cambia $pdo por $conexion si en este archivo usas MySQLi en lugar de PDO
-                    $stmt_media = $pdo->prepare("SELECT id_media FROM media WHERE tmdb_id = ? OR mal_id = ?");
-                    $stmt_media->execute([$id, $id]);
-                    $media_row = $stmt_media->fetch(PDO::FETCH_ASSOC);
-                    $id_media_actual = $media_row ? $media_row['id_media'] : 0;
-
-                    // --- 3. Buscamos los favoritos con las variables correctas ---
-                    $ids_favoritos = [];
-                    if ($id_usuario_actual > 0 && $id_media_actual > 0) {
-                        $stmt_check_favs = $pdo->prepare("SELECT personaje_id FROM personajes_usuario WHERE id_usuario = ? AND id_media = ?");
-                        $stmt_check_favs->execute([$id_usuario_actual, $id_media_actual]);
-                        $ids_favoritos = $stmt_check_favs->fetchAll(PDO::FETCH_COLUMN); 
-                    }
-                    ?>
-
                 <h2 class="section-title">Characters & Staff</h2>
+                <?php 
+                    // Lógica para obtener favoritos usando $conexion (MySQLi)
+                    $ids_favoritos = [];
+                    if (isset($_SESSION['id_usuario'])) {
+                        $stmt_favs = $conexion->prepare("
+                            SELECT personaje_id FROM personajes_usuario pu
+                            JOIN media m ON pu.id_media = m.id_media
+                            WHERE pu.id_usuario = ? AND (m.tmdb_id = ? OR m.mal_id = ?)
+                        ");
+                        $stmt_favs->bind_param("iss", $_SESSION['id_usuario'], $id, $id);
+                        $stmt_favs->execute();
+                        $result_favs = $stmt_favs->get_result();
+                        while($row_f = $result_favs->fetch_assoc()){
+                            $ids_favoritos[] = $row_f['personaje_id'];
+                        }
+                    }
+                ?>
                 <table class="characters-table">
                     <?php foreach(array_slice($characters, 0, 15) as $char): 
                         $c_id = $char['character']['mal_id'] ?? $char['id'] ?? 0;
                         $c_name = $char['character']['name'] ?? $char['name'];
                         $c_img = $char['character']['images']['jpg']['image_url'] ?? ($char['profile_path'] ? "https://image.tmdb.org/t/p/w185".$char['profile_path'] : "../../Recursos/no-image.png");
-                        
-                        // --- NUEVO: Comprobar si este personaje específico está en la lista de favoritos ---
                         $es_favorito = in_array($c_id, $ids_favoritos);
                     ?>
                     <tr class="char-row">
-                        <td class="char-img-cell"><img src="<?php echo $c_img; ?>" width="50"></td>
-                        <td class="char-info-cell"><a href="#"><?php echo $c_name; ?></a><p><?php echo $char['role'] ?? 'Cast'; ?></p></td>
+                        <td class="char-img-cell"><img src="<?php echo $c_img; ?>" width="50" style="border-radius:4px;"></td>
+                        <td class="char-info-cell">
+                            <a href="javascript:void(0)" onclick="verDetallesPersonaje('<?php echo $c_id; ?>', '<?php echo $type; ?>')" style="color:#ffdd1c; text-decoration:none; font-weight:bold;">
+                                <?php echo htmlspecialchars($c_name); ?>
+                            </a>
+                            <p style="margin:0; font-size:12px; color:#aaa;"><?php echo $char['role'] ?? 'Cast'; ?></p>
+                        </td>
                         <td style="text-align: right; padding-right: 15px;">
                             <span class="btn-fav-char" 
                                 data-char-id="<?php echo $c_id; ?>" 
                                 data-char-name="<?php echo htmlspecialchars($c_name); ?>"
                                 data-char-img="<?php echo htmlspecialchars($c_img); ?>"
-                                style="cursor:pointer; font-size: 18px; color: <?php echo $es_favorito ? '#e74c3c' : '#444'; ?>; transition: 0.3s;">
+                                style="cursor:pointer; font-size: 18px; color: <?php echo $es_favorito ? '#e74c3c' : '#444'; ?>;">
                                 ❤
                             </span>
                         </td>
@@ -363,7 +401,14 @@ switch($view) {
         </div>
     </main>
 </div>
-
+<div id="characterModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content">
+        <span class="close-modal" onclick="cerrarModal()">&times;</span>
+        <div id="modal-body-content">
+            <p style="text-align:center;">Cargando información...</p>
+        </div>
+    </div>
+</div>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const btnList = document.getElementById('btnAddList');
@@ -382,6 +427,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (tipoAccion === 'add_list') {
     datos.append('nuevo_status', 'planned'); // Valor por defecto al añadir
+
 }
 
     fetch('../funcionalidades/procesar_interaccion.php', {
@@ -557,6 +603,95 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+function verDetallesPersonaje(charId, type) {
+    const modal = document.getElementById('characterModal');
+    const content = document.getElementById('modal-body-content');
+    
+    modal.style.display = 'flex';
+    content.innerHTML = '<p style="text-align:center;">Buscando en la base de datos de NixoList...</p>';
+
+    let url = '';
+    if (type === 'anime') {
+        url = `https://api.jikan.moe/v4/characters/${charId}/full`;
+    } else {
+        // TMDB requiere el API Key que ya tienes en PHP
+        url = `https://api.themoviedb.org/3/person/${charId}?api_key=0537b412710df9a2b7790cada44e494e&language=es-ES`;
+    }
+
+    fetch(url)
+    .then(res => res.json())
+    .then(res => {
+        const data = res.data || res; // Jikan usa .data, TMDB devuelve directo
+        
+        let nombre = data.name;
+        let imagen = type === 'anime' ? data.images.jpg.image_url : (data.profile_path ? `https://image.tmdb.org/t/p/w500${data.profile_path}` : '../../Recursos/no-image.png');
+        let biografia = type === 'anime' ? (data.about || "No hay biografía disponible.") : (data.biography || "No hay biografía disponible.");
+        let nicknames = data.nicknames ? `<p><b>Apodos:</b> ${data.nicknames.join(', ')}</p>` : '';
+
+        content.innerHTML = `
+            <div class="modal-grid">
+                <img src="${imagen}" class="modal-img">
+                <div>
+                    <h2 style="margin-top:0; color:#ffdd1c;">${nombre}</h2>
+                    ${nicknames}
+                    <div class="modal-desc">${biografia.replace(/\n/g, '<br>')}</div>
+                </div>
+            </div>
+        `;
+    })
+    .catch(err => {
+        content.innerHTML = '<p>Error al cargar la información del personaje.</p>';
+    });
+}
+
+function cerrarModal() {
+    document.getElementById('characterModal').style.display = 'none';
+}
+
+// Cerrar modal si se hace clic fuera de la caja negra
+window.onclick = function(event) {
+    const modal = document.getElementById('characterModal');
+    if (event.target == modal) { cerrarModal(); }
+}
+
+// // --- Lógica para enviar Review (Unificada) ---
+const btnSendReview = document.getElementById('btnSendReview');
+if (btnSendReview) {
+    btnSendReview.addEventListener('click', function() {
+        const contenido = document.getElementById('user-review-text').value;
+
+        if (contenido.trim().length < 10) {
+            alert("La reseña es muy corta. Escribe al menos 10 caracteres.");
+            return;
+        }
+
+        const datos = new FormData();
+        datos.append('id_api', '<?php echo $id; ?>');
+        datos.append('type', '<?php echo $type; ?>');
+        datos.append('titulo', <?php echo json_encode($title); ?>);
+        datos.append('portada', '<?php echo $img; ?>');
+        datos.append('action', 'add_review'); 
+        datos.append('review', contenido);
+
+        fetch('../funcionalidades/procesar_interaccion.php', {
+            method: 'POST',
+            body: datos
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (res.status === 'success') {
+                alert("¡Reseña publicada con éxito!");
+                location.reload(); 
+            } else {
+                alert("Error: " + res.message);
+            }
+        })
+        .catch(err => {
+            console.error("Error:", err);
+            alert("Hubo un problema al conectar con el servidor.");
+        });
+    });
+}
 </script>
 
 </body>

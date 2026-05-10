@@ -37,7 +37,17 @@ try {
     ");
     $stmtFavs->execute([$id_usuario]);
     $favorites = $stmtFavs->fetchAll();
-
+     
+        // --- OBTENER LAS RESEÑAS DEL USUARIO VISITADO ---
+    $stmtRev = $pdo->prepare("
+        SELECT r.texto_resena, r.created_at, m.titulo, m.portada, m.tmdb_id, m.mal_id, m.type
+        FROM resenas r
+        JOIN media m ON r.id_media = m.id_media
+        WHERE r.id_usuario = ?
+        ORDER BY r.created_at DESC
+    ");
+    $stmtRev->execute([$id_perfil_visitado]);
+    $user_reviews = $stmtRev->fetchAll(PDO::FETCH_ASSOC);
     // 👇 AQUÍ ESTÁ LA SOLUCIÓN 👇
     // --- Obtener Personajes Favoritos ---
     $stmtChars = $pdo->prepare("
