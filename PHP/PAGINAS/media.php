@@ -16,10 +16,9 @@ $id = $_GET['id'] ?? 0;
 $type = $_GET['type'] ?? 'movie'; 
 $view = $_GET['view'] ?? 'details'; 
 
-
 $title = ""; $img = ""; $desc = ""; $score = ""; $status = "N/A"; $genres = []; $extra_info = [];
 
-
+// 1. OBTENER DATOS PRINCIPALES
 if($type == "anime"){
     $media = callAPI("https://api.jikan.moe/v4/anime/".$id);
     $data = $media["data"] ?? null;
@@ -31,7 +30,33 @@ if($type == "anime"){
         $status = $data["status"];
         $genres = $data["genres"];
         $trailer_url = $data["trailer"]["embed_url"] ?? "";
-        $extra_info = ["Tipo" => $data["type"], "Emitido" => $data["aired"]["string"], "Estudio" => $data["studios"][0]["name"] ?? "N/A", "Duración" => $data["duration"]];
+        $extra_info = [
+            "Tipo" => $data["type"], 
+            "Emitido" => $data["aired"]["string"], 
+            "Estudio" => $data["studios"][0]["name"] ?? "N/A", 
+            "Duración" => $data["duration"]
+        ];
+    }
+} elseif ($type == "manga") {
+    // NUEVA LÓGICA PARA MANGA
+    $media = callAPI("https://api.jikan.moe/v4/manga/".$id);
+    $data = $media["data"] ?? null;
+    if($data){
+        $title = $data["title"];
+        $img = $data["images"]["webp"]["large_image_url"];
+        $desc = $data["synopsis"];
+        $score = $data["score"] ?? "N/A";
+        $status = $data["status"];
+        $genres = $data["genres"];
+        // Los mangas no tienen trailers ni estudios, sino autores, capítulos y volúmenes
+        $trailer_url = ""; 
+        $extra_info = [
+            "Tipo" => $data["type"] ?? "Manga", 
+            "Publicado" => $data["published"]["string"] ?? "N/A", 
+            "Autor" => $data["authors"][0]["name"] ?? "N/A", 
+            "Capítulos" => $data["chapters"] ?? "N/A",
+            "Volúmenes" => $data["volumes"] ?? "N/A"
+        ];
     }
 } else {
     $media = callAPI("https://api.themoviedb.org/3/".$type."/".$id."?api_key=".$tmdb_key."&language=es-ES");
@@ -45,52 +70,57 @@ if($type == "anime"){
     }
 }
 
-    $mi_nota = 0;
-    $en_lista = false;
-    $es_fav = false;
+$mi_nota = 0;
+$en_lista = false;
+$es_fav = false;
 
-    if (isset($_SESSION['id_usuario'])) {
-        require_once("../conexion.php"); // Asegúrate de que la ruta a tu conexión es correcta
-        $stmt_user = $conexion->prepare("SELECT mu.puntuacion, mu.status, mu.es_favorito 
-                                        FROM media_usuario mu 
-                                        JOIN media m ON mu.id_media = m.id_media 
-                                        WHERE mu.id_usuario = ? AND (m.tmdb_id = ? OR m.mal_id = ?)");
-        $stmt_user->bind_param("iss", $_SESSION['id_usuario'], $id, $id);
-        $stmt_user->execute();
-        $res_user = $stmt_user->get_result();
-        if($fila = $res_user->fetch_assoc()) {
-            $mi_nota = $fila['puntuacion'] ?? 0;
-            $en_lista = !empty($fila['status']);
-            $es_fav = ($fila['es_favorito'] == 1);
-        }
+if (isset($_SESSION['id_usuario'])) {
+    require_once("../conexion.php"); // Asegúrate de que la ruta a tu conexión es correcta
+    $stmt_user = $conexion->prepare("SELECT mu.puntuacion, mu.status, mu.es_favorito 
+                                    FROM media_usuario mu 
+                                    JOIN media m ON mu.id_media = m.id_media 
+                                    WHERE mu.id_usuario = ? AND (m.tmdb_id = ? OR m.mal_id = ?)");
+    $stmt_user->bind_param("iss", $_SESSION['id_usuario'], $id, $id);
+    $stmt_user->execute();
+    $res_user = $stmt_user->get_result();
+    if($fila = $res_user->fetch_assoc()) {
+        $mi_nota = $fila['puntuacion'] ?? 0;
+        $en_lista = !empty($fila['status']);
+        $es_fav = ($fila['es_favorito'] == 1);
     }
+}
 
 // 2. LOGICA ESPECIFICA DE CADA PESTAÑA
 $characters = []; $episodes_list = []; $videos_list = []; $reviews_list = []; $stats = [];
 
 switch($view) {
-    
     case 'characters':
         if($type == 'anime') $characters = callAPI("https://api.jikan.moe/v4/anime/".$id."/characters")["data"] ?? [];
+        elseif($type == 'manga') $characters = callAPI("https://api.jikan.moe/v4/manga/".$id."/characters")["data"] ?? [];
         else $characters = callAPI("https://api.themoviedb.org/3/".$type."/".$id."/credits?api_key=".$tmdb_key)["cast"] ?? [];
         break;
     case 'episodes':
         if($type == 'anime') $episodes_list = callAPI("https://api.jikan.moe/v4/anime/".$id."/episodes")["data"] ?? [];
+        // Jikan no tiene listado de capítulos para manga, así que se queda vacío
         break;
     case 'videos':
         if($type == 'anime') {
-            // Jikan devuelve trailers en un formato distinto
             $res = callAPI("https://api.jikan.moe/v4/anime/".$id."/videos");
-            $videos_list = $res["data"]["promo"] ?? []; // Promos (trailers)
+            $videos_list = $res["data"]["promo"] ?? []; 
+        } elseif ($type == 'manga') {
+            // Los mangas no tienen trailers en la API
+            $videos_list = [];
         } else {
             $videos_list = callAPI("https://api.themoviedb.org/3/".$type."/".$id."/videos?api_key=".$tmdb_key)["results"] ?? [];
         }
         break;
     case 'stats':
         if($type == 'anime') $stats = callAPI("https://api.jikan.moe/v4/anime/".$id."/statistics")["data"] ?? [];
+        elseif($type == 'manga') $stats = callAPI("https://api.jikan.moe/v4/manga/".$id."/statistics")["data"] ?? [];
         break;
     case 'reviews':
         if($type == 'anime') $reviews_list = callAPI("https://api.jikan.moe/v4/anime/".$id."/reviews")["data"] ?? [];
+        elseif($type == 'manga') $reviews_list = callAPI("https://api.jikan.moe/v4/manga/".$id."/reviews")["data"] ?? [];
         else $reviews_list = callAPI("https://api.themoviedb.org/3/".$type."/".$id."/reviews?api_key=".$tmdb_key)["results"] ?? [];
         break;
 }
@@ -115,7 +145,7 @@ switch($view) {
 
         <div class="PerfilContenedor"> <?php
             if (isset($_SESSION['Usuario'])) {
-                $Foto = (!empty($_SESSION['Foto'])) ? $_SESSION['Foto'] : '/Recursos/fotousuario.png';
+                $Foto = (!empty($_SESSION['Foto'])) ? $_SESSION['Foto']  : '../../Recursos/fotos_perfil/fotousuario.png';
                 echo '
                 <a href="listaperfil.php" style="text-decoration: none; color: inherit;">
                     <div class="perfil-horiz">
@@ -153,6 +183,16 @@ switch($view) {
                 <a href="anime.php#top">Top Anime</a>
             </div>
         </div>
+                <div class="menu-desplegable">
+            <a href="manga.php" class="seccion-principal <?php echo ($pagina_actual == 'manga.php') ? 'active' : ''; ?>">Manga</a>
+            <div class="sub-menu">
+                <a href="manga.php">Inicio Manga</a>
+                <a href="manga.php#recomendados">Recomendados</a>
+                <a href="manga.php#populares">Más Populares</a>
+                <a href="manga.php#top">Top Manga</a>
+            </div>
+        </div>
+
 
         <div class="menu-desplegable">
             <a href="peliculas.php" class="seccion-principal <?php echo ($pagina_actual == 'peliculas.php') ? 'active' : ''; ?>">Películas</a>

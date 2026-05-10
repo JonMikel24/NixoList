@@ -1,30 +1,16 @@
 <?php
-session_start();
-
-function callAPI($url){
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL,$url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
-    $response = curl_exec($ch);
-    curl_close($ch);
-    return json_decode($response,true);
-}
-
-$tmdb_key = "0537b412710df9a2b7790cada44e494e";
-
-$topAnime = callAPI("https://api.jikan.moe/v4/top/anime?limit=10");
-$topMovies = callAPI("https://api.themoviedb.org/3/trending/movie/week?api_key=".$tmdb_key);
-$topSeries = callAPI("https://api.themoviedb.org/3/trending/tv/week?api_key=".$tmdb_key);
-
+// ¡Magia! Con esta línea traemos todos los datos procesados enfocados a MANGA
+require_once '../FUNCIONALIDADES/logica_mangalist.php';
 ?>
-<!DOCTYPE html>
+    <link rel="stylesheet" href="../../CSS/medialistusuario.css">
+
+    <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>NixoList</title>
+<title>Manga List</title>
 <link rel="stylesheet" href="../../CSS/styles.css">
 </head>
-<body>
 <header class="header-main">
     <div class="header-top">
         <div class="logo-container">
@@ -35,14 +21,14 @@ $topSeries = callAPI("https://api.themoviedb.org/3/trending/tv/week?api_key=".$t
 
         <div class="PerfilContenedor"> <?php
             if (isset($_SESSION['Usuario'])) {
-                $Foto = (!empty($_SESSION['Foto'])) ? $_SESSION['Foto'] : '../../Recursos/fotos_perfil/fotousuario.png';
+                $Foto = (!empty($_SESSION['Foto'])) ? $_SESSION['Foto'] : '/Recursos/fotousuario.png';
                 echo '
                 <a href="listaperfil.php" style="text-decoration: none; color: inherit;">
                     <div class="perfil-horiz">
                         <div class="perfil-info">
                             <p class="perfil-nombre nombre-mio">' . htmlspecialchars($_SESSION['Usuario']) . ' <span class="flecha">▼</span></p>
                         </div>
-                        <img src="' . htmlspecialchars($Foto) . '" class="profile-pic foto-mia" id="perfilImagen"> 
+                        <img src="' . htmlspecialchars($Foto) . '" class="profile-pic foto-mia" id="perfilImagen">
                     </div>
                 </a>
                 ';
@@ -58,8 +44,9 @@ $topSeries = callAPI("https://api.themoviedb.org/3/trending/tv/week?api_key=".$t
         </div>
     </div>
 </header>
+<body>
     <?php
-    // Obtenemos el nombre del archivo actual (ej: anime.php)
+    // Obtenemos el nombre del archivo actual
     $pagina_actual = basename($_SERVER['PHP_SELF']);
     ?>
 
@@ -78,7 +65,7 @@ $topSeries = callAPI("https://api.themoviedb.org/3/trending/tv/week?api_key=".$t
             </div>
         </div>
 
-        <div class="menu-desplegable">
+                <div class="menu-desplegable">
             <a href="manga.php" class="seccion-principal <?php echo ($pagina_actual == 'manga.php') ? 'active' : ''; ?>">Manga</a>
             <div class="sub-menu">
                 <a href="manga.php">Inicio Manga</a>
@@ -123,72 +110,50 @@ $topSeries = callAPI("https://api.themoviedb.org/3/trending/tv/week?api_key=".$t
     </div>
 </nav>
 
-<div class="container">
-
-<h2>Top Anime</h2>
-<div class="carousel">
-<?php
-foreach($topAnime["data"] as $anime){
-    $title = $anime["title"];
-    $img = $anime["images"]["jpg"]["image_url"];
-    $id = $anime["mal_id"];
-    $type = "anime";
-
-    echo "
-    <div class='card'>
-        <a href='media.php?id=$id&type=$type'>
-            <img src='$img'>
-        </a>
-        <p>$title</p>
-    </div>
-    ";
-}
-?>
-</div>
-
-<h2>Top Películas</h2>
-<div class="carousel">
-<?php
-foreach(array_slice($topMovies["results"],0,10) as $movie){
-    $title = $movie["title"];
-    $img = "https://image.tmdb.org/t/p/w500".$movie["poster_path"];
-    $id = $movie["id"];
-    $type = "movie";
-
-    echo "
-    <div class='card'>
-        <a href='media.php?id=$id&type=$type'>
-            <img src='$img'>
-        </a>
-        <p>$title</p>
-    </div>
-    ";
-}
-?>
-</div>
-
-<h2>Top Series</h2>
-<div class="carousel">
-<?php
-foreach(array_slice($topSeries["results"],0,10) as $serie){
-    $title = $serie["name"];
-    $img = "https://image.tmdb.org/t/p/w500".$serie["poster_path"];
-    $id = $serie["id"];
-    $type = "tv";
-
-    echo "
-    <div class='card'>
-        <a href='media.php?id=$id&type=$type'>
-            <img src='$img'>
-        </a>
-        <p>$title</p>
-    </div>
-    ";
-}
-?>
-</div>
-
+<div class="list-container">
+    <?php foreach ($listaAgrupada as $estado => $lista): ?>
+        <?php if (count($lista) > 0): ?>
+            <div class="status-section">
+                <h2 class="status-title"><?php echo isset($nombresEstados[$estado]) ? $nombresEstados[$estado] : 'Reading'; ?></h2>                
+                
+                <table class="anime-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th class="center-text" style="width: 100px;">Score</th>
+                            <th class="center-text" style="width: 120px;">Progress (Ch.)</th>
+                            <th class="center-text" style="width: 100px;">Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+<?php foreach ($lista as $item): 
+                            // En manga, usamos mal_id
+                            $id_para_link = (strtolower($item['type']) === 'anime' || strtolower($item['type']) === 'manga') ? $item['mal_id'] : $item['tmdb_id'];                        ?>
+                            <tr>
+                                <td>
+                                    <div class="anime-title-col">
+                                        <img src="<?php echo htmlspecialchars($item['portada']); ?>" alt="Cover" class="anime-cover">
+                                        <a href="media.php?id=<?php echo urlencode($id_para_link); ?>&type=<?php echo urlencode(strtolower($item['type'])); ?>" class="anime-name">
+                                            <?php echo htmlspecialchars($item['titulo']); ?>
+                                        </a>
+                                    </div>
+                                </td>
+                                <td class="center-text">
+                                    <?php echo ($item['puntuacion'] > 0) ? $item['puntuacion'] : '-'; ?>
+                                </td>
+                                <td class="center-text">
+                                    <?php echo $item['episodios_vistos']; ?> / <?php echo ($item['episodios_totales'] > 0) ? $item['episodios_totales'] : '?'; ?>
+                                </td>
+                                <td class="center-text" style="text-transform: uppercase;">
+                                    <?php echo htmlspecialchars($item['type']); ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
+    <?php endforeach; ?>
 </div>
 </body>
-
 </html>

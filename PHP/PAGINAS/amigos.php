@@ -94,6 +94,17 @@ $mis_amigos = $stmt_ami->get_result();
             </div>
         </div>
 
+                <div class="menu-desplegable">
+            <a href="manga.php" class="seccion-principal <?php echo ($pagina_actual == 'manga.php') ? 'active' : ''; ?>">Manga</a>
+            <div class="sub-menu">
+                <a href="manga.php">Inicio Manga</a>
+                <a href="manga.php#recomendados">Recomendados</a>
+                <a href="manga.php#populares">Más Populares</a>
+                <a href="manga.php#top">Top Manga</a>
+            </div>
+        </div>
+
+
         <div class="menu-desplegable">
             <a href="peliculas.php" class="seccion-principal <?php echo ($pagina_actual == 'peliculas.php') ? 'active' : ''; ?>">Películas</a>
             <div class="sub-menu">
@@ -169,7 +180,7 @@ $mis_amigos = $stmt_ami->get_result();
             <?php while($sol = $solicitudes->fetch_assoc()): ?>
                 <div class="request-card" id="req-<?php echo $sol['id_usuario']; ?>">
                     <div class="request-info">
-                        <img src="<?php echo $sol['avatar'] ?: '../../Recursos/fotousuario.png'; ?>" alt="Avatar">
+                        <img src="<?php echo $sol['avatar'] ?: '../../Recursos/fotos_perfil/fotousuario.png'; ?>" alt="Avatar">
                         <span><?php echo htmlspecialchars($sol['username']); ?></span>
                     </div>
                     <div class="req-buttons">
