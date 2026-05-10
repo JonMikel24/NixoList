@@ -284,3 +284,20 @@
     font-size: 16px;
     color: #ffdd1c;
 }
+
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85); z-index: 1000; display: flex; align-items: center; justify-content: center;
+}
+.modal-content {
+    background: #1a1a1a; width: 90%; max-width: 600px; padding: 30px;
+    border-radius: 12px; position: relative; color: white; max-height: 80vh; overflow-y: auto;
+    border: 1px solid #333;
+}
+.close-modal {
+    position: absolute; top: 15px; right: 20px; font-size: 30px; cursor: pointer; color: #666;
+}
+.close-modal:hover { color: white; }
+.modal-grid { display: flex; gap: 20px; margin-top: 20px; }
+.modal-img { width: 150px; border-radius: 8px; object-fit: cover; }
+.modal-desc { font-size: 14px; line-height: 1.6; color: #ccc; }

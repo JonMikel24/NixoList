@@ -122,7 +122,26 @@ if ($action === 'fav_character') {
     echo json_encode(['status' => 'success', 'result' => $res_type]);
     exit;
 }
+// --- NUEVA Lógica para Guardar Reseñas ---
+if ($action === 'add_review') {
+    $review_text = $_POST['review'] ?? '';
 
+    if (strlen(trim($review_text)) < 10) {
+        echo json_encode(['status' => 'error', 'message' => 'Reseña demasiado corta']);
+        exit;
+    }
+
+    // Insertamos la reseña vinculándola al id_media que ya obtuviste al principio del archivo
+    $stmt_rev = $conexion->prepare("INSERT INTO resenas (id_usuario, id_media, texto_resena, created_at) VALUES (?, ?, ?, NOW())");
+    $stmt_rev->bind_param("iis", $id_user, $id_media, $review_text);
+    
+    if ($stmt_rev->execute()) {
+        echo json_encode(['status' => 'success', 'result' => 'review_added']);
+    } else {
+        echo json_encode(['status' => 'error', 'message' => $conexion->error]);
+    }
+    exit;
+}
 // --- LOGICA DE LIMPIEZA ---
 $clean = $conexion->prepare("DELETE FROM media_usuario WHERE id_usuario = ? AND id_media = ? AND (status IS NULL OR status = '') AND (es_favorito = 0 OR es_favorito IS NULL)");
 $clean->bind_param("ii", $id_user, $id_media);

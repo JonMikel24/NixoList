@@ -150,7 +150,7 @@ require_once '../FUNCIONALIDADES/perfil.php';
     <a href="#">Manga List</a>
     <a href="peliculatvlistusuario.php?id=<?php echo $id_perfil_visitado; ?>">TV List</a>
     <a href="amigos.php?id=<?php echo $id_perfil_visitado; ?>">Friends</a>
-    <a href="#">Reviews</a>
+    <a href="reseñasperfil.php">Reviews</a>
 </div>
 
 <div class="profile-body-container">
