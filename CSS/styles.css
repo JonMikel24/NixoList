@@ -352,3 +352,132 @@ border:none;
     gap: 25px;
     padding: 20px 0;
 }
+
+/* --- ESTILOS DE LISTA RANKING (Tema Oscuro) --- */
+.lista-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+}
+
+.lista-header h2 {
+    margin: 0;
+}
+
+.tabla-nixolist {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: transparent;
+}
+
+.tabla-nixolist th {
+    background-color: #222;
+    color: #ccc;
+    padding: 12px 10px;
+    text-align: left;
+    font-size: 14px;
+    border-bottom: 2px solid #444;
+}
+
+.tabla-nixolist td {
+    padding: 15px 10px;
+    border-bottom: 1px solid #222;
+    vertical-align: top; /* Mantiene el contenido alineado arriba */
+}
+
+/* Hover suave en las filas */
+.tabla-nixolist tr:hover {
+    background-color: #1a1a1a;
+}
+
+.rank-numero {
+    font-size: 30px;
+    font-weight: bold;
+    color: #666;
+    text-align: center;
+    width: 60px;
+}
+
+.title-cell {
+    display: flex;
+    gap: 15px;
+}
+
+.lista-img {
+    width: 50px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.title-info a {
+    font-weight: bold;
+    font-size: 16px;
+    transition: color 0.2s;
+}
+
+/* Usa el amarillo de tu menú para el hover de los títulos */
+.title-info a:hover {
+    color: #ffdd1c; 
+}
+
+.title-info .fecha {
+    font-size: 12px;
+    color: #888;
+    margin-top: 5px;
+}
+
+.score-cell {
+    font-weight: bold;
+    text-align: center;
+    width: 100px;
+}
+
+.status-cell {
+    text-align: center;
+    width: 150px;
+}
+
+/* Botón adaptado a tu estilo de botones de Auth */
+.btn-add-list {
+    background: #333;
+    color: white;
+    border: 1px solid #555;
+    padding: 6px 12px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: 0.2s;
+}
+
+.btn-add-list:hover {
+    background: #555;
+}
+
+/* Botones de paginación adaptados */
+.paginacion { display: flex; gap: 5px; }
+
+.btn-pag {
+    background: #333;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 3px;
+    border: 1px solid #555;
+    font-size: 13px;
+    transition: 0.2s;
+}
+
+.btn-pag:hover {
+    background: #ffdd1c;
+    color: #333;
+    border-color: #ffdd1c;
+}
+
+.lista-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}

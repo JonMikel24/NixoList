@@ -12,6 +12,9 @@ function callAPI($url){
 
 $seccion = isset($_GET['seccion']) ? $_GET['seccion'] : 'inicio';
 
+// Variable de paginación
+$pagina = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+
 if ($seccion == 'inicio') {
     $topAnime = callAPI("https://api.jikan.moe/v4/top/anime?limit=10");
     $popularAnime = callAPI("https://api.jikan.moe/v4/top/anime?filter=bypopularity&limit=10");
@@ -63,7 +66,6 @@ if ($seccion == 'inicio') {
 </header>
 <body>
     <?php
-    // Obtenemos el nombre del archivo actual (ej: anime.php)
     $pagina_actual = basename($_SERVER['PHP_SELF']);
     ?>
 
@@ -217,7 +219,126 @@ foreach(array_slice($upcomingAnime["data"],0,10) as $anime){
 
 </div>
 
-<?php } elseif ($seccion == 'recomendados') {
+<?php } elseif ($seccion == 'populares' || $seccion == 'top') { 
+    // ---- PÁGINAS DE LISTA (POPULARES Y TOP) ----
+    
+    // 1. Títulos y Endpoints
+    $tituloSeccion = ($seccion == 'populares') ? "Animes Más Populares" : "Top Anime de Todos los Tiempos";
+    $endpoint = ($seccion == 'populares') ? "top/anime?filter=bypopularity" : "top/anime?";
+    // Ojo: Jikan usa un formato de paginación con '&page='
+    $conector = ($seccion == 'populares') ? "&" : "";
+    
+    // 2. Llamada a la API de Jikan con Paginación
+    $listaDatos = callAPI("https://api.jikan.moe/v4/".$endpoint.$conector."page=".$pagina."&limit=25");
+
+    // 3. Cabecera con título y paginación superior
+    echo "<div class='lista-header'>";
+    echo "<h2>$tituloSeccion</h2>";
+    echo "<div class='paginacion'>";
+    if ($pagina > 1) {
+        echo "<a href='anime.php?seccion=$seccion&page=".($pagina - 1)."' class='btn-pag'>&lt; Prev 25</a>";
+    }
+    echo "<a href='anime.php?seccion=$seccion&page=".($pagina + 1)."' class='btn-pag'>Next 25 &gt;</a>";
+    echo "</div>";
+    echo "</div>";
+
+    // 4. Base de Datos: Comprobar qué animes tiene el usuario
+    $mis_animes = [];
+    $mis_estados = [];
+
+    if (isset($_SESSION['id_usuario'])) {
+        require_once(__DIR__ . "/../conexion.php");
+        
+        /* NOTA: Uso 'tmdb_id' porque es el nombre de la columna que tienes en BD, 
+           aunque aquí se guarde el ID de MyAnimeList. Si tu BD tiene otro nombre 
+           para la columna de IDs de Anime, cámbialo aquí. */
+        $stmt_user = $conexion->prepare("
+            SELECT m.tmdb_id, mu.status 
+            FROM media_usuario mu 
+            JOIN media m ON mu.id_media = m.id_media 
+            WHERE mu.id_usuario = ? AND m.tmdb_id IS NOT NULL
+        ");
+        $stmt_user->bind_param("i", $_SESSION['id_usuario']);
+        $stmt_user->execute();
+        $res_user = $stmt_user->get_result();
+        
+        while($fila = $res_user->fetch_assoc()) {
+            $mis_animes[] = $fila['tmdb_id'];
+            $mis_estados[$fila['tmdb_id']] = $fila['status'];
+        }
+    }
+
+    echo "<table class='tabla-nixolist'>";
+    echo "<thead><tr><th style='text-align:center;'>Rank</th><th>Title</th><th style='text-align:center;'>Score</th><th style='text-align:center;'>Status</th></tr></thead>";
+    echo "<tbody>";
+
+    $rank = ($pagina - 1) * 25 + 1; 
+
+    // Ojo: Jikan usa ["data"] en vez de ["results"]
+    if(isset($listaDatos["data"]) && is_array($listaDatos["data"])) {
+        foreach($listaDatos["data"] as $anime){
+            $id = $anime["mal_id"];
+            $img = $anime["images"]["jpg"]["image_url"];
+            $title = $anime["title"];
+            $date = isset($anime["year"]) ? $anime["year"] : 'N/A'; // Usamos el año para el Anime
+            $score = isset($anime["score"]) ? $anime["score"] : 'N/A';
+
+            echo "<tr>";
+            echo "<td class='rank-numero'>$rank</td>";
+            echo "<td class='title-cell'>";
+            echo "  <img src='$img' alt='Poster' class='lista-img'>";
+            echo "  <div class='title-info'>";
+            echo "      <a href='media.php?id=$id&type=anime'>$title</a>";
+            echo "      <p class='fecha'>$date</p>";
+            echo "  </div>";
+            echo "</td>";
+            echo "<td class='score-cell'>⭐ $score</td>";
+
+            $titulo_seguro = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
+
+            // Comprobamos si ya está en la lista
+            $esta_en_lista = in_array($id, $mis_animes);
+            $estado_actual = $esta_en_lista ? $mis_estados[$id] : '';
+
+            echo "<td class='status-cell' style='text-align: center;'>";
+
+            $btn_display = $esta_en_lista ? "display: none;" : "display: inline-block;";
+            echo "<button class='btn-add-list btn-add-ajax' data-id='$id' data-type='anime' data-title='$titulo_seguro' data-img='$img' style='$btn_display'>Add to My List</button>";
+
+            $select_display = $esta_en_lista ? "display: inline-block;" : "display: none;";
+            echo "<select class='status-select-ajax' data-id='$id' data-type='anime' data-title='$titulo_seguro' data-img='$img' style='$select_display background: #222; color: white; border: 1px solid #444; padding: 5px; border-radius: 3px; cursor: pointer;'>";
+
+            $opciones = [
+                'planned'   => 'Planteando verlo',
+                'watching'  => 'Viendo',
+                'completed' => 'Completado',
+                'paused'    => 'En espera',
+                'dropped'   => 'Dropeado'
+            ];
+
+            foreach($opciones as $val => $texto) {
+                $sel = ($estado_actual == $val) ? 'selected' : '';
+                echo "<option value='$val' $sel>$texto</option>";
+            }
+            echo "</select>";
+            echo "</td>";
+            echo "</tr>";
+            
+            $rank++;
+        }
+    }
+    echo "</tbody></table>";
+    
+    // Paginación inferior
+    echo "<div class='lista-footer'>";
+    if ($pagina > 1) {
+        echo "<a href='anime.php?seccion=$seccion&page=".($pagina - 1)."' class='btn-pag'>&lt; Prev 25</a>";
+    }
+    echo "<a href='anime.php?seccion=$seccion&page=".($pagina + 1)."' class='btn-pag'>Next 25 &gt;</a>";
+    echo "</div>";
+
+} elseif ($seccion == 'recomendados') {
+    // ---- PÁGINA RECOMENDADOS (Se queda en CUADRÍCULA) ----
     echo "<h2>Animes Recomendados</h2>";
     echo "<div class='grid-galeria'>";
     $paginaRecomendados = callAPI("https://api.jikan.moe/v4/recommendations/anime");
@@ -229,34 +350,79 @@ foreach(array_slice($upcomingAnime["data"],0,10) as $anime){
         echo "<div class='card'><a href='media.php?id=$id&type=anime'><img src='$img'></a><p>{$entry['title']}</p></div>";
     }
     echo "</div>";
-
-} elseif ($seccion == 'populares') {
-    echo "<h2>Animes Más Populares</h2>";
-    echo "<div class='grid-galeria'>";
-    $paginaPopulares = callAPI("https://api.jikan.moe/v4/top/anime?filter=bypopularity&limit=25");
-    
-    foreach($paginaPopulares["data"] as $anime){
-        $id = $anime["mal_id"];
-        $img = $anime["images"]["jpg"]["image_url"];
-        echo "<div class='card'><a href='media.php?id=$id&type=anime'><img src='$img'></a><p>{$anime['title']}</p></div>";
-    }
-    echo "</div>";
-
-} elseif ($seccion == 'top') {
-    echo "<h2>Top Anime de Todos los Tiempos</h2>";
-    echo "<div class='grid-galeria'>";
-    $paginaTop = callAPI("https://api.jikan.moe/v4/top/anime?limit=25");
-    
-    foreach($paginaTop["data"] as $anime){
-        $id = $anime["mal_id"];
-        $img = $anime["images"]["jpg"]["image_url"];
-        echo "<div class='card'><a href='media.php?id=$id&type=anime'><img src='$img'></a><p>{$anime['title']}</p></div>";
-    }
-    echo "</div>";
 }
 ?>
-
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const botonesAdd = document.querySelectorAll('.btn-add-ajax');
+    const selectsStatus = document.querySelectorAll('.status-select-ajax');
+
+    // 1. Lógica para el botón "Add to My List"
+    botonesAdd.forEach(boton => {
+        boton.addEventListener('click', function(e) {
+            e.preventDefault();
+            const botonActual = this;
+            
+            const datos = new FormData();
+            datos.append('id_api', botonActual.dataset.id);
+            datos.append('type', botonActual.dataset.type);
+            datos.append('titulo', botonActual.dataset.title);
+            datos.append('portada', botonActual.dataset.img);
+            datos.append('action', 'add_list');
+            datos.append('nuevo_status', 'planned'); // Valor por defecto al añadir
+
+            fetch('../FUNCIONALIDADES/procesar_interaccion.php', {
+                method: 'POST',
+                body: datos
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.status === 'success' && res.result === 'added') {
+                    // Ocultamos el botón y mostramos el <select>
+                    botonActual.style.display = 'none';
+                    const selectAsociado = botonActual.nextElementSibling;
+                    if(selectAsociado) {
+                        selectAsociado.style.display = 'inline-block';
+                        selectAsociado.value = 'planned';
+                    }
+                } else {
+                    alert("Hubo un problema al añadir a la lista.");
+                }
+            })
+            .catch(err => console.error("Error:", err));
+        });
+    });
+
+    // 2. Lógica para actualizar el estado con el <select>
+    selectsStatus.forEach(select => {
+        select.addEventListener('change', function() {
+            const nuevoEstado = this.value;
+
+            const datos = new FormData();
+            datos.append('id_api', this.dataset.id);
+            datos.append('type', this.dataset.type);
+            datos.append('titulo', this.dataset.title);
+            datos.append('portada', this.dataset.img);
+            datos.append('action', 'update_status');
+            datos.append('nuevo_status', nuevoEstado);
+
+            fetch('../FUNCIONALIDADES/procesar_interaccion.php', {
+                method: 'POST',
+                body: datos
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.status !== 'success') {
+                    alert("Error al actualizar el estado.");
+                }
+            })
+            .catch(err => console.error("Error:", err));
+        });
+    });
+});
+</script>
 
 </body>
 </html>
