@@ -1,0 +1,300 @@
+/* =========================================
+   ESTILOS DEL HUB DE JUEGOS (juegos.php)
+   ========================================= */
+.juegos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+.juego-card {
+    background-color: #222;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.2s;
+}
+.juego-card:hover {
+    transform: translateY(-5px);
+    border-color: #ffd700;
+}
+.juego-card h3 {
+    color: #ffd700;
+    margin-bottom: 10px;
+}
+.juego-card p {
+    color: #ccc;
+    margin-bottom: 20px;
+    font-size: 14px;
+    min-height: 40px;
+}
+.btn-jugar {
+    background-color: #ffd700;
+    color: #111;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    display: inline-block;
+}
+.btn-jugar.disabled {
+    background-color: #555;
+    color: #888;
+    cursor: not-allowed;
+}
+
+/* =========================================
+   ESTILOS DEL JUEGO DE OPENINGS
+   ========================================= */
+.game-container { 
+    text-align: center; 
+    margin-top: 40px; 
+    background: #1a1a1a;
+    padding: 40px 20px;
+    border-radius: 10px;
+    border: 1px solid #333;
+}
+.game-container h2 { color: #ffd700; margin-bottom: 20px;}
+.opciones-game { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+    max-width: 400px; 
+    margin: 30px auto; 
+}
+.btn-opcion { 
+    padding: 15px; 
+    cursor: pointer; 
+    background-color: #333; 
+    color: white; 
+    border: 2px solid #555; 
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+.btn-opcion:hover:not(:disabled) { 
+    background-color: #ffd700; 
+    color: #111;
+    border-color: #ffd700;
+}
+.btn-opcion:disabled {
+    opacity: 0.7;
+    cursor: default;
+}
+.btn-opcion.correct {
+    background-color: #28a745 !important;
+    border-color: #28a745 !important;
+    color: white !important;
+}
+.btn-opcion.wrong {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+    color: white !important;
+}
+#resultado-texto {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 20px 0;
+    min-height: 24px;
+}
+.btn-siguiente {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: none;
+    margin: 0 auto;
+}
+.btn-siguiente:hover { background-color: #0056b3; }
+
+/* =========================================
+   JUEGO: ADIVINA EL PERSONAJE
+   ========================================= */
+.character-img-container {
+    width: 100%;
+    max-width: 300px;
+    height: 400px;
+    margin: 0 auto 20px;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 3px solid #444;
+    background: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.character-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+}
+
+/* =========================================
+   BOTÓN DE INICIO DE JUEGOS
+   ========================================= */
+.btn-empezar {
+    background-color: #28a745; 
+    color: white;
+    padding: 20px 50px;
+    font-size: 1.8rem;
+    border-radius: 50px;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+    transition: all 0.3s ease;
+    margin: 30px 0;
+}
+.btn-empezar:hover {
+    background-color: #218838;
+}
+
+#reproductor-custom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    background: #252525;
+    padding: 15px 25px;
+    border-radius: 50px;
+    margin: 20px auto;
+    max-width: 500px;
+    border: 1px solid #444;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+#icono-musica {
+    font-size: 1.4rem;
+}
+#barra-contenedor {
+    flex-grow: 1; 
+    background-color: #444;
+    height: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 0; 
+}
+#tiempo-restante {
+    font-family: 'Courier New', Courier, monospace; 
+    font-weight: bold;
+    color: #007bff;
+    min-width: 35px;
+    font-size: 1.1rem;
+}
+#barra-progreso {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #007bff, #00d4ff);
+    transition: width 1s linear;
+}
+
+/* =========================================
+   WORDLE ANIME STYLES (ACTUALIZADOS)
+   ========================================= */
+
+.wordle-game {
+    display: flex;
+    flex-direction: row; /* Diseño a dos columnas */
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap; /* Colapsa en móvil */
+    gap: 50px;
+    padding: 30px;
+}
+
+.wordle-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.wordle-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 320px;
+    gap: 20px;
+}
+
+.board {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 20px 0;
+}
+
+.board-row {
+    display: flex;
+    gap: 8px;
+}
+
+.cuadro-wordle {
+    width: 55px;
+    height: 55px;
+    border: 2px solid #3a3a3c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #fff;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.05);
+    transition: transform 0.1s, border-color 0.1s;
+}
+
+.keyboard-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.key-row {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+}
+
+.tecla-wordle {
+    background-color: #818384;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 15px 12px;
+    cursor: pointer;
+    font-weight: bold;
+    min-width: 40px;
+    transition: background-color 0.2s;
+}
+
+.tecla-especial {
+    min-width: 65px;
+}
+
+.tecla-wordle:hover {
+    background-color: #acafb0;
+}
+
+.mensaje-alerta {
+    min-height: 30px;
+    color: #ffc107;
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+/* Estados de colores */
+.correct { background-color: #538d4e !important; border-color: #538d4e !important; }
+.present { background-color: #b59f3b !important; border-color: #b59f3b !important; }
+.absent { background-color: #3a3a3c !important; border-color: #3a3a3c !important; }
+
+/* Animaciones */
+.animacion-pop {
+    transform: scale(1.1);
+    border-color: #888;
+}

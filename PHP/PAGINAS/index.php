@@ -108,6 +108,15 @@ $topSeries = callAPI("https://api.themoviedb.org/3/trending/tv/week?api_key=".$t
             </div>
         </div>
 
+        <div class="menu-desplegable">
+            <a href="juegos.php" class="seccion-principal <?php echo (in_array($pagina_actual, ['juegos.php', 'juegoOpeningsAnime.php', 'juegoPersonajesAnime.php', 'juegoWordleAnime.php'])) ? 'active' : ''; ?>">Juegos</a>
+            <div class="sub-menu">
+                <a href="juegos.php">Inicio Juegos</a>
+                <a href="juegoOpeningsAnime.php">Adivina el Opening</a>
+                <a href="juegoPersonajesAnime.php">Adivina el Personaje</a>
+                <a href="juegoWordleAnime.php">Wordle Anime</a>
+            </div>
+        </div>
     </div>
 
     <div class="search-wrapper" style="position: relative;"> 
