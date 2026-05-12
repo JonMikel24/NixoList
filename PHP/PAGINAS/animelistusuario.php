@@ -70,7 +70,7 @@ require_once '../FUNCIONALIDADES/logica_animelist.php';
             </div>
         </div>
 
-                <div class="menu-desplegable">
+        <div class="menu-desplegable">
             <a href="manga.php" class="seccion-principal <?php echo ($pagina_actual == 'manga.php') ? 'active' : ''; ?>">Manga</a>
             <div class="sub-menu">
                 <a href="manga.php">Inicio Manga</a>
@@ -79,7 +79,6 @@ require_once '../FUNCIONALIDADES/logica_animelist.php';
                 <a href="manga.php#top">Top Manga</a>
             </div>
         </div>
-
 
         <div class="menu-desplegable">
             <a href="peliculas.php" class="seccion-principal <?php echo ($pagina_actual == 'peliculas.php') ? 'active' : ''; ?>">Películas</a>
@@ -101,21 +100,32 @@ require_once '../FUNCIONALIDADES/logica_animelist.php';
             </div>
         </div>
 
+        <div class="menu-desplegable">
+            <a href="juegos.php" class="seccion-principal <?php echo (in_array($pagina_actual, ['juegos.php', 'juegoOpeningsAnime.php', 'juegoPersonajesAnime.php', 'juegoWordleAnime.php'])) ? 'active' : ''; ?>">Juegos</a>
+            <div class="sub-menu">
+                <a href="juegos.php">Inicio Juegos</a>
+                <a href="juegoOpeningsAnime.php">Adivina el Opening</a>
+                <a href="juegoPersonajesAnime.php">Adivina el Personaje</a>
+                <a href="juegoWordleAnime.php">Wordle Anime</a>
+            </div>
+        </div>
     </div>
 
-    <div class="search-container">
-        <select class="search-select">
-            <option value="all">All</option>
-            <option value="anime">Anime</option>
-            <option value="manga">Manga</option>
-        </select>
-        <input type="text" placeholder="Search Anime, Manga, and more..." class="search-input">
-        <button type="submit" class="search-button">
-            <i>🔍</i> 
-        </button>
+    <div class="search-wrapper" style="position: relative;"> 
+        <div class="search-container">
+            <select class="search-select" id="search-type">
+                <option value="all">All</option>
+                <option value="anime">Anime</option>
+                <option value="manga">Manga</option>
+                <option value="movie">Películas</option>
+                <option value="tv">Series</option>
+            </select>
+            <input type="text" id="search-input" placeholder="Search..." class="search-input" autocomplete="off">
+            <button type="submit" class="search-button"><i>🔍</i></button>
+        </div>
+        <div id="search-results" class="search-results-dropdown"></div>
     </div>
 </nav>
-
 
 <div class="list-container">
     <?php foreach ($listaAgrupada as $estado => $lista): ?>
