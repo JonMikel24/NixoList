@@ -33,13 +33,13 @@ $stmt = $pdo->prepare("
         mu.episodios_vistos 
     FROM media_usuario mu
     JOIN media m ON mu.id_media = m.id_media
-    WHERE mu.id_usuario = ? AND (m.type = 'ANIME' OR m.type = 'anime')
+    WHERE mu.id_usuario = ? AND (m.type = 'MANGA' OR m.type = 'manga')
     ORDER BY FIELD(mu.status, 'watching', 'completed', 'planned', 'paused', 'dropped'), m.titulo ASC
 ");
 
 // Pasamos el nuevo ID a la consulta
 $stmt->execute([$id_usuario_lista]);
-$animes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$mangas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // 3. Agrupar la lista por estados
 $listaAgrupada = [
@@ -50,8 +50,8 @@ $listaAgrupada = [
     'dropped' => []
 ];
 
-foreach ($animes as $anime) {
-    $listaAgrupada[$anime['status']][] = $anime;
+foreach ($mangas as $manga) {
+    $listaAgrupada[$manga['status']][] = $manga;
 }
 
 // 4. Títulos bonitos para el HTML

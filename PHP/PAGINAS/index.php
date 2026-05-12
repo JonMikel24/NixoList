@@ -35,14 +35,14 @@ $topSeries = callAPI("https://api.themoviedb.org/3/trending/tv/week?api_key=".$t
 
         <div class="PerfilContenedor"> <?php
             if (isset($_SESSION['Usuario'])) {
-                $Foto = (!empty($_SESSION['Foto'])) ? $_SESSION['Foto'] : '/Recursos/fotousuario.png';
+                $Foto = (!empty($_SESSION['Foto'])) ? $_SESSION['Foto'] : '../../Recursos/fotos_perfil/fotousuario.png';
                 echo '
                 <a href="listaperfil.php" style="text-decoration: none; color: inherit;">
                     <div class="perfil-horiz">
                         <div class="perfil-info">
                             <p class="perfil-nombre nombre-mio">' . htmlspecialchars($_SESSION['Usuario']) . ' <span class="flecha">▼</span></p>
                         </div>
-                        <img src="' . htmlspecialchars($Foto) . '" class="profile-pic foto-mia" id="perfilImagen">
+                        <img src="' . htmlspecialchars($Foto) . '" class="profile-pic foto-mia" id="perfilImagen"> 
                     </div>
                 </a>
                 ';
@@ -79,6 +79,16 @@ $topSeries = callAPI("https://api.themoviedb.org/3/trending/tv/week?api_key=".$t
         </div>
 
         <div class="menu-desplegable">
+            <a href="manga.php" class="seccion-principal <?php echo ($pagina_actual == 'manga.php') ? 'active' : ''; ?>">Manga</a>
+            <div class="sub-menu">
+                <a href="manga.php">Inicio Manga</a>
+                <a href="manga.php#recomendados">Recomendados</a>
+                <a href="manga.php#populares">Más Populares</a>
+                <a href="manga.php#top">Top Manga</a>
+            </div>
+        </div>
+
+        <div class="menu-desplegable">
             <a href="peliculas.php" class="seccion-principal <?php echo ($pagina_actual == 'peliculas.php') ? 'active' : ''; ?>">Películas</a>
             <div class="sub-menu">
                 <a href="peliculas.php">Inicio Películas</a>
@@ -109,16 +119,19 @@ $topSeries = callAPI("https://api.themoviedb.org/3/trending/tv/week?api_key=".$t
         </div>
     </div>
 
-    <div class="search-container">
-        <select class="search-select">
-            <option value="all">All</option>
-            <option value="anime">Anime</option>
-            <option value="manga">Manga</option>
-        </select>
-        <input type="text" placeholder="Search Anime, Manga, and more..." class="search-input">
-        <button type="submit" class="search-button">
-            <i>🔍</i> 
-        </button>
+    <div class="search-wrapper" style="position: relative;"> 
+        <div class="search-container">
+            <select class="search-select" id="search-type">
+                <option value="all">All</option>
+                <option value="anime">Anime</option>
+                <option value="manga">Manga</option>
+                <option value="movie">Películas</option>
+                <option value="tv">Series</option>
+            </select>
+            <input type="text" id="search-input" placeholder="Search..." class="search-input" autocomplete="off">
+            <button type="submit" class="search-button"><i>🔍</i></button>
+        </div>
+        <div id="search-results" class="search-results-dropdown"></div>
     </div>
 </nav>
 
@@ -189,5 +202,31 @@ foreach(array_slice($topSeries["results"],0,10) as $serie){
 
 </div>
 </body>
+<script>
+document.getElementById('search-input').addEventListener('input', function() {
+    let query = this.value;
+    let type = document.getElementById('search-type').value;
+    let resultsContainer = document.getElementById('search-results');
+
+    if (query.length >= 3) {
+        fetch(`buscar_sugerencias.php?q=${query}&type=${type}`)
+            .then(response => response.text())
+            .then(data => {
+                resultsContainer.innerHTML = data;
+                resultsContainer.style.display = 'block';
+            });
+    } else {
+        resultsContainer.style.display = 'none';
+    }
+});
+
+// Cerrar buscador al hacer clic fuera
+document.addEventListener('click', function(e) {
+    // Ahora comprobamos si el clic fue fuera del wrapper
+    if (!document.querySelector('.search-wrapper').contains(e.target)) {
+        document.getElementById('search-results').style.display = 'none';
+    }
+});
+</script>
 
 </html>

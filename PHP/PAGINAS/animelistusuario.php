@@ -70,6 +70,17 @@ require_once '../FUNCIONALIDADES/logica_animelist.php';
             </div>
         </div>
 
+                <div class="menu-desplegable">
+            <a href="manga.php" class="seccion-principal <?php echo ($pagina_actual == 'manga.php') ? 'active' : ''; ?>">Manga</a>
+            <div class="sub-menu">
+                <a href="manga.php">Inicio Manga</a>
+                <a href="manga.php#recomendados">Recomendados</a>
+                <a href="manga.php#populares">Más Populares</a>
+                <a href="manga.php#top">Top Manga</a>
+            </div>
+        </div>
+
+
         <div class="menu-desplegable">
             <a href="peliculas.php" class="seccion-principal <?php echo ($pagina_actual == 'peliculas.php') ? 'active' : ''; ?>">Películas</a>
             <div class="sub-menu">
@@ -110,8 +121,7 @@ require_once '../FUNCIONALIDADES/logica_animelist.php';
     <?php foreach ($listaAgrupada as $estado => $lista): ?>
         <?php if (count($lista) > 0): ?>
             <div class="status-section">
-                <h2 class="status-title"><?php echo $nombresEstados[$estado]; ?></h2>
-                
+                <h2 class="status-title"><?php echo isset($nombresEstados[$estado]) ? $nombresEstados[$estado] : 'Reading'; ?></h2>                
                 <table class="anime-table">
                     <thead>
                         <tr>
@@ -122,12 +132,17 @@ require_once '../FUNCIONALIDADES/logica_animelist.php';
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($lista as $item): ?>
+<?php foreach ($lista as $item): 
+                            // Calculamos qué ID usar (MyAnimeList o TMDB) según el tipo
+                            $id_para_link = (strtolower($item['type']) === 'anime') ? $item['mal_id'] : $item['tmdb_id']; 
+                        ?>
                             <tr>
                                 <td>
                                     <div class="anime-title-col">
                                         <img src="<?php echo htmlspecialchars($item['portada']); ?>" alt="Cover" class="anime-cover">
-                                        <a href="#" class="anime-name"><?php echo htmlspecialchars($item['titulo']); ?></a>
+                                        <a href="media.php?id=<?php echo urlencode($id_para_link); ?>&type=<?php echo urlencode($item['type']); ?>" class="anime-name">
+                                            <?php echo htmlspecialchars($item['titulo']); ?>
+                                        </a>
                                     </div>
                                 </td>
                                 <td class="center-text">

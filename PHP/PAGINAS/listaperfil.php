@@ -20,8 +20,8 @@ if (!$datosVisitado) {
 }
 
 // Preparamos las imágenes del usuario visitado (usando la foto y banner de la BD, o las de por defecto)
-$AvatarVisitado = (!empty($datosVisitado['avatar'])) ? $datosVisitado['avatar'] : '/Recursos/fotousuario.png';
-$BannerVisitado = (!empty($datosVisitado['banner'])) ? $datosVisitado['banner'] : '../Recursos/Banners/banner_default.jpg';
+$AvatarVisitado = (!empty($datosVisitado['avatar'])) ? $datosVisitado['avatar'] : '../../Recursos/fotos_perfil/fotousuario.png';
+$BannerVisitado = (!empty($datosVisitado['banner'])) ? $datosVisitado['banner'] : '../../Recursos/Banners/banner.png';
 
 // 4. COMPROBAR AMISTAD (Solo si no es mi perfil)
 $son_amigos = false;
@@ -90,12 +90,51 @@ require_once '../FUNCIONALIDADES/perfil.php';
     ?>
 
 <nav class="navbar">
-        <div class="nav-links">
-            <a href="index.php" class="<?php echo ($pagina_actual == 'index.php') ? 'active' : ''; ?>">Inicio</a>
-            <a href="anime.php" class="<?php echo ($pagina_actual == 'anime.php') ? 'active' : ''; ?>">Anime</a>
-            <a href="peliculas.php" class="<?php echo ($pagina_actual == 'peliculas.php') ? 'active' : ''; ?>">Películas</a>
-            <a href="series.php" class="<?php echo ($pagina_actual == 'series.php') ? 'active' : ''; ?>">Series</a>
+    <div class="nav-links">
+        
+        <a href="index.php" class="<?php echo ($pagina_actual == 'index.php') ? 'active' : ''; ?>">Inicio</a>
+
+        <div class="menu-desplegable">
+            <a href="anime.php" class="seccion-principal <?php echo ($pagina_actual == 'anime.php') ? 'active' : ''; ?>">Anime</a>
+            <div class="sub-menu">
+                <a href="anime.php">Inicio Anime</a>
+                <a href="anime.php#recomendados">Recomendados</a>
+                <a href="anime.php#populares">Más Populares</a>
+                <a href="anime.php#top">Top Anime</a>
+            </div>
         </div>
+
+        <div class="menu-desplegable">
+            <a href="manga.php" class="seccion-principal <?php echo ($pagina_actual == 'manga.php') ? 'active' : ''; ?>">Manga</a>
+            <div class="sub-menu">
+                <a href="manga.php">Inicio Manga</a>
+                <a href="manga.php#recomendados">Recomendados</a>
+                <a href="manga.php#populares">Más Populares</a>
+                <a href="manga.php#top">Top Manga</a>
+            </div>
+        </div>
+
+        <div class="menu-desplegable">
+            <a href="peliculas.php" class="seccion-principal <?php echo ($pagina_actual == 'peliculas.php') ? 'active' : ''; ?>">Películas</a>
+            <div class="sub-menu">
+                <a href="peliculas.php">Inicio Películas</a>
+                <a href="peliculas.php#recomendadas">Recomendadas</a>
+                <a href="peliculas.php#populares">Más Populares</a>
+                <a href="peliculas.php#top">Top Rated</a>
+            </div>
+        </div>
+
+        <div class="menu-desplegable">
+            <a href="series.php" class="seccion-principal <?php echo ($pagina_actual == 'series.php') ? 'active' : ''; ?>">Series</a>
+            <div class="sub-menu">
+                <a href="series.php">Inicio Series</a>
+                <a href="series.php#trending">Trending</a>
+                <a href="series.php#populares">Más Populares</a>
+                <a href="series.php#top">Top Rated</a>
+            </div>
+        </div>
+
+    </div>
 
     <div class="search-container">
         <select class="search-select">
@@ -105,17 +144,18 @@ require_once '../FUNCIONALIDADES/perfil.php';
         </select>
         <input type="text" placeholder="Search Anime, Manga, and more..." class="search-input">
         <button type="submit" class="search-button">
-            <i>🔍</i> </button>
+            <i>🔍</i> 
+        </button>
     </div>
 </nav>
 
 <div class="profile-banner-container">
-    <img src="<?php echo htmlspecialchars($BannerVisitado); ?>" class="banner-image" alt="Banner">
+    <img src="<?php echo !empty($BannerVisitado) ? htmlspecialchars($BannerVisitado) : '../IMG/default-banner.jpg'; ?>" class="banner-image" alt="Banner">
 </div>
 
 <div class="profile-header-content">
     <div class="profile-avatar-wrapper">
-        <img src="<?php echo htmlspecialchars($AvatarVisitado); ?>" class="profile-avatar-main" alt="Avatar">
+        <img src="<?php echo !empty($AvatarVisitado) ? htmlspecialchars($AvatarVisitado) : '../Recursos/fotos_perfil/fotousuario.png'; ?>" class="profile-avatar-main" alt="Avatar">
     </div>
     <div class="profile-user-info">
         <h2 class="profile-username"><?php echo htmlspecialchars($datosVisitado['username']); ?></h2>
@@ -123,7 +163,6 @@ require_once '../FUNCIONALIDADES/perfil.php';
             <span>Joined <?php echo date('M j, Y', strtotime($datosVisitado['created_at'])); ?></span>
         </div>
     </div>
-    
     <div class="profile-actions">
         <?php if ($es_mi_perfil): ?>
             <a href="configuracionperfil.php" class="btn-config">Configuración</a>
@@ -136,7 +175,6 @@ require_once '../FUNCIONALIDADES/perfil.php';
             <?php else: ?>
                 <form action="../FUNCIONALIDADES/anadir_amigo.php" method="POST" style="margin: 0;">
                     <input type="hidden" name="amigo_id" value="<?php echo $id_perfil_visitado; ?>">
-                    <button type="submit" class="btn-config" style="background: #4ade80; border-color: #4ade80; color: #111; font-weight: bold;">+ Añadir Amigo</button>
                 </form>
             <?php endif; ?>
         <?php endif; ?>
@@ -147,7 +185,7 @@ require_once '../FUNCIONALIDADES/perfil.php';
 <div class="profile-subnav">
     <a href="listaperfil.php?id=<?php echo $id_perfil_visitado; ?>" class="active">Overview</a>
     <a href="animelistusuario.php?id=<?php echo $id_perfil_visitado; ?>">Anime List</a>
-    <a href="#">Manga List</a>
+    <a href="mangalistusuario.php?id=<?php echo $id_perfil_visitado; ?>">Manga List</a>
     <a href="peliculatvlistusuario.php?id=<?php echo $id_perfil_visitado; ?>">TV List</a>
     <a href="amigos.php?id=<?php echo $id_perfil_visitado; ?>">Friends</a>
     <a href="reseñasperfil.php">Reviews</a>
@@ -158,7 +196,7 @@ require_once '../FUNCIONALIDADES/perfil.php';
     <div class="profile-left-col">
         
         <?php
-        $tipos_permitidos = ['anime', 'pelicula', 'tv', 'libro'];
+        $tipos_permitidos = ['anime', 'pelicula', 'tv', 'manga'];
         $tipo_seleccionado = (isset($_GET['tipo']) && in_array($_GET['tipo'], $tipos_permitidos)) ? $_GET['tipo'] : 'anime';
 
         $stmt = $pdo->prepare("
@@ -192,7 +230,7 @@ require_once '../FUNCIONALIDADES/perfil.php';
                         <option value="anime" <?php echo $tipo_seleccionado == 'anime' ? 'selected' : ''; ?>>Anime</option>
                         <option value="tv" <?php echo $tipo_seleccionado == 'tv' ? 'selected' : ''; ?>>Series TV</option>
                         <option value="pelicula" <?php echo $tipo_seleccionado == 'pelicula' ? 'selected' : ''; ?>>Películas</option>
-                        <option value="libro" <?php echo $tipo_seleccionado == 'libro' ? 'selected' : ''; ?>>Libros</option>
+                        <option value="manga" <?php echo $tipo_seleccionado == 'manga' ? 'selected' : ''; ?>>Mangas</option>
                     </select>
                 </form>
             </div>

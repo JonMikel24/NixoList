@@ -63,7 +63,7 @@ CREATE TABLE `amigos` (
   KEY `id_amigo_usuario` (`id_amigo_usuario`),
   CONSTRAINT `amigos_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`) ON DELETE CASCADE,
   CONSTRAINT `amigos_ibfk_2` FOREIGN KEY (`id_amigo_usuario`) REFERENCES `usuarios` (`id_usuario`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -72,7 +72,7 @@ CREATE TABLE `amigos` (
 
 LOCK TABLES `amigos` WRITE;
 /*!40000 ALTER TABLE `amigos` DISABLE KEYS */;
-INSERT INTO `amigos` VALUES (1,4,3,'aceptado','2026-04-25 16:10:25');
+INSERT INTO `amigos` VALUES (1,4,3,'aceptado','2026-04-25 16:10:25'),(2,10,3,'aceptado','2026-05-10 17:40:07');
 /*!40000 ALTER TABLE `amigos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -218,7 +218,7 @@ DROP TABLE IF EXISTS `media`;
 CREATE TABLE `media` (
   `id_media` int(11) NOT NULL AUTO_INCREMENT,
   `titulo` varchar(255) NOT NULL,
-  `type` enum('pelicula','tv','anime','libro') NOT NULL,
+  `type` enum('pelicula','tv','anime','manga') NOT NULL,
   `descripcion` text,
   `fecha_publicacion` date DEFAULT NULL,
   `portada` varchar(255) DEFAULT NULL,
@@ -232,7 +232,7 @@ CREATE TABLE `media` (
   KEY `idx_titulo` (`titulo`),
   KEY `idx_tmdb` (`tmdb_id`),
   KEY `idx_mal` (`mal_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -241,7 +241,7 @@ CREATE TABLE `media` (
 
 LOCK TABLES `media` WRITE;
 /*!40000 ALTER TABLE `media` DISABLE KEYS */;
-INSERT INTO `media` VALUES (20,'Naruto','anime','Naruto Uzumaki, a mischievous adolescent ninja...',NULL,'https://cdn.myanimelist.net/images/anime/13/17405.jpg',NULL,NULL,NULL,NULL,'2026-04-08 13:43:57',NULL),(21,'Serial Experiments Lain','anime',NULL,NULL,'https://myanimelist.net/images/anime/1718/91550l.webp',NULL,339,NULL,NULL,'2026-04-08 14:12:16',NULL),(22,'The Boys','tv',NULL,NULL,'https://image.tmdb.org/t/p/w500/5kgY14oisiHcJ4zq0Xgq1e97PHm.jpg',76479,NULL,NULL,NULL,'2026-04-08 14:21:44',NULL),(23,'Ore dake Level Up na Ken Season 2: Arise from the Shadow','anime',NULL,NULL,'https://myanimelist.net/images/anime/1448/147351l.webp',NULL,58567,NULL,NULL,'2026-04-25 12:54:44',NULL),(24,'Fullmetal Alchemist: Brotherhood','anime',NULL,NULL,'https://myanimelist.net/images/anime/1208/94745l.webp',NULL,5114,NULL,NULL,'2026-04-25 13:21:14',NULL),(25,'Boku no Hero Academia','anime',NULL,NULL,'https://myanimelist.net/images/anime/10/78745l.webp',NULL,31964,NULL,NULL,'2026-04-25 13:21:41',NULL),(26,'Steins;Gate','anime',NULL,NULL,'https://myanimelist.net/images/anime/1935/127974l.webp',NULL,9253,NULL,NULL,'2026-04-25 14:14:14',NULL),(27,'Summertime Render','anime',NULL,NULL,'https://myanimelist.net/images/anime/1120/120796l.webp',NULL,47194,NULL,NULL,'2026-04-25 14:32:53',NULL),(28,'Ikoku Nikki','anime',NULL,NULL,'https://myanimelist.net/images/anime/1791/154233l.webp',NULL,58788,NULL,NULL,'2026-04-25 14:32:57',NULL),(29,'Fate/stay night','anime',NULL,NULL,'https://myanimelist.net/images/anime/4/30327l.webp',NULL,356,NULL,NULL,'2026-04-25 14:33:02',NULL),(30,'Gyakkyou Burai Kaiji: Ultimate Survivor','anime',NULL,NULL,'https://myanimelist.net/images/anime/12/80032l.webp',NULL,3002,NULL,NULL,'2026-04-25 14:33:18',NULL),(31,'Sword Art Online','anime',NULL,NULL,'https://myanimelist.net/images/anime/11/39717l.webp',NULL,11757,NULL,NULL,'2026-04-25 14:33:25',NULL),(32,'Chainsaw Man Movie: Reze-hen','anime',NULL,NULL,'https://myanimelist.net/images/anime/1763/150638l.webp',NULL,57555,NULL,NULL,'2026-04-25 14:33:37',NULL),(33,'Sousou no Frieren','anime',NULL,NULL,'https://myanimelist.net/images/anime/1015/138006l.webp',NULL,52991,NULL,NULL,'2026-04-25 14:33:46',NULL),(34,'Mushoku Tensei III: Isekai Ittara Honki Dasu','anime',NULL,NULL,'https://myanimelist.net/images/anime/1723/154941l.webp',NULL,59193,NULL,NULL,'2026-04-25 14:34:11',NULL),(35,'Tokyo Ghoul','anime',NULL,NULL,'https://myanimelist.net/images/anime/1498/134443l.webp',NULL,22319,NULL,NULL,'2026-04-25 15:26:00',NULL),(36,'Koe no Katachi','anime',NULL,NULL,'https://myanimelist.net/images/anime/1122/96435l.webp',NULL,28851,NULL,NULL,'2026-04-25 16:26:12',NULL),(37,'Michael','pelicula',NULL,NULL,'https://image.tmdb.org/t/p/w500/2uK36ujoDXOfNiJ5Yp3raVprB51.jpg',936075,NULL,NULL,NULL,'2026-04-25 16:31:20',NULL),(38,'INVENCIBLE','tv',NULL,NULL,'https://image.tmdb.org/t/p/w500/AdcfiT5FsjUooyP7CrKzEGmP9K1.jpg',95557,NULL,NULL,NULL,'2026-04-26 14:08:39',NULL);
+INSERT INTO `media` VALUES (20,'Naruto','anime','Naruto Uzumaki, a mischievous adolescent ninja...',NULL,'https://cdn.myanimelist.net/images/anime/13/17405.jpg',NULL,NULL,NULL,NULL,'2026-04-08 13:43:57',NULL),(21,'Serial Experiments Lain','anime',NULL,NULL,'https://myanimelist.net/images/anime/1718/91550l.webp',NULL,339,NULL,NULL,'2026-04-08 14:12:16',NULL),(22,'The Boys','tv',NULL,NULL,'https://image.tmdb.org/t/p/w500/5kgY14oisiHcJ4zq0Xgq1e97PHm.jpg',76479,NULL,NULL,NULL,'2026-04-08 14:21:44',NULL),(23,'Ore dake Level Up na Ken Season 2: Arise from the Shadow','anime',NULL,NULL,'https://myanimelist.net/images/anime/1448/147351l.webp',NULL,58567,NULL,NULL,'2026-04-25 12:54:44',NULL),(24,'Fullmetal Alchemist: Brotherhood','anime',NULL,NULL,'https://myanimelist.net/images/anime/1208/94745l.webp',NULL,5114,NULL,NULL,'2026-04-25 13:21:14',NULL),(25,'Boku no Hero Academia','anime',NULL,NULL,'https://myanimelist.net/images/anime/10/78745l.webp',NULL,31964,NULL,NULL,'2026-04-25 13:21:41',NULL),(26,'Steins;Gate','anime',NULL,NULL,'https://myanimelist.net/images/anime/1935/127974l.webp',NULL,9253,NULL,NULL,'2026-04-25 14:14:14',NULL),(27,'Summertime Render','anime',NULL,NULL,'https://myanimelist.net/images/anime/1120/120796l.webp',NULL,47194,NULL,NULL,'2026-04-25 14:32:53',NULL),(28,'Ikoku Nikki','anime',NULL,NULL,'https://myanimelist.net/images/anime/1791/154233l.webp',NULL,58788,NULL,NULL,'2026-04-25 14:32:57',NULL),(29,'Fate/stay night','anime',NULL,NULL,'https://myanimelist.net/images/anime/4/30327l.webp',NULL,356,NULL,NULL,'2026-04-25 14:33:02',NULL),(30,'Gyakkyou Burai Kaiji: Ultimate Survivor','anime',NULL,NULL,'https://myanimelist.net/images/anime/12/80032l.webp',NULL,3002,NULL,NULL,'2026-04-25 14:33:18',NULL),(31,'Sword Art Online','anime',NULL,NULL,'https://myanimelist.net/images/anime/11/39717l.webp',NULL,11757,NULL,NULL,'2026-04-25 14:33:25',NULL),(32,'Chainsaw Man Movie: Reze-hen','anime',NULL,NULL,'https://myanimelist.net/images/anime/1763/150638l.webp',NULL,57555,NULL,NULL,'2026-04-25 14:33:37',NULL),(33,'Sousou no Frieren','anime',NULL,NULL,'https://myanimelist.net/images/anime/1015/138006l.webp',NULL,52991,NULL,NULL,'2026-04-25 14:33:46',NULL),(34,'Mushoku Tensei III: Isekai Ittara Honki Dasu','anime',NULL,NULL,'https://myanimelist.net/images/anime/1723/154941l.webp',NULL,59193,NULL,NULL,'2026-04-25 14:34:11',NULL),(35,'Tokyo Ghoul','anime',NULL,NULL,'https://myanimelist.net/images/anime/1498/134443l.webp',NULL,22319,NULL,NULL,'2026-04-25 15:26:00',NULL),(36,'Koe no Katachi','anime',NULL,NULL,'https://myanimelist.net/images/anime/1122/96435l.webp',NULL,28851,NULL,NULL,'2026-04-25 16:26:12',NULL),(37,'Michael','pelicula',NULL,NULL,'https://image.tmdb.org/t/p/w500/2uK36ujoDXOfNiJ5Yp3raVprB51.jpg',936075,NULL,NULL,NULL,'2026-04-25 16:31:20',NULL),(38,'INVENCIBLE','tv',NULL,NULL,'https://image.tmdb.org/t/p/w500/AdcfiT5FsjUooyP7CrKzEGmP9K1.jpg',95557,NULL,NULL,NULL,'2026-04-26 14:08:39',NULL),(39,'Death Note','anime',NULL,NULL,'https://myanimelist.net/images/anime/1079/138100l.webp',NULL,1535,NULL,NULL,'2026-05-09 11:44:27',NULL),(40,'Utsuro no Hako to Zero no Maria','manga',NULL,NULL,'https://myanimelist.net/images/manga/2/175662l.webp',55215,NULL,NULL,NULL,'2026-05-10 16:46:25',NULL),(41,'Robotics;Notes','anime',NULL,NULL,'https://myanimelist.net/images/anime/10/42013l.webp',NULL,13599,NULL,NULL,'2026-05-10 17:22:53',NULL),(42,'Chuukan Kanriroku Tonegawa','anime',NULL,NULL,'https://myanimelist.net/images/anime/1072/93145l.webp',NULL,37338,NULL,NULL,'2026-05-10 17:23:12',NULL),(43,'Suzumiya Haruhi Series','manga',NULL,NULL,'https://myanimelist.net/images/manga/1/186142l.webp',3083,NULL,NULL,NULL,'2026-05-10 17:26:21',NULL),(44,'Seihantai na Kimi to Boku','anime',NULL,NULL,'https://myanimelist.net/images/anime/1140/154457l.webp',NULL,60371,NULL,NULL,'2026-05-10 17:32:17',NULL),(45,'Guimi Zhi Zhu','manga',NULL,NULL,'https://myanimelist.net/images/manga/2/287344l.webp',162032,NULL,NULL,NULL,'2026-05-10 17:36:28',NULL);
 /*!40000 ALTER TABLE `media` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -327,7 +327,7 @@ CREATE TABLE `media_usuario` (
   KEY `id_media` (`id_media`),
   CONSTRAINT `media_usuario_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`) ON DELETE CASCADE,
   CONSTRAINT `media_usuario_ibfk_2` FOREIGN KEY (`id_media`) REFERENCES `media` (`id_media`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -336,7 +336,7 @@ CREATE TABLE `media_usuario` (
 
 LOCK TABLES `media_usuario` WRITE;
 /*!40000 ALTER TABLE `media_usuario` DISABLE KEYS */;
-INSERT INTO `media_usuario` VALUES (1,5,34,'planned',NULL,0,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-04-25 14:39:49','2026-04-25 14:47:46'),(6,5,33,'planned',NULL,0,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-04-25 14:48:12','2026-04-25 15:20:23'),(22,5,23,'paused',10,0,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-04-25 15:24:16','2026-04-25 15:30:41'),(27,5,35,'completed',7,0,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-04-25 15:26:00','2026-04-25 15:26:13'),(33,5,29,'watching',6,0,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-04-25 15:31:06','2026-04-25 15:31:17'),(37,3,36,'completed',10,1,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-04-25 16:26:12','2026-04-25 16:26:57'),(42,3,37,'completed',9,1,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-04-25 16:31:20','2026-04-25 16:53:02'),(46,3,23,'watching',5,0,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-04-25 16:56:39','2026-04-25 16:57:00'),(47,3,34,NULL,NULL,0,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-04-26 13:29:25','2026-04-26 13:29:28'),(48,4,38,'completed',5,1,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-04-26 14:08:39','2026-04-26 14:08:54'),(54,4,33,'completed',10,1,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-04-26 14:55:38','2026-04-26 14:55:47');
+INSERT INTO `media_usuario` VALUES (1,5,34,'planned',NULL,0,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-04-25 14:39:49','2026-04-25 14:47:46'),(6,5,33,'planned',NULL,0,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-04-25 14:48:12','2026-04-25 15:20:23'),(22,5,23,'paused',10,0,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-04-25 15:24:16','2026-04-25 15:30:41'),(27,5,35,'completed',7,0,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-04-25 15:26:00','2026-04-25 15:26:13'),(33,5,29,'watching',6,0,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-04-25 15:31:06','2026-04-25 15:31:17'),(37,3,36,'completed',10,0,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-04-25 16:26:12','2026-05-10 16:48:13'),(42,3,37,'completed',9,0,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-04-25 16:31:20','2026-05-10 16:47:59'),(46,3,23,'watching',5,0,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-04-25 16:56:39','2026-04-25 16:57:00'),(47,3,34,NULL,NULL,0,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-04-26 13:29:25','2026-04-26 13:29:28'),(48,4,38,'completed',5,1,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-04-26 14:08:39','2026-04-26 14:08:54'),(54,4,33,'planned',10,1,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-04-26 14:55:38','2026-05-09 12:01:26'),(56,4,39,'completed',8,1,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-05-09 11:44:27','2026-05-09 11:52:35'),(57,3,40,'completed',10,1,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-05-10 16:46:25','2026-05-10 16:46:53'),(64,10,41,'completed',8,1,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-05-10 17:22:53','2026-05-10 17:24:29'),(67,10,42,'completed',5,1,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-05-10 17:23:12','2026-05-10 17:24:35'),(74,10,43,'planned',9,0,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-05-10 17:26:21','2026-05-10 17:34:00'),(76,10,44,'planned',NULL,1,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-05-10 17:32:17','2026-05-10 17:32:18'),(80,10,45,'planned',NULL,0,NULL,NULL,NULL,0,0,0,NULL,NULL,'2026-05-10 17:36:31','2026-05-10 17:36:31');
 /*!40000 ALTER TABLE `media_usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -393,7 +393,7 @@ CREATE TABLE `personajes_usuario` (
 
 LOCK TABLES `personajes_usuario` WRITE;
 /*!40000 ALTER TABLE `personajes_usuario` DISABLE KEYS */;
-INSERT INTO `personajes_usuario` VALUES (3,34,111335,'Greyrat, Eris Boreas','https://cdn.myanimelist.net/images/characters/14/324594.jpg?s=3648ce18134882a5f934130607f69548'),(3,34,111341,'Migurdia, Roxy','https://cdn.myanimelist.net/images/characters/16/552605.jpg?s=77b5b2dfd526c9ec5563c372a4dac111'),(5,33,184947,'Frieren','https://cdn.myanimelist.net/images/characters/7/525105.jpg?s=1706604ec2ca141a172526b8dedf3177'),(5,33,188176,'Fern','https://cdn.myanimelist.net/images/characters/12/619183.jpg?s=15f45c66440c0e9843e2f0109f0c1aef'),(5,33,188177,'Stark','https://cdn.myanimelist.net/images/characters/7/621924.jpg?s=ff623ff40dde15a769f879d87d6e7dcd');
+INSERT INTO `personajes_usuario` VALUES (3,40,87719,'Hoshino, Kazuki','https://cdn.myanimelist.net/images/characters/11/280825.jpg?s=bf337940693f77bb83e85b114eeaa574'),(3,40,87721,'Otonashi, Maria','https://cdn.myanimelist.net/images/characters/4/218559.jpg?s=809502c72fdb6d773a7c46b346916789'),(3,40,87925,'Oomine, Daiya','https://cdn.myanimelist.net/images/characters/16/225157.jpg?s=53399b0abacdb259f9a7d95bef76e03e'),(3,34,111335,'Greyrat, Eris Boreas','https://cdn.myanimelist.net/images/characters/14/324594.jpg?s=3648ce18134882a5f934130607f69548'),(3,34,111341,'Migurdia, Roxy','https://cdn.myanimelist.net/images/characters/16/552605.jpg?s=77b5b2dfd526c9ec5563c372a4dac111'),(4,39,3767,'Aizawa, Shuuichi','https://cdn.myanimelist.net/images/characters/4/55515.jpg?s=a9df293e54c36408a5c17b5200e77404'),(5,33,184947,'Frieren','https://cdn.myanimelist.net/images/characters/7/525105.jpg?s=1706604ec2ca141a172526b8dedf3177'),(5,33,188176,'Fern','https://cdn.myanimelist.net/images/characters/12/619183.jpg?s=15f45c66440c0e9843e2f0109f0c1aef'),(5,33,188177,'Stark','https://cdn.myanimelist.net/images/characters/7/621924.jpg?s=ff623ff40dde15a769f879d87d6e7dcd');
 /*!40000 ALTER TABLE `personajes_usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -467,13 +467,13 @@ CREATE TABLE `usuarios` (
   `email` varchar(100) NOT NULL,
   `password_hash` varchar(255) NOT NULL,
   `bio` text,
-  `avatar` varchar(255) DEFAULT NULL,
+  `avatar` varchar(255) DEFAULT '../../Recursos/fotos_perfil/fotousuario.png',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `banner` varchar(255) DEFAULT NULL,
+  `banner` varchar(255) DEFAULT '../../Recursos/Banners/banner.png',
   PRIMARY KEY (`id_usuario`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -482,7 +482,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'Cosmin','cosmin@gmail.com','$2y$10$HEcKCfoAnDDw24sWlJ1M7eecjQY6HSJbaE8AoWcxx40FO2vk8dGFO',NULL,NULL,'2026-03-23 09:45:14',NULL),(3,'Groom','groom@gmail.co,','$2y$10$XokoTpFhEJ0rRKhnF8IYQ.wWK/c5gVAaGz4aI4VvgVnQOgIpAjgRC',NULL,'/Recursos/fotos_perfil/user_3_1777137758.jpg','2026-04-15 09:29:52','/Recursos/Banners/banner_3_1777137758.png'),(4,'Kiki','kiki@gmail.com','$2y$10$T.WXjXJ56MbcWy3X7zyqpO0OZW7jOFRGOf8PtH7nIyGxAGmxxhOuW',NULL,'/Recursos/fotos_perfil/user_4_1777211414.jpg','2026-04-15 13:07:44','/Recursos/Banners/banner_4_1777211414.png'),(5,'Diddy','diddy@gmail.com','$2y$10$9hpfBFOVdTgKCZKNiglRQ.c8Jt8Reak5DydAsnHlmCJ4BLIkb0FVu',NULL,'/Recursos/fotos_perfil/user_5_1777136600.png','2026-04-25 14:13:57','/Recursos/Banners/banner_5_1777136823.png'),(6,'Klik','klik@gmail.com','$2y$10$gBkOH9eUvkJfPFkR2W3t7.t1m1LCHjEJrI/A1Tnukz2FTohGaMLru',NULL,'/Recursos/fotos_perfil/user_6_1777137008.png','2026-04-25 17:09:50','/Recursos/Banners/banner_6_1777137396.png'),(7,'Hola','hola@gmail.com','$2y$10$ITToSyh6NUiYGbBI0apPXu4V5D.Ks0h86yjS84Rzn8y6w6a9.Ysie',NULL,'/Recursos/fotos_perfil/user_7_1777137614.png','2026-04-25 17:19:55','/Recursos/Banners/banner_7_1777138091.png');
+INSERT INTO `usuarios` VALUES (1,'Cosmin','cosmin@gmail.com','$2y$10$HEcKCfoAnDDw24sWlJ1M7eecjQY6HSJbaE8AoWcxx40FO2vk8dGFO',NULL,NULL,'2026-03-23 09:45:14',NULL),(3,'Groom','groom@gmail.co,','$2y$10$XokoTpFhEJ0rRKhnF8IYQ.wWK/c5gVAaGz4aI4VvgVnQOgIpAjgRC',NULL,'/Recursos/fotos_perfil/user_3_1777137758.jpg','2026-04-15 09:29:52','/Recursos/Banners/banner_3_1778431994.png'),(4,'Kiki','kiki@gmail.com','$2y$10$T.WXjXJ56MbcWy3X7zyqpO0OZW7jOFRGOf8PtH7nIyGxAGmxxhOuW',NULL,'/Recursos/fotos_perfil/user_4_1777211414.jpg','2026-04-15 13:07:44','/Recursos/Banners/banner_4_1778327421.png'),(5,'Diddy','diddy@gmail.com','$2y$10$9hpfBFOVdTgKCZKNiglRQ.c8Jt8Reak5DydAsnHlmCJ4BLIkb0FVu',NULL,'/Recursos/fotos_perfil/user_5_1777136600.png','2026-04-25 14:13:57','/Recursos/Banners/banner_5_1777136823.png'),(6,'Klik','klik@gmail.com','$2y$10$gBkOH9eUvkJfPFkR2W3t7.t1m1LCHjEJrI/A1Tnukz2FTohGaMLru',NULL,'/Recursos/fotos_perfil/user_6_1777137008.png','2026-04-25 17:09:50','/Recursos/Banners/banner_6_1777137396.png'),(7,'Hola','hola@gmail.com','$2y$10$ITToSyh6NUiYGbBI0apPXu4V5D.Ks0h86yjS84Rzn8y6w6a9.Ysie',NULL,'/Recursos/fotos_perfil/user_7_1777137614.png','2026-04-25 17:19:55','/Recursos/Banners/banner_7_1777138091.png'),(8,'Grum','grum@gmail.com','$2y$10$gnOE9zRAL.emYcpb5lf5t.cBxJ7xx3iH7Mu6.7T8tQifMOys3wbVi',NULL,NULL,'2026-05-09 17:57:04',NULL),(9,'Grape','grape@gmail.com','$2y$10$pi/GQwcNDm89MhS/Nb8SguXhg1PqMi.CdBauFNawZNydu79y66p4.',NULL,'../../Recursos/fotos_perfil/fotousuario.png','2026-05-09 18:24:05','../../Recursos/Banners/banner.png'),(10,'Sato','sato@gmail.com','$2y$10$CaX8y29LiJUKv9KeCIuoqufKFg0AfbQ39wolOPvJhf1Wk9HB/TRCq',NULL,'/Recursos/fotos_perfil/user_10_1778433752.png','2026-05-10 17:21:43','../../Recursos/Banners/banner.png');
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -495,4 +495,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-04-26 17:04:56
+-- Dump completed on 2026-05-10 19:47:26

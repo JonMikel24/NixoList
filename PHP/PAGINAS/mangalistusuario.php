@@ -1,9 +1,6 @@
 <?php
-// ¡Magia! Con esta línea traemos todos los datos procesados de las PELÍCULAS
-// ⚠️ NOTA: Asegúrate de crear este archivo copiando tu 'logica_animelist.php' 
-// y cambiando en la consulta SQL el "type = 'anime'" por "type = 'pelicula'"
-require_once '../FUNCIONALIDADES/logica_peliculaslist.php';
-
+// ¡Magia! Con esta línea traemos todos los datos procesados enfocados a MANGA
+require_once '../FUNCIONALIDADES/logica_mangalist.php';
 ?>
     <link rel="stylesheet" href="../../CSS/medialistusuario.css">
 
@@ -11,8 +8,8 @@ require_once '../FUNCIONALIDADES/logica_peliculaslist.php';
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Películas</title> <link rel="stylesheet" href="../../CSS/styles.css">
-
+<title>Manga List</title>
+<link rel="stylesheet" href="../../CSS/styles.css">
 </head>
 <header class="header-main">
     <div class="header-top">
@@ -49,7 +46,7 @@ require_once '../FUNCIONALIDADES/logica_peliculaslist.php';
 </header>
 <body>
     <?php
-    // Obtenemos el nombre del archivo actual (ej: peliculas.php)
+    // Obtenemos el nombre del archivo actual
     $pagina_actual = basename($_SERVER['PHP_SELF']);
     ?>
 
@@ -65,6 +62,16 @@ require_once '../FUNCIONALIDADES/logica_peliculaslist.php';
                 <a href="anime.php#recomendados">Recomendados</a>
                 <a href="anime.php#populares">Más Populares</a>
                 <a href="anime.php#top">Top Anime</a>
+            </div>
+        </div>
+
+                <div class="menu-desplegable">
+            <a href="manga.php" class="seccion-principal <?php echo ($pagina_actual == 'manga.php') ? 'active' : ''; ?>">Manga</a>
+            <div class="sub-menu">
+                <a href="manga.php">Inicio Manga</a>
+                <a href="manga.php#recomendados">Recomendados</a>
+                <a href="manga.php#populares">Más Populares</a>
+                <a href="manga.php#top">Top Manga</a>
             </div>
         </div>
 
@@ -95,10 +102,8 @@ require_once '../FUNCIONALIDADES/logica_peliculaslist.php';
             <option value="all">All</option>
             <option value="anime">Anime</option>
             <option value="manga">Manga</option>
-            <option value="pelicula">Películas</option>
-            <option value="tv">Series</option>
         </select>
-        <input type="text" placeholder="Search Anime, Movies, and more..." class="search-input">
+        <input type="text" placeholder="Search Anime, Manga, and more..." class="search-input">
         <button type="submit" class="search-button">
             <i>🔍</i> 
         </button>
@@ -109,27 +114,26 @@ require_once '../FUNCIONALIDADES/logica_peliculaslist.php';
     <?php foreach ($listaAgrupada as $estado => $lista): ?>
         <?php if (count($lista) > 0): ?>
             <div class="status-section">
-                <h2 class="status-title"><?php echo $nombresEstados[$estado]; ?></h2>
+                <h2 class="status-title"><?php echo isset($nombresEstados[$estado]) ? $nombresEstados[$estado] : 'Reading'; ?></h2>                
                 
                 <table class="anime-table">
                     <thead>
                         <tr>
                             <th>Title</th>
                             <th class="center-text" style="width: 100px;">Score</th>
-                            <th class="center-text" style="width: 120px;">Progress</th>
+                            <th class="center-text" style="width: 120px;">Progress (Ch.)</th>
                             <th class="center-text" style="width: 100px;">Type</th>
                         </tr>
                     </thead>
                     <tbody>
 <?php foreach ($lista as $item): 
-                            // Calculamos qué ID usar (MyAnimeList o TMDB) según el tipo
-                            $id_para_link = (strtolower($item['type']) === 'anime') ? $item['mal_id'] : $item['tmdb_id']; 
-                        ?>
+                            // En manga, usamos mal_id
+                            $id_para_link = (strtolower($item['type']) === 'anime' || strtolower($item['type']) === 'manga') ? $item['mal_id'] : $item['tmdb_id'];                        ?>
                             <tr>
                                 <td>
                                     <div class="anime-title-col">
                                         <img src="<?php echo htmlspecialchars($item['portada']); ?>" alt="Cover" class="anime-cover">
-                                        <a href="media.php?id=<?php echo urlencode($id_para_link); ?>&type=<?php echo urlencode($item['type']); ?>" class="anime-name">
+                                        <a href="media.php?id=<?php echo urlencode($id_para_link); ?>&type=<?php echo urlencode(strtolower($item['type'])); ?>" class="anime-name">
                                             <?php echo htmlspecialchars($item['titulo']); ?>
                                         </a>
                                     </div>
