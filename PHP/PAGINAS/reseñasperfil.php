@@ -42,9 +42,115 @@ $user_reviews = $stmtRev->fetchAll(PDO::FETCH_ASSOC);
     <title>Reseñas de <?php echo htmlspecialchars($datosVisitado['username']); ?></title>
 </head>
 <body>
-
 <header class="header-main">
-    </header>
+    <div class="header-top">
+        <div class="logo-container">
+            <a href="index.php" class="enlace-logo">
+                <h1 class="logo-texto">NixoList</h1>
+            </a>
+        </div>
+
+        <div class="PerfilContenedor"> <?php
+            if (isset($_SESSION['Usuario'])) {
+                $Foto = (!empty($_SESSION['Foto'])) ? $_SESSION['Foto'] : '../../Recursos/fotos_perfil/fotousuario.png';
+                echo '
+                <a href="listaperfil.php" style="text-decoration: none; color: inherit;">
+                    <div class="perfil-horiz">
+                        <div class="perfil-info">
+                            <p class="perfil-nombre nombre-mio">' . htmlspecialchars($_SESSION['Usuario']) . ' <span class="flecha">▼</span></p>
+                        </div>
+                        <img src="' . htmlspecialchars($Foto) . '" class="profile-pic foto-mia" id="perfilImagen"> 
+                    </div>
+                </a>
+                ';
+            } else {
+                echo '
+                <div class="auth-buttons">
+                    <a href="../Login/Index.php"><button class="login-btn">Iniciar Sesión</button></a>
+                    <a href="../Login/registrarse.php"><button class="register-btn">Registrarse</button></a>
+                </div>
+                ';
+            }
+            ?>
+        </div>
+    </div>
+</header>
+    <?php
+    
+    $pagina_actual = basename($_SERVER['PHP_SELF']);
+    ?>
+
+<nav class="navbar">
+    <div class="nav-links">
+        
+        <a href="index.php" class="<?php echo ($pagina_actual == 'index.php') ? 'active' : ''; ?>">Inicio</a>
+
+        <div class="menu-desplegable">
+            <a href="anime.php" class="seccion-principal <?php echo ($pagina_actual == 'anime.php') ? 'active' : ''; ?>">Anime</a>
+            <div class="sub-menu">
+                <a href="anime.php">Inicio Anime</a>
+                <a href="anime.php#recomendados">Recomendados</a>
+                <a href="anime.php#populares">Más Populares</a>
+                <a href="anime.php#top">Top Anime</a>
+            </div>
+        </div>
+
+        <div class="menu-desplegable">
+            <a href="manga.php" class="seccion-principal <?php echo ($pagina_actual == 'manga.php') ? 'active' : ''; ?>">Manga</a>
+            <div class="sub-menu">
+                <a href="manga.php">Inicio Manga</a>
+                <a href="manga.php#recomendados">Recomendados</a>
+                <a href="manga.php#populares">Más Populares</a>
+                <a href="manga.php#top">Top Manga</a>
+            </div>
+        </div>
+
+        <div class="menu-desplegable">
+            <a href="peliculas.php" class="seccion-principal <?php echo ($pagina_actual == 'peliculas.php') ? 'active' : ''; ?>">Películas</a>
+            <div class="sub-menu">
+                <a href="peliculas.php">Inicio Películas</a>
+                <a href="peliculas.php#recomendadas">Recomendadas</a>
+                <a href="peliculas.php#populares">Más Populares</a>
+                <a href="peliculas.php#top">Top Rated</a>
+            </div>
+        </div>
+
+        <div class="menu-desplegable">
+            <a href="series.php" class="seccion-principal <?php echo ($pagina_actual == 'series.php') ? 'active' : ''; ?>">Series</a>
+            <div class="sub-menu">
+                <a href="series.php">Inicio Series</a>
+                <a href="series.php#trending">Trending</a>
+                <a href="series.php#populares">Más Populares</a>
+                <a href="series.php#top">Top Rated</a>
+            </div>
+        </div>
+
+        <div class="menu-desplegable">
+            <a href="juegos.php" class="seccion-principal <?php echo (in_array($pagina_actual, ['juegos.php', 'juegoOpeningsAnime.php', 'juegoPersonajesAnime.php', 'juegoWordleAnime.php'])) ? 'active' : ''; ?>">Juegos</a>
+            <div class="sub-menu">
+                <a href="juegos.php">Inicio Juegos</a>
+                <a href="juegoOpeningsAnime.php">Adivina el Opening</a>
+                <a href="juegoPersonajesAnime.php">Adivina el Personaje</a>
+                <a href="juegoWordleAnime.php">Wordle Anime</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="search-wrapper" style="position: relative;"> 
+        <div class="search-container">
+            <select class="search-select" id="search-type">
+                <option value="all">All</option>
+                <option value="anime">Anime</option>
+                <option value="manga">Manga</option>
+                <option value="movie">Películas</option>
+                <option value="tv">Series</option>
+            </select>
+            <input type="text" id="search-input" placeholder="Search..." class="search-input" autocomplete="off">
+            <button type="submit" class="search-button"><i>🔍</i></button>
+        </div>
+        <div id="search-results" class="search-results-dropdown"></div>
+    </div>
+</nav>
 
 <div class="profile-banner-container">
     <img src="<?php echo htmlspecialchars($BannerVisitado); ?>" class="banner-image">
@@ -60,17 +166,18 @@ $user_reviews = $stmtRev->fetchAll(PDO::FETCH_ASSOC);
 </div>
 
 <div class="profile-subnav">
-    <a href="listaperfil.php?id=<?php echo $id_perfil_visitado; ?>">Overview</a>
+    <a href="listaperfil.php?id=<?php echo $id_perfil_visitado; ?>">General</a>
     <a href="animelistusuario.php?id=<?php echo $id_perfil_visitado; ?>">Anime List</a>
+    <a href="mangalistusuario.php?id=<?php echo $id_perfil_visitado; ?>">Manga List</a>
     <a href="peliculatvlistusuario.php?id=<?php echo $id_perfil_visitado; ?>">TV List</a>
-    <a href="amigos.php?id=<?php echo $id_perfil_visitado; ?>">Friends</a>
-    <a href="reviews_usuario.php?id=<?php echo $id_perfil_visitado; ?>" class="active">Reviews</a>
+    <a href="amigos.php?id=<?php echo $id_perfil_visitado; ?>">Social</a>
+    <a href="reviews_usuario.php?id=<?php echo $id_perfil_visitado; ?>" class="active">Reseñas</a>
 </div>
 
 <div class="profile-body-container">
     <div class="profile-left-col">
         <div class="content-card">
-            <h3 class="card-title">Total Reviews</h3>
+            <h3 class="card-title">Total Reseñas</h3>
             <p style="font-size: 2em; color: #ffdd1c; font-weight: bold;">
                 <?php echo count($user_reviews); ?>
             </p>
@@ -79,7 +186,7 @@ $user_reviews = $stmtRev->fetchAll(PDO::FETCH_ASSOC);
 
     <div class="profile-right-col">
         <div class="content-section">
-            <h3 class="section-title">All Reviews</h3>
+            <h3 class="section-title">Todas Las Reseñas</h3>
             
             <?php if (empty($user_reviews)): ?>
                 <p class="empty-text">Este usuario aún no ha escrito reseñas.</p>

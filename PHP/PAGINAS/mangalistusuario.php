@@ -132,7 +132,14 @@ if (!isset($nombresEstados)) {
 
 <div class="list-container">
     <?php foreach ($listaAgrupada as $estado => $lista): ?>
-        <?php if (count($lista) > 0): ?>
+        <?php if (count($lista) > 0): 
+            // --- ORDENACIÓN POR SCORE (Puntuación) ---
+            usort($lista, function($a, $b) {
+                // Comparamos puntuaciones de mayor a menor
+                return $b['puntuacion'] <=> $a['puntuacion'];
+            });
+            // -----------------------------------------
+        ?>
             <div class="status-section">
                 <h2 class="status-title"><?php echo isset($nombresEstados[$estado]) ? $nombresEstados[$estado] : 'Reading'; ?></h2>                
                 
@@ -146,9 +153,10 @@ if (!isset($nombresEstados)) {
                         </tr>
                     </thead>
                     <tbody>
-<?php foreach ($lista as $item): 
-                            // En manga, usamos mal_id
-                            $id_para_link = (strtolower($item['type']) === 'anime' || strtolower($item['type']) === 'manga') ? $item['mal_id'] : $item['tmdb_id'];                        ?>
+                        <?php foreach ($lista as $item): 
+                            // En manga y anime, usamos mal_id
+                            $id_para_link = (strtolower($item['type']) === 'anime' || strtolower($item['type']) === 'manga') ? $item['mal_id'] : $item['tmdb_id']; 
+                        ?>
                             <tr>
                                 <td>
                                     <div class="anime-title-col">
@@ -159,7 +167,9 @@ if (!isset($nombresEstados)) {
                                     </div>
                                 </td>
                                 <td class="center-text">
-                                    <?php echo ($item['puntuacion'] > 0) ? $item['puntuacion'] : '-'; ?>
+                                    <strong style="color: #ffcc00;">
+                                        <?php echo ($item['puntuacion'] > 0) ? $item['puntuacion'] : '-'; ?>
+                                    </strong>
                                 </td>
                                 <td class="center-text">
                                     <?php echo $item['episodios_vistos']; ?> / <?php echo ($item['episodios_totales'] > 0) ? $item['episodios_totales'] : '?'; ?>
@@ -175,5 +185,3 @@ if (!isset($nombresEstados)) {
         <?php endif; ?>
     <?php endforeach; ?>
 </div>
-</body>
-</html>

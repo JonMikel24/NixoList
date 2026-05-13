@@ -345,11 +345,11 @@ case 'reviews':
                 <h2 class="section-title">Summary Stats</h2>
                 <?php if(!empty($stats)): ?>
                     <div class="stats-list" style="background: #1a1a1a; padding: 20px; border-radius: 5px;">
-                        <p><b>Watching:</b> <?php echo number_format($stats['watching']); ?></p>
-                        <p><b>Completed:</b> <?php echo number_format($stats['completed']); ?></p>
-                        <p><b>On Hold:</b> <?php echo number_format($stats['on_hold']); ?></p>
+                        <p><b>Viendo:</b> <?php echo number_format($stats['watching']); ?></p>
+                        <p><b>Completado:</b> <?php echo number_format($stats['completed']); ?></p>
+                        <p><b>Pausado:</b> <?php echo number_format($stats['on_hold']); ?></p>
                         <p><b>Dropped:</b> <?php echo number_format($stats['dropped']); ?></p>
-                        <p><b>Plan to Watch:</b> <?php echo number_format($stats['plan_to_watch']); ?></p>
+                        <p><b>Planeando:</b> <?php echo number_format($stats['plan_to_watch']); ?></p>
                         <p style="border-top: 1px solid #333; margin-top: 10px; padding-top: 10px;"><b>Total Members:</b> <?php echo number_format($stats['total']); ?></p>
                     </div>
                 <?php else: echo "No stats available for this media."; endif; ?>

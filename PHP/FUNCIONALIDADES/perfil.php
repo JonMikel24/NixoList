@@ -48,7 +48,6 @@ try {
     ");
     $stmtRev->execute([$id_usuario]);
     $user_reviews = $stmtRev->fetchAll(PDO::FETCH_ASSOC);
-    // 👇 AQUÍ ESTÁ LA SOLUCIÓN 👇
     // --- Obtener Personajes Favoritos ---
     $stmtChars = $pdo->prepare("
         SELECT personaje_nombre, personaje_imagen 
