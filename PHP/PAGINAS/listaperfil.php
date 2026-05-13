@@ -173,7 +173,7 @@ require_once '../FUNCIONALIDADES/perfil.php';
     <div class="profile-user-info">
         <h2 class="profile-username"><?php echo htmlspecialchars($datosVisitado['username']); ?></h2>
         <div class="profile-meta">
-            <span>Joined <?php echo date('M j, Y', strtotime($datosVisitado['created_at'])); ?></span>
+            <span>Desde <?php echo date('M j, Y', strtotime($datosVisitado['created_at'])); ?></span>
         </div>
     </div>
     <div class="profile-actions">
