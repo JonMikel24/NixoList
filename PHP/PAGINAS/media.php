@@ -143,6 +143,8 @@ case 'reviews':
     <meta charset="UTF-8">
     <title><?php echo htmlspecialchars($title); ?></title>
     <link rel="stylesheet" href="../../CSS/styles.css">
+    <link rel="icon" type="image/png" href="../../Recursos/icono/icononixo.png">
+
     <link rel="stylesheet" href="../../CSS/media.css">
 </head>
 <body>

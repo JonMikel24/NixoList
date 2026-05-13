@@ -9,6 +9,8 @@ session_start();
 <title>NixoList - Juegos</title>
 <link rel="stylesheet" href="../../CSS/styles.css">
 <link rel="stylesheet" href="../../CSS/juegos.css">
+<link rel="icon" type="image/png" href="../../Recursos/icono/icononixo.png">
+
 </head>
 
 <body>

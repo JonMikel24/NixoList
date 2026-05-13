@@ -33,6 +33,8 @@ if ($seccion == 'inicio') {
 <meta charset="UTF-8">
 <title>Manga - NixoList</title>
 <link rel="stylesheet" href="../../CSS/styles.css">
+<link rel="icon" type="image/png" href="../../Recursos/icono/icononixo.png">
+
 </head>
 <body>
 <header class="header-main">

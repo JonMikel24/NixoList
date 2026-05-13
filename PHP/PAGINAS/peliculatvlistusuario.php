@@ -12,6 +12,8 @@ require_once '../FUNCIONALIDADES/logica_peliculaslist.php';
 <head>
 <meta charset="UTF-8">
 <title>Películas</title> <link rel="stylesheet" href="../../CSS/styles.css">
+<link rel="icon" type="image/png" href="../../Recursos/icono/icononixo.png">
+
 
 </head>
 <header class="header-main">

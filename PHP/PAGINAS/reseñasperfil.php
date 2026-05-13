@@ -37,6 +37,8 @@ $user_reviews = $stmtRev->fetchAll(PDO::FETCH_ASSOC);
 <html lang="es">
 <head>
     <link rel="stylesheet" href="../../CSS/listaperfil.css">
+    <link rel="icon" type="image/png" href="../../Recursos/icono/icononixo.png">
+
     <link rel="stylesheet" href="../../CSS/styles.css">
     <meta charset="UTF-8">
     <title>Reseñas de <?php echo htmlspecialchars($datosVisitado['username']); ?></title>

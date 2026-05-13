@@ -8,7 +8,8 @@ session_start();
     <meta charset="UTF-8">
     <title>Adivina el Personaje - NixoList</title>
     <link rel="stylesheet" href="../../CSS/juegos.css">
-    
+    <link rel="icon" type="image/png" href="../../Recursos/icono/icononixo.png">
+
     <link rel="stylesheet" href="../../CSS/styles.css">
 </head>
 

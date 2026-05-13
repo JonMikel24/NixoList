@@ -23,6 +23,8 @@ $topSeries = callAPI("https://api.themoviedb.org/3/trending/tv/week?api_key=".$t
 <meta charset="UTF-8">
 <title>NixoList</title>
 <link rel="stylesheet" href="../../CSS/styles.css">
+<link rel="icon" type="image/png" href="../../Recursos/icono/icononixo.png">
+
 </head>
 <body>
 <header class="header-main">

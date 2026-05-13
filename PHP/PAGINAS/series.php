@@ -30,6 +30,8 @@ if ($seccion == 'inicio') {
 <meta charset="UTF-8">
 <title>Series</title>
 <link rel="stylesheet" href="../../CSS/styles.css">
+<link rel="icon" type="image/png" href="../../Recursos/icono/icononixo.png">
+
 </head>
 <header class="header-main">
     <div class="header-top">

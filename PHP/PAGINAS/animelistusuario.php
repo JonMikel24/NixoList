@@ -14,6 +14,7 @@ require_once '../FUNCIONALIDADES/logica_animelist.php';
 <meta charset="UTF-8">
 <title>Anime</title>
 <link rel="stylesheet" href="../../CSS/styles.css">
+<link rel="icon" type="image/png" href="../../Recursos/icono/icononixo.png">
 
 </head>
 <header class="header-main">

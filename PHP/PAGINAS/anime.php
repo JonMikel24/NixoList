@@ -29,9 +29,11 @@ if ($seccion == 'inicio') {
 <meta charset="UTF-8">
 <title>Anime</title>
 <link rel="stylesheet" href="../../CSS/styles.css">
+<link rel="icon" type="image/png" href="../../Recursos/icono/icononixo.png">
 
 </head>
 <header class="header-main">
+    
     <div class="header-top">
         <div class="logo-container">
             <a href="index.php" class="enlace-logo">

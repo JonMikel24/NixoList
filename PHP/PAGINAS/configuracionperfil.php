@@ -17,6 +17,8 @@ $bannerActual = (!empty($_SESSION['Banner'])) ? $_SESSION['Banner'] : '/Recursos
     <meta charset="UTF-8">
     <title>Configuración de Perfil - Nixolist</title>
     <link rel="stylesheet" href="../../CSS/configuracion.css">
+    <link rel="icon" type="image/png" href="../../Recursos/icono/icononixo.png">
+
     <style>
         .input-error { border: 2px solid #ff4d4d !important; }
         .error-msg { color: #ff4d4d; font-size: 0.9em; margin-bottom: 8px; font-weight: bold; display: block; }

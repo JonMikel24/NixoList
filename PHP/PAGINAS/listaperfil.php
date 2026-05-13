@@ -46,6 +46,8 @@ require_once '../FUNCIONALIDADES/perfil.php';
 <html lang="es">
 <head>
     <link rel="stylesheet" href="../../CSS/listaperfil.css">
+    <link rel="icon" type="image/png" href="../../Recursos/icono/icononixo.png">
+
     <link rel="stylesheet" href="../../CSS/styles.css">
     <script src="../../JS/busqueda.js"></script>
 
