@@ -125,13 +125,13 @@ $topSeries = callAPI("https://api.themoviedb.org/3/trending/tv/week?api_key=".$t
     <div class="search-wrapper" style="position: relative;"> 
         <div class="search-container">
             <select class="search-select" id="search-type">
-                <option value="all">All</option>
+                <option value="all">Todos</option>
                 <option value="anime">Anime</option>
                 <option value="manga">Manga</option>
                 <option value="movie">Películas</option>
                 <option value="tv">Series</option>
             </select>
-            <input type="text" id="search-input" placeholder="Search..." class="search-input" autocomplete="off">
+            <input type="text" id="search-input" placeholder="Buscar..." class="search-input" autocomplete="off">
             <button type="submit" class="search-button"><i>🔍</i></button>
         </div>
         <div id="search-results" class="search-results-dropdown"></div>

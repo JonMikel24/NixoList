@@ -106,13 +106,13 @@ session_start();
     <div class="search-wrapper" style="position: relative;"> 
         <div class="search-container">
             <select class="search-select" id="search-type">
-                <option value="all">All</option>
+                <option value="all">Todos</option>
                 <option value="anime">Anime</option>
                 <option value="manga">Manga</option>
                 <option value="movie">Películas</option>
                 <option value="tv">Series</option>
             </select>
-            <input type="text" id="search-input" placeholder="Search..." class="search-input" autocomplete="off">
+            <input type="text" id="search-input" placeholder="Buscar..." class="search-input" autocomplete="off">
             <button type="submit" class="search-button"><i>🔍</i></button>
         </div>
         <div id="search-results" class="search-results-dropdown"></div>
@@ -125,7 +125,7 @@ session_start();
         
         <div class="wordle-left">
             <h2>Wordle Anime</h2>
-            <p>Adivina el personaje de anime (5 letras)</p>
+            <p>Adivina el personaje de anime (6 letras)</p>
             <div id="wordle-board" class="board"></div>
         </div>
 
@@ -139,13 +139,11 @@ session_start();
 </div>
 
 <script>
-// Diccionario estricto de 5 letras
+// Diccionario estricto de 6 letras
 const diccionarioAnime = [
-    "LUFFY", "SANJI", "USOPP", "AKIRA",
-    "BROLY", "GOHAN", "BULMA", "NATSU",
-    "LIGHT", "GAARA", "RUKIA", "ARMIN",
-    "ERWIN", "SASHA", "HANGE", "DENJI",
-    "POWER", "ASUKA", "AKAME", "SHIRO" 
+    "NARUTO", "SASUKE", "VEGETA", "ITACHI", "SAKURA",
+    "KANEKI", "ICHIGO", "MIKASA", "EDWARD", "NEZUKO",
+    "SHINJI", "MAKIMA", "JOTARO", "KILLUA", "HISOKA"
 ];
 
 let palabraObjetivo = "";
@@ -153,7 +151,7 @@ let intentoActual = 0;
 let letraActual = 0;
 let juegoTerminado = false;
 const MAX_INTENTOS = 6;
-const LONGITUD_PALABRA = 5;
+const LONGITUD_PALABRA = 6;
 
 function iniciarWordle() {
     palabraObjetivo = diccionarioAnime[Math.floor(Math.random() * diccionarioAnime.length)].toUpperCase();
@@ -255,7 +253,7 @@ function borrarLetra() {
 
 function verificarPalabra() {
     if (letraActual !== LONGITUD_PALABRA) {
-        document.getElementById('wordle-mensaje').innerText = "Faltan letras ⚠️";
+        document.getElementById('wordle-mensaje').innerText = "Faltan letras";
         setTimeout(() => { document.getElementById('wordle-mensaje').innerText = ""; }, 1500);
         return;
     }
@@ -266,7 +264,7 @@ function verificarPalabra() {
     }
 
     let tempObjetivo = palabraObjetivo.split("");
-    let filaColores = new Array(5).fill("absent");
+    let filaColores = new Array(LONGITUD_PALABRA).fill("absent"); // Adaptado a la nueva longitud
 
     // 1. Verdes (correct)
     for (let i = 0; i < LONGITUD_PALABRA; i++) {
@@ -328,7 +326,6 @@ function finalizarJuego() {
 }
 
 function reiniciarWordle() {
-    // Ya no recargamos la página, simplemente reiniciamos el juego usando la función de inicio
     iniciarWordle();
 }
 

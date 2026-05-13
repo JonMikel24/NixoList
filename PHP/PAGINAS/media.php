@@ -242,13 +242,13 @@ case 'reviews':
     <div class="search-wrapper" style="position: relative;"> 
         <div class="search-container">
             <select class="search-select" id="search-type">
-                <option value="all">All</option>
+                <option value="all">Todos</option>
                 <option value="anime">Anime</option>
                 <option value="manga">Manga</option>
                 <option value="movie">Películas</option>
                 <option value="tv">Series</option>
             </select>
-            <input type="text" id="search-input" placeholder="Search..." class="search-input" autocomplete="off">
+            <input type="text" id="search-input" placeholder="Buscar..." class="search-input" autocomplete="off">
             <button type="submit" class="search-button"><i>🔍</i></button>
         </div>
         <div id="search-results" class="search-results-dropdown"></div>
@@ -263,7 +263,7 @@ case 'reviews':
         <button class="btn-action-list" id="btnFav">❤ AÑADIR A FAVORITOS</button>
         
         <div class="info-box">
-            <h3>INFORMATION</h3>
+            <h3>INFORMACIÓN</h3>
             <div class="info-unit"><b>Status:</b> <?php echo $status; ?></div>
             <?php foreach($extra_info as $label => $value): ?>
                 <div class="info-unit"><b><?php echo $label; ?>:</b> <?php echo $value; ?></div>
@@ -275,12 +275,12 @@ case 'reviews':
         <div class="media-header-title"><h1><?php echo htmlspecialchars($title); ?></h1></div>
 
         <nav class="media-tabs">
-            <a href="?id=<?php echo $id; ?>&type=<?php echo $type; ?>&view=details" class="<?php echo ($view=='details')?'active':''; ?>">Details</a>
-            <a href="?id=<?php echo $id; ?>&type=<?php echo $type; ?>&view=characters" class="<?php echo ($view=='characters')?'active':''; ?>">Characters</a>
-            <a href="?id=<?php echo $id; ?>&type=<?php echo $type; ?>&view=episodes" class="<?php echo ($view=='episodes')?'active':''; ?>">Episodes</a>
-            <a href="?id=<?php echo $id; ?>&type=<?php echo $type; ?>&view=videos" class="<?php echo ($view=='videos')?'active':''; ?>">Videos</a>
-            <a href="?id=<?php echo $id; ?>&type=<?php echo $type; ?>&view=stats" class="<?php echo ($view=='stats')?'active':''; ?>">Stats</a>
-            <a href="?id=<?php echo $id; ?>&type=<?php echo $type; ?>&view=reviews" class="<?php echo ($view=='reviews')?'active':''; ?>">Reviews</a>
+            <a href="?id=<?php echo $id; ?>&type=<?php echo $type; ?>&view=details" class="<?php echo ($view=='details')?'active':''; ?>">Detalles</a>
+            <a href="?id=<?php echo $id; ?>&type=<?php echo $type; ?>&view=characters" class="<?php echo ($view=='characters')?'active':''; ?>">Personajes</a>
+            <a href="?id=<?php echo $id; ?>&type=<?php echo $type; ?>&view=episodes" class="<?php echo ($view=='episodes')?'active':''; ?>">Episodios</a>
+            <a href="?id=<?php echo $id; ?>&type=<?php echo $type; ?>&view=videos" class="<?php echo ($view=='videos')?'active':''; ?>">Vídeos</a>
+            <a href="?id=<?php echo $id; ?>&type=<?php echo $type; ?>&view=stats" class="<?php echo ($view=='stats')?'active':''; ?>">Estadísticas</a>
+            <a href="?id=<?php echo $id; ?>&type=<?php echo $type; ?>&view=reviews" class="<?php echo ($view=='reviews')?'active':''; ?>">Reseñas</a>
         </nav>
 
         <div class="content-body">
@@ -326,15 +326,15 @@ case 'reviews':
                         </div>
                     </div>
                 </div>
-                <h2 class="section-title">Synopsis</h2>
+                <h2 class="section-title">Sinopsis</h2>
                 <p><?php echo nl2br($desc); ?></p>
                 <?php if(!empty($trailer_url)): ?>
-                    <h2 class="section-title">Trailer</h2>
+                    <h2 class="section-title">Tráiler</h2>
                     <div class="video-container"><iframe src="<?php echo $trailer_url; ?>" frameborder="0" allowfullscreen></iframe></div>
                 <?php endif; ?>
 
             <?php elseif($view == 'videos'): ?>
-                <h2 class="section-title">Promotional Videos</h2>
+                <h2 class="section-title">Vídeos Promocionales</h2>
                 <div class="videos-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
                     <?php foreach($videos_list as $vid): 
                         $v_url = $vid['trailer']['embed_url'] ?? (isset($vid['key']) ? "https://www.youtube.com/embed/".$vid['key'] : null);
@@ -346,7 +346,7 @@ case 'reviews':
                     <?php endif; endforeach; ?>
                 </div>
             <?php elseif($view == 'episodes'): ?>
-            <h2 class="section-title">Episode List</h2>
+            <h2 class="section-title">Lista de Episodios</h2>
             <table class="ep-table">
                 <thead><tr><th>#</th><th>Título</th><th>Aired</th></tr></thead>
                 <tbody>
@@ -357,7 +357,7 @@ case 'reviews':
             </table>
 
             <?php elseif($view == 'stats'): ?>
-                <h2 class="section-title">Summary Stats</h2>
+                <h2 class="section-title">Resumen Estadístico</h2>
                 <?php if(!empty($stats)): ?>
                     <div class="stats-list" style="background: #1a1a1a; padding: 20px; border-radius: 5px;">
                         <p><b>Viendo:</b> <?php echo number_format($stats['watching']); ?></p>
@@ -404,7 +404,7 @@ case 'reviews':
                 </div>
 
             <?php elseif($view == 'characters'): ?>
-                <h2 class="section-title">Characters & Staff</h2>
+                <h2 class="section-title">Personajes / Staff</h2>
                 <?php 
                     $ids_favoritos = [];
                     if (isset($_SESSION['id_usuario']) && isset($conexion)) {

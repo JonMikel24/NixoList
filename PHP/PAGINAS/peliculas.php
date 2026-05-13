@@ -132,13 +132,13 @@ if ($seccion == 'inicio') {
     <div class="search-wrapper" style="position: relative;"> 
         <div class="search-container">
             <select class="search-select" id="search-type">
-                <option value="all">All</option>
+                <option value="all">Todos</option>
                 <option value="anime">Anime</option>
                 <option value="manga">Manga</option>
                 <option value="movie">Películas</option>
                 <option value="tv">Series</option>
             </select>
-            <input type="text" id="search-input" placeholder="Search..." class="search-input" autocomplete="off">
+            <input type="text" id="search-input" placeholder="Buscar..." class="search-input" autocomplete="off">
             <button type="submit" class="search-button"><i>🔍</i></button>
         </div>
         <div id="search-results" class="search-results-dropdown"></div>
@@ -248,9 +248,9 @@ foreach(array_slice($upcoming["results"],0,10) as $movie){
     echo "<h2>$tituloSeccion</h2>";
     echo "<div class='paginacion'>";
     if ($pagina > 1) {
-        echo "<a href='peliculas.php?seccion=$seccion&page=".($pagina - 1)."' class='btn-pag'>&lt; Prev 20</a>";
+        echo "<a href='peliculas.php?seccion=$seccion&page=".($pagina - 1)."' class='btn-pag'>&lt; Ant 20</a>";
     }
-    echo "<a href='peliculas.php?seccion=$seccion&page=".($pagina + 1)."' class='btn-pag'>Next 20 &gt;</a>";
+    echo "<a href='peliculas.php?seccion=$seccion&page=".($pagina + 1)."' class='btn-pag'>Sig 20 &gt;</a>";
     echo "</div>";
     echo "</div>";
 
@@ -278,7 +278,7 @@ foreach(array_slice($upcoming["results"],0,10) as $movie){
     }
 
     echo "<table class='tabla-nixolist'>";
-    echo "<thead><tr><th style='text-align:center;'>Rank</th><th>Title</th><th style='text-align:center;'>Score</th><th style='text-align:center;'>Status</th></tr></thead>";
+    echo "<thead><tr><th style='text-align:center;'>Puesto</th><th>Título</th><th style='text-align:center;'>Puntuación</th><th style='text-align:center;'>Estado</th></tr></thead>";
     echo "<tbody>";
 
     $rank = ($pagina - 1) * 20 + 1; 
@@ -311,7 +311,7 @@ foreach(array_slice($upcoming["results"],0,10) as $movie){
 
         // 1. El botón de añadir
         $btn_display = $esta_en_lista ? "display: none;" : "display: inline-block;";
-        echo "<button class='btn-add-list btn-add-ajax' data-id='$id' data-type='movie' data-title='$titulo_seguro' data-img='$img' style='$btn_display'>Add to My List</button>";
+        echo "<button class='btn-add-list btn-add-ajax' data-id='$id' data-type='movie' data-title='$titulo_seguro' data-img='$img' style='$btn_display'>Añadir a mi lista</button>";
 
         // 2. El selector de estado
         $select_display = $esta_en_lista ? "display: inline-block;" : "display: none;";
@@ -342,9 +342,9 @@ foreach(array_slice($upcoming["results"],0,10) as $movie){
     // 5. Paginación inferior
     echo "<div class='lista-footer'>";
     if ($pagina > 1) {
-        echo "<a href='peliculas.php?seccion=$seccion&page=".($pagina - 1)."' class='btn-pag'>&lt; Prev 20</a>";
+        echo "<a href='peliculas.php?seccion=$seccion&page=".($pagina - 1)."' class='btn-pag'>&lt; Ant 20</a>";
     }
-    echo "<a href='peliculas.php?seccion=$seccion&page=".($pagina + 1)."' class='btn-pag'>Next 20 &gt;</a>";
+    echo "<a href='peliculas.php?seccion=$seccion&page=".($pagina + 1)."' class='btn-pag'>Sig 20 &gt;</a>";
     echo "</div>";
 
 } elseif ($seccion == 'recomendadas') {
