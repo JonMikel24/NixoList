@@ -151,7 +151,7 @@ const diccionarioAnime = [
 let palabraObjetivo = "";
 let letrasAdivinadas = [];
 let errores = 0;
-const MAX_ERRORES = 6;
+const MAX_ERRORES = 5;
 let juegoTerminado = false;
 
 function iniciarAhorcado() {

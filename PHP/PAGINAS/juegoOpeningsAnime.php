@@ -345,10 +345,10 @@ function verificarRespuesta(botonClicado, animeElegido) {
     actualizarMarcador();
 
     if (contadorRondas === MAX_RONDAS) {
-        btnSiguiente.innerText = "Ver Resultados Finales ➔";
+        btnSiguiente.innerText = "Ver Resultados Finales";
         btnSiguiente.onclick = mostrarPantallaFinal;
     } else {
-        btnSiguiente.innerText = "Siguiente Canción ➔";
+        btnSiguiente.innerText = "Siguiente Opening";
         btnSiguiente.onclick = iniciarRonda;
     }
     btnSiguiente.style.display = 'block';
