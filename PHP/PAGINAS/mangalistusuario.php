@@ -1,6 +1,14 @@
 <?php
 // ¡Magia! Con esta línea traemos todos los datos procesados enfocados a MANGA
 require_once '../FUNCIONALIDADES/logica_mangalist.php';
+
+// Initialize variables if not set by the logic file
+if (!isset($listaAgrupada)) {
+    $listaAgrupada = [];
+}
+if (!isset($nombresEstados)) {
+    $nombresEstados = ['reading' => 'Reading', 'completed' => 'Completed', 'on_hold' => 'On Hold', 'dropped' => 'Dropped', 'plan_to_read' => 'Plan to Read'];
+}
 ?>
     <link rel="stylesheet" href="../../CSS/medialistusuario.css">
 

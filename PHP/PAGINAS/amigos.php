@@ -1,10 +1,14 @@
 <?php
 session_start();
-require_once("../conexion.php");
+require_once("../../conexion.php");
 
 if (!isset($_SESSION['id_usuario'])) {
     header("Location: ../Login/Index.php");
     exit;
+}
+
+if (!isset($conexion)) {
+    die("Error: Database connection not established.");
 }
 
 $mi_id = $_SESSION['id_usuario'];

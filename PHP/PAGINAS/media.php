@@ -16,6 +16,7 @@ $id = $_GET['id'] ?? 0;
 $type = $_GET['type'] ?? 'movie'; 
 $view = $_GET['view'] ?? 'details'; 
 
+$pagina_actual = basename($_SERVER['PHP_SELF']);
 $title = ""; $img = ""; $desc = ""; $score = ""; $status = "N/A"; $genres = []; $extra_info = [];
 
 // 1. OBTENER DATOS PRINCIPALES
@@ -74,8 +75,9 @@ $mi_nota = 0;
 $en_lista = false;
 $es_fav = false;
 
-if (isset($_SESSION['id_usuario'])) {
-    require_once("../conexion.php"); // Asegúrate de que la ruta a tu conexión es correcta
+require_once("../conexion.php"); // Asegúrate de que la ruta a tu conexión es correcta
+
+if (isset($_SESSION['id_usuario']) && isset($conexion)) {
     $stmt_user = $conexion->prepare("SELECT mu.puntuacion, mu.status, mu.es_favorito 
                                     FROM media_usuario mu 
                                     JOIN media m ON mu.id_media = m.id_media 
@@ -395,7 +397,7 @@ case 'reviews':
                 <?php 
                     // Lógica para obtener favoritos usando $conexion (MySQLi)
                     $ids_favoritos = [];
-                    if (isset($_SESSION['id_usuario'])) {
+                    if (isset($_SESSION['id_usuario']) && isset($conexion)) {
                         $stmt_favs = $conexion->prepare("
                             SELECT personaje_id FROM personajes_usuario pu
                             JOIN media m ON pu.id_media = m.id_media

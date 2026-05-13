@@ -128,7 +128,10 @@ require_once '../FUNCIONALIDADES/logica_animelist.php';
 </nav>
 
 <div class="list-container">
-    <?php foreach ($listaAgrupada as $estado => $lista): ?>
+    <?php
+    $listaAgrupada = isset($listaAgrupada) ? $listaAgrupada : [];
+    $nombresEstados = isset($nombresEstados) ? $nombresEstados : [];
+    foreach ($listaAgrupada as $estado => $lista): ?>
         <?php if (count($lista) > 0): ?>
             <div class="status-section">
                 <h2 class="status-title"><?php echo isset($nombresEstados[$estado]) ? $nombresEstados[$estado] : 'Reading'; ?></h2>                

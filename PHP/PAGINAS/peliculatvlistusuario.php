@@ -126,7 +126,16 @@ require_once '../FUNCIONALIDADES/logica_peliculaslist.php';
 </nav>
 
 <div class="list-container">
-    <?php foreach ($listaAgrupada as $estado => $lista): ?>
+    <?php 
+    $nombresEstados = [
+        'planificada' => 'Planificada',
+        'viendo' => 'Viendo',
+        'completada' => 'Completada',
+        'pausada' => 'Pausada',
+        'abandonada' => 'Abandonada'
+    ];
+    $listaAgrupada = $listaAgrupada ?? [];
+    foreach ($listaAgrupada as $estado => $lista): ?>
         <?php if (count($lista) > 0): ?>
             <div class="status-section">
                 <h2 class="status-title"><?php echo $nombresEstados[$estado]; ?></h2>

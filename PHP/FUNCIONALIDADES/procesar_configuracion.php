@@ -1,74 +1,58 @@
 <?php
 session_start();
-require_once '../conexion.php'; // Asegúrate de que la ruta sea correcta
+require_once '../conexion.php'; 
 
 if (!isset($_SESSION['Usuario'])) exit("Acceso denegado");
 
-// Intentar obtener el ID de la sesión, si no existe, lo buscamos (por seguridad)
+// 1. Obtener ID de usuario
 if (!isset($_SESSION['id_usuario'])) {
     $stmtId = $pdo->prepare("SELECT id_usuario FROM usuarios WHERE username = ?");
     $stmtId->execute([$_SESSION['Usuario']]);
     $userRow = $stmtId->fetch();
-    $id_usuario = $userRow['id_usuario'];
+    $id_usuario = $userRow['id_usuario'] ?? null;
 } else {
     $id_usuario = $_SESSION['id_usuario'];
 }
 
-$nuevo_nombre = $_POST['nuevo_usuario'];
+if (!$id_usuario) exit("Usuario no encontrado");
+
+// Limpiamos el nombre de espacios en blanco al inicio y final
+$nuevo_nombre = isset($_POST['nuevo_usuario']) ? trim($_POST['nuevo_usuario']) : '';
 $nombre_antiguo = $_SESSION['Usuario'];
 
-// --- FUNCIÓN PARA REDIMENSIONAR A 225x350 (Mantenida por si la usas en otro lado) ---
-function procesarYRedimensionar($ruta_temporal, $ruta_destino) {
-    list($ancho_orig, $alto_orig, $tipo) = getimagesize($ruta_temporal);
-    
-    // Crear recurso de imagen según el tipo
-    switch ($tipo) {
-        case IMAGETYPE_JPEG: $img_orig = imagecreatefromjpeg($ruta_temporal); break;
-        case IMAGETYPE_PNG:  $img_orig = imagecreatefrompng($ruta_temporal); break;
-        case IMAGETYPE_GIF:  $img_orig = imagecreatefromgif($ruta_temporal); break;
-        default: return false;
-    }
-
-    // Crear lienzo de 225x350
-    $nuevo_ancho = 225;
-    $nuevo_alto = 350;
-    $lienzo = imagecreatetruecolor($nuevo_ancho, $nuevo_alto);
-
-    // Mantener transparencias si es PNG o GIF
-    if ($tipo == IMAGETYPE_PNG || $tipo == IMAGETYPE_GIF) {
-        imagealphablending($lienzo, false);
-        imagesavealpha($lienzo, true);
-    }
-
-    // Redimensionar ajustando al tamaño exacto
-    imagecopyresampled($lienzo, $img_orig, 0, 0, 0, 0, $nuevo_ancho, $nuevo_alto, $ancho_orig, $alto_orig);
-
-    // Guardar la imagen final sobreescribiendo el destino
-    $exito = false;
-    switch ($tipo) {
-        case IMAGETYPE_JPEG: $exito = imagejpeg($lienzo, $ruta_destino, 90); break;
-        case IMAGETYPE_PNG:  $exito = imagepng($lienzo, $ruta_destino); break;
-        case IMAGETYPE_GIF:  $exito = imagegif($lienzo, $ruta_destino); break;
-    }
-
-    imagedestroy($img_orig);
-    imagedestroy($lienzo);
-    return $exito;
-}
-
 try {
-    // 1. ACTUALIZAR NOMBRE DE USUARIO
+    // --- SECCIÓN: VALIDACIONES DE NOMBRE DE USUARIO ---
     if ($nuevo_nombre != $nombre_antiguo) {
+        
+        // A. Validación de longitud (Mínimo 3 caracteres)
+        if (strlen($nuevo_nombre) < 3) {
+            header("Location: ../PAGINAS/configuracionperfil.php?error=nombre_corto");
+            exit();
+        }
+
+        // B. Validación de caracteres (Solo letras y números, sin símbolos ni espacios)
+        if (!ctype_alnum($nuevo_nombre)) {
+            header("Location: ../PAGINAS/configuracionperfil.php?error=nombre_especial");
+            exit();
+        }
+
+        // C. Validación de disponibilidad (Si ya existe en la BD)
+        $checkStmt = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE username = ?");
+        $checkStmt->execute([$nuevo_nombre]);
+        if ($checkStmt->fetchColumn() > 0) {
+            header("Location: ../PAGINAS/configuracionperfil.php?error=nombre_duplicado");
+            exit();
+        }
+
+        // Si pasa todas las validaciones, actualizamos en la BD y en la Sesión
         $stmt = $pdo->prepare("UPDATE usuarios SET username = ? WHERE id_usuario = ?");
         $stmt->execute([$nuevo_nombre, $id_usuario]);
         $_SESSION['Usuario'] = $nuevo_nombre;
     }
-
-    // 2. PROCESAR SUBIDA DE FOTO DE PERFIL
+    
+    // --- SECCIÓN: PROCESAR FOTO DE PERFIL ---
     if (isset($_FILES['nueva_foto']) && $_FILES['nueva_foto']['error'] == 0) {
         $directorio = "Recursos/fotos_perfil/";
-        
-        // Corregido: Crear carpeta usando la ruta absoluta del servidor
         if (!is_dir($_SERVER['DOCUMENT_ROOT'] . "/" . $directorio)) { 
             mkdir($_SERVER['DOCUMENT_ROOT'] . "/" . $directorio, 0777, true); 
         }
@@ -78,20 +62,15 @@ try {
         $ruta_final = "/" . $directorio . $nombre_archivo;
 
         if (move_uploaded_file($_FILES['nueva_foto']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . $ruta_final)) {
-            // Actualizar DB
             $stmt = $pdo->prepare("UPDATE usuarios SET avatar = ? WHERE id_usuario = ?");
             $stmt->execute([$ruta_final, $id_usuario]);
-            
-            // Actualizar Sesión
             $_SESSION['Foto'] = $ruta_final;
         }
     }
 
-// 3. PROCESAR SUBIDA DE BANNER
+    // --- SECCIÓN: PROCESAR BANNER ---
     if (isset($_FILES['nuevo_banner']) && $_FILES['nuevo_banner']['error'] == 0) {
         $directorio_banner = "Recursos/Banners/";
-        
-        // Crear carpeta usando la ruta absoluta del servidor (igual que el avatar)
         if (!is_dir($_SERVER['DOCUMENT_ROOT'] . "/" . $directorio_banner)) { 
             mkdir($_SERVER['DOCUMENT_ROOT'] . "/" . $directorio_banner, 0777, true); 
         }
@@ -101,21 +80,17 @@ try {
         $ruta_banner_final = "/" . $directorio_banner . $nombre_banner;
 
         if (move_uploaded_file($_FILES['nuevo_banner']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . $ruta_banner_final)) {
-            // Actualizar DB
             $stmt = $pdo->prepare("UPDATE usuarios SET banner = ? WHERE id_usuario = ?");
             $stmt->execute([$ruta_banner_final, $id_usuario]);
-            
-            // Actualizar Sesión
             $_SESSION['Banner'] = $ruta_banner_final;
         }
     }
 
-    // REDIRECCIÓN FINAL
-    // Nota: Revisa si quieres mandarlo a 'perfil.php' o 'listaperfil.php' según donde esté el diseño final
+    // REDIRECCIÓN FINAL DE ÉXITO
     header("Location: ../PAGINAS/listaperfil.php?status=updated");
     exit();
 
 } catch (Exception $e) {
-    die("Error al actualizar: " . $e->getMessage());
+    die("Error crítico al actualizar: " . $e->getMessage());
 }
 ?>

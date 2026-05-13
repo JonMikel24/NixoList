@@ -46,7 +46,7 @@ try {
         WHERE r.id_usuario = ?
         ORDER BY r.created_at DESC
     ");
-    $stmtRev->execute([$id_perfil_visitado]);
+    $stmtRev->execute([$id_usuario]);
     $user_reviews = $stmtRev->fetchAll(PDO::FETCH_ASSOC);
     // 👇 AQUÍ ESTÁ LA SOLUCIÓN 👇
     // --- Obtener Personajes Favoritos ---

@@ -196,12 +196,12 @@ require_once '../FUNCIONALIDADES/perfil.php';
 </div>
 
 <div class="profile-subnav">
-    <a href="listaperfil.php?id=<?php echo $id_perfil_visitado; ?>" class="active">Overview</a>
+    <a href="listaperfil.php?id=<?php echo $id_perfil_visitado; ?>" class="active">General</a>
     <a href="animelistusuario.php?id=<?php echo $id_perfil_visitado; ?>">Anime List</a>
     <a href="mangalistusuario.php?id=<?php echo $id_perfil_visitado; ?>">Manga List</a>
     <a href="peliculatvlistusuario.php?id=<?php echo $id_perfil_visitado; ?>">TV List</a>
-    <a href="amigos.php?id=<?php echo $id_perfil_visitado; ?>">Friends</a>
-    <a href="reseñasperfil.php?id=<?php echo $id_perfil_visitado; ?>">Reviews</a>
+    <a href="amigos.php?id=<?php echo $id_perfil_visitado; ?>">Social</a>
+    <a href="reseñasperfil.php?id=<?php echo $id_perfil_visitado; ?>">Reseñas</a>
 </div>
 
 <div class="profile-body-container">
@@ -230,7 +230,7 @@ require_once '../FUNCIONALIDADES/perfil.php';
         $counts = $stmt->fetch(PDO::FETCH_ASSOC);
         $counts = array_map(fn($v) => $v ?? 0, $counts); 
         
-        $titulo_stats = ucfirst($tipo_seleccionado) . " Stats";
+        $titulo_stats = ucfirst($tipo_seleccionado) . " ";
         ?>
         
         <div class="content-card">
@@ -280,7 +280,7 @@ require_once '../FUNCIONALIDADES/perfil.php';
     <div class="profile-right-col">
         
 <div class="content-section">
-            <h3 class="section-title">Currently Watching</h3>
+            <h3 class="section-title">Viendo Actualmente</h3>
             <div class="cover-row">
                 <?php if(empty($watchingList)): ?>
                     <p class="empty-text">No estás viendo nada actualmente.</p>
@@ -302,10 +302,10 @@ require_once '../FUNCIONALIDADES/perfil.php';
 
     <div class="content-section">
         <div class="section-header-flex">
-            <h3 class="section-title">Favorites</h3>
+            <h3 class="section-title">Favoritos</h3>
             <div class="favorite-tabs">
-                <span class="tab active" onclick="cambiarPestaña('anime', this)">Anime</span>
-                <span class="tab" onclick="cambiarPestaña('personajes', this)">Characters</span>
+                <span class="tab active" onclick="cambiarPestaña('anime', this)">Media</span>
+                <span class="tab" onclick="cambiarPestaña('personajes', this)">Personajes</span>
             </div>
         </div>
         

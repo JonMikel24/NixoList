@@ -1,5 +1,10 @@
 <?php
 require_once("../conexion.php");
+
+if (!isset($conexion) || $conexion->connect_error) {
+    die("Error de conexión a la base de datos");
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // 3. Recibir datos del formulario

@@ -1,6 +1,13 @@
 <?php
 session_start();
-require_once("../conexion.php");
+require_once(__DIR__ . "/../conexion.php");
+if (!isset($conexion) && isset($conn)) {
+    $conexion = $conn;
+}
+if (!isset($conexion)) {
+    echo json_encode(['status' => 'error', 'message' => 'No hay conexión a la base de datos']);
+    exit;
+}
 
 if (!isset($_SESSION['id_usuario'])) {
     echo json_encode(['status' => 'error', 'message' => 'No autorizado']);
