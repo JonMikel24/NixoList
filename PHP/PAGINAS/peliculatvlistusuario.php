@@ -127,17 +127,24 @@ require_once '../FUNCIONALIDADES/logica_peliculaslist.php';
 </nav>
 
 <div class="list-container">
+    <?php if (isset($listaAgrupada) && is_array($listaAgrupada)): ?>
     <?php foreach ($listaAgrupada as $estado => $lista): ?>
-        <?php if (count($lista) > 0): ?>
+        <?php if (count($lista) > 0): 
+            // --- ORDENACIÓN POR SCORE (Puntuación) ---
+            usort($lista, function($a, $b) {
+                // Comparamos puntuaciones de mayor a menor
+                return $b['puntuacion'] <=> $a['puntuacion'];
+            });
+        ?>
             <div class="status-section">
-                <h2 class="status-title"><?php echo $nombresEstados[$estado]; ?></h2>
+                <h2 class="status-title"><?php echo isset($nombresEstados[$estado]) ? $nombresEstados[$estado] : 'Reading'; ?></h2>                
                 
                 <table class="anime-table">
                     <thead>
                         <tr>
                             <th>Title</th>
                             <th class="center-text" style="width: 100px;">Score</th>
-                            <th class="center-text" style="width: 120px;">Progress</th>
+                            <th class="center-text" style="width: 120px;">Progress (Ch.)</th>
                             <th class="center-text" style="width: 100px;">Type</th>
                         </tr>
                     </thead>
@@ -171,6 +178,7 @@ require_once '../FUNCIONALIDADES/logica_peliculaslist.php';
             </div>
         <?php endif; ?>
     <?php endforeach; ?>
+    <?php endif; ?>
 </div>
 </body>
 </html>

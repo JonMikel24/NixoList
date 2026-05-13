@@ -1,27 +1,29 @@
 <?php
 session_start();
-// Ajusta esta ruta a tu archivo de conexión real si es necesario
 require_once '../conexion.php'; 
 
 if (!isset($_SESSION['Usuario'])) {
     exit("Acceso denegado. Debes iniciar sesión.");
 }
 
-// 1. Asegurarnos de tener el ID de la sesión guardado por si acaso
+// 1. Asegurarnos de tener el ID del usuario
 if (!isset($_SESSION['id_usuario'])) {
     $stmtId = $pdo->prepare("SELECT id_usuario FROM usuarios WHERE username = ?");
     $stmtId->execute([$_SESSION['Usuario']]);
     $userRow = $stmtId->fetch();
-    $_SESSION['id_usuario'] = $userRow['id_usuario'];
+    $_SESSION['id_usuario'] = $userRow['id_usuario'] ?? null;
 }
 
-// 👇 EL CAMBIO CLAVE: Leer el ID de la URL si existe, sino usar el propio 👇
+// ID de la lista a mostrar (la mía o la de otro usuario por perfil público)
 $id_usuario_lista = isset($_GET['id']) ? (int)$_GET['id'] : $_SESSION['id_usuario'];
 
-// 2. CONSULTA MODIFICADA: Traemos lo que tenga type = 'pelicula' OR 'tv'
+// 2. CONSULTA CORREGIDA
+// Filtramos por 'movie' y 'tv' que son los tipos reales de TMDB en tu DB
 $stmt = $pdo->prepare("
     SELECT 
+        m.id_media,
         m.tmdb_id,
+        m.mal_id,
         m.titulo, 
         m.portada, 
         m.type, 
@@ -31,35 +33,39 @@ $stmt = $pdo->prepare("
         mu.episodios_vistos 
     FROM media_usuario mu
     JOIN media m ON mu.id_media = m.id_media
-    WHERE mu.id_usuario = ? AND (m.type = 'pelicula' OR m.type = 'tv')
-    ORDER BY FIELD(mu.status, 'watching', 'completed', 'planned', 'paused', 'dropped'), m.titulo ASC
+    WHERE mu.id_usuario = ? 
+    AND (m.type = 'movie' OR m.type = 'tv' OR m.type = 'pelicula') 
+    ORDER BY FIELD(mu.status, 'watching', 'completed', 'on_hold', 'dropped', 'plan_to_watch'), m.titulo ASC
 ");
 
-
-// Ejecutamos la consulta con el nuevo ID (el tuyo o el de tu amigo)
 $stmt->execute([$id_usuario_lista]);
-$animes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// 3. Agrupar la lista por estados
+// 3. Agrupar la lista por estados (Ajustado a los strings que usas en el resto de la web)
 $listaAgrupada = [
-    'watching' => [],
-    'completed' => [],
-    'planned' => [],
-    'paused' => [],
-    'dropped' => []
+    'watching'      => [],
+    'completed'     => [],
+    'on_hold'       => [],
+    'dropped'       => [],
+    'plan_to_watch' => []
 ];
 
-// (Nota: Aunque la variable se llame $animes, aquí estamos guardando películas y series de TV)
-foreach ($animes as $anime) {
-    $listaAgrupada[$anime['status']][] = $anime;
+foreach ($resultados as $item) {
+    // Verificamos que el status exista en nuestro array para evitar errores de Undefined Index
+    if (array_key_exists($item['status'], $listaAgrupada)) {
+        $listaAgrupada[$item['status']][] = $item;
+    } else {
+        // Por si acaso algún estado viene vacío o diferente
+        $listaAgrupada['plan_to_watch'][] = $item;
+    }
 }
 
-// 4. Títulos bonitos para el HTML
+// 4. Títulos para el HTML
 $nombresEstados = [
-    'watching' => 'Currently Watching',
-    'completed' => 'Completed',
-    'planned' => 'Plan to Watch',
-    'paused' => 'On Hold',
-    'dropped' => 'Dropped'
+    'watching'      => 'Watching',
+    'completed'     => 'Completed',
+    'on_hold'       => 'On Hold',
+    'dropped'       => 'Dropped',
+    'plan_to_watch' => 'Plan to Watch/Movie'
 ];
 ?>

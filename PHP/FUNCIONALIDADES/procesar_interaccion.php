@@ -100,6 +100,11 @@ if ($action === 'fav_character') {
     $char_name = $_POST['char_name'];
     $char_img  = isset($_POST['char_img']) ? $_POST['char_img'] : ''; 
 
+    if (!isset($conexion)) {
+        echo json_encode(['status' => 'error', 'message' => 'Database connection failed']);
+        exit;
+    }
+
     // Buscamos si ESTE usuario ya tiene a ESTE personaje
     $check = $conexion->prepare("SELECT personaje_id FROM personajes_usuario WHERE id_usuario = ? AND personaje_id = ?");
     $check->bind_param("ii", $id_user, $char_id);

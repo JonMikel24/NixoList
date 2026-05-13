@@ -7,6 +7,10 @@ if (!isset($_SESSION['id_usuario'])) {
     exit;
 }
 
+if (!isset($conexion)) {
+    die("Error: Database connection not established.");
+}
+
 $mi_id = $_SESSION['id_usuario'];
 
 $sql_req = "SELECT a.id_usuario, u.username, u.avatar 

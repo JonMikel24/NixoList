@@ -1,7 +1,5 @@
 <?php
 session_start();
-// Opcional: Aquí deberías incluir tu conexión a la base de datos si necesitas obtener el banner desde allí
-// require_once '../conexion.php'; 
 
 if (!isset($_SESSION['Usuario'])) {
     header("Location: ../Login/Index.php");
@@ -10,8 +8,6 @@ if (!isset($_SESSION['Usuario'])) {
 
 $nombreActual = $_SESSION['Usuario'];
 $fotoActual = (!empty($_SESSION['Foto'])) ? $_SESSION['Foto'] : '/Recursos/fotousuario.png';
-
-// Si guardas el banner en la sesión, ponlo aquí. Si no, pon una imagen por defecto para que no se vea roto.
 $bannerActual = (!empty($_SESSION['Banner'])) ? $_SESSION['Banner'] : '/Recursos/fotousuario.png';
 ?>
 
@@ -21,6 +17,10 @@ $bannerActual = (!empty($_SESSION['Banner'])) ? $_SESSION['Banner'] : '/Recursos
     <meta charset="UTF-8">
     <title>Configuración de Perfil - Nixolist</title>
     <link rel="stylesheet" href="../../CSS/configuracion.css">
+    <style>
+        .input-error { border: 2px solid #ff4d4d !important; }
+        .error-msg { color: #ff4d4d; font-size: 0.9em; margin-bottom: 8px; font-weight: bold; display: block; }
+    </style>
 </head>
 <body>
 
@@ -53,10 +53,27 @@ $bannerActual = (!empty($_SESSION['Banner'])) ? $_SESSION['Banner'] : '/Recursos
             </div>
         </div>
 
-        <div class="form-group">
-            <label>Nombre de Usuario</label>
-            <input type="text" class="custom-input" name="nuevo_usuario" value="<?php echo htmlspecialchars($nombreActual); ?>" required>
-        </div>
+<div class="form-group">
+        <label>Nombre de Usuario</label>
+        
+        <?php if (isset($_GET['error'])): ?>
+            <p class="error-msg" style="color: #ff4d4d; font-size: 0.9em; margin-bottom: 5px; font-weight: bold;">
+                <?php 
+                    if ($_GET['error'] == 'nombre_duplicado') echo "⚠️ El nombre de usuario ya está en uso.";
+                    if ($_GET['error'] == 'nombre_corto') echo "⚠️ El nombre debe tener al menos 3 caracteres.";
+                    if ($_GET['error'] == 'nombre_especial') echo "⚠️ Solo se permiten letras y números.";
+                ?>
+            </p>
+        <?php endif; ?>
+
+        <input type="text" 
+            class="custom-input <?php echo isset($_GET['error']) ? 'input-error' : ''; ?>" 
+            name="nuevo_usuario" 
+            value="<?php echo htmlspecialchars($nombreActual); ?>" 
+            required>
+        
+        <small style="color: gray; display: block; margin-top: 5px;">Mínimo 3 caracteres, sin símbolos.</small>
+    </div>
 
         <div class="form-actions">
             <button type="submit" class="save-btn">Guardar Cambios</button>
@@ -65,38 +82,25 @@ $bannerActual = (!empty($_SESSION['Banner'])) ? $_SESSION['Banner'] : '/Recursos
         </div>
     </form>
 </div>
+
 <script>
-    // --- VISTA PREVIA DEL AVATAR ---
+    // Vista previa de Avatar
     const inputAvatar = document.getElementById('avatar-upload');
     const previewAvatar = document.getElementById('avatar-prev');
-
     if (inputAvatar && previewAvatar) {
-        inputAvatar.addEventListener('change', function(event) {
-            const file = event.target.files[0]; // Obtenemos el archivo seleccionado
-            if (file) {
-                // Creamos una URL temporal local para la imagen
-                const objectURL = URL.createObjectURL(file);
-                // Cambiamos el 'src' de la imagen por esta nueva URL temporal
-                previewAvatar.src = objectURL;
-            }
+        inputAvatar.addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (file) previewAvatar.src = URL.createObjectURL(file);
         });
     }
 
-    // --- VISTA PREVIA DEL BANNER ---
+    // Vista previa de Banner
     const inputBanner = document.getElementById('banner-upload');
     const previewBanner = document.getElementById('banner-prev');
-
     if (inputBanner && previewBanner) {
-        inputBanner.addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const objectURL = URL.createObjectURL(file);
-                previewBanner.src = objectURL; 
-                
-                // NOTA: Si en tu diseño el banner es un 'div' con background-image en lugar de un <img>, 
-                // borra la línea de arriba y usa esta:
-                // previewBanner.style.backgroundImage = `url(${objectURL})`;
-            }
+        inputBanner.addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (file) previewBanner.src = URL.createObjectURL(file);
         });
     }
 </script>

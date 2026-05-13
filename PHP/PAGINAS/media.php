@@ -16,6 +16,7 @@ $id = $_GET['id'] ?? 0;
 $type = $_GET['type'] ?? 'movie'; 
 $view = $_GET['view'] ?? 'details'; 
 
+$pagina_actual = basename($_SERVER['PHP_SELF']);
 $title = ""; $img = ""; $desc = ""; $score = ""; $status = "N/A"; $genres = []; $extra_info = [];
 
 
@@ -72,8 +73,9 @@ $mi_nota = 0;
 $en_lista = false;
 $es_fav = false;
 
-if (isset($_SESSION['id_usuario'])) {
-    require_once("../conexion.php"); 
+require_once("../conexion.php"); 
+
+if (isset($_SESSION['id_usuario']) && isset($conexion)) {
     $stmt_user = $conexion->prepare("SELECT mu.puntuacion, mu.status, mu.es_favorito 
                                     FROM media_usuario mu 
                                     JOIN media m ON mu.id_media = m.id_media 
@@ -87,7 +89,6 @@ if (isset($_SESSION['id_usuario'])) {
         $es_fav = ($fila['es_favorito'] == 1);
     }
 }
-
 
 $characters = []; $episodes_list = []; $videos_list = []; $reviews_list = []; $stats = [];
 
@@ -357,11 +358,11 @@ case 'reviews':
                 <h2 class="section-title">Summary Stats</h2>
                 <?php if(!empty($stats)): ?>
                     <div class="stats-list" style="background: #1a1a1a; padding: 20px; border-radius: 5px;">
-                        <p><b>Watching:</b> <?php echo number_format($stats['watching']); ?></p>
-                        <p><b>Completed:</b> <?php echo number_format($stats['completed']); ?></p>
-                        <p><b>On Hold:</b> <?php echo number_format($stats['on_hold']); ?></p>
+                        <p><b>Viendo:</b> <?php echo number_format($stats['watching']); ?></p>
+                        <p><b>Completado:</b> <?php echo number_format($stats['completed']); ?></p>
+                        <p><b>Pausado:</b> <?php echo number_format($stats['on_hold']); ?></p>
                         <p><b>Dropped:</b> <?php echo number_format($stats['dropped']); ?></p>
-                        <p><b>Plan to Watch:</b> <?php echo number_format($stats['plan_to_watch']); ?></p>
+                        <p><b>Planeando:</b> <?php echo number_format($stats['plan_to_watch']); ?></p>
                         <p style="border-top: 1px solid #333; margin-top: 10px; padding-top: 10px;"><b>Total Members:</b> <?php echo number_format($stats['total']); ?></p>
                     </div>
                 <?php else: echo "No stats available for this media."; endif; ?>
@@ -404,7 +405,7 @@ case 'reviews':
                 <h2 class="section-title">Characters & Staff</h2>
                 <?php 
                     $ids_favoritos = [];
-                    if (isset($_SESSION['id_usuario'])) {
+                    if (isset($_SESSION['id_usuario']) && isset($conexion)) {
                         $stmt_favs = $conexion->prepare("
                             SELECT personaje_id FROM personajes_usuario pu
                             JOIN media m ON pu.id_media = m.id_media

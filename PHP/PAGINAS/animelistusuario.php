@@ -129,8 +129,18 @@ require_once '../FUNCIONALIDADES/logica_animelist.php';
 </nav>
 
 <div class="list-container">
-    <?php foreach ($listaAgrupada as $estado => $lista): ?>
-        <?php if (count($lista) > 0): ?>
+    <?php
+    $listaAgrupada = isset($listaAgrupada) ? $listaAgrupada : [];
+    $nombresEstados = isset($nombresEstados) ? $nombresEstados : [];
+    
+    foreach ($listaAgrupada as $estado => $lista): ?>
+        <?php if (count($lista) > 0): 
+            // --- BLOQUE DE ORDENACIÓN ---
+            // Ordenamos la lista actual por 'puntuacion' de mayor a menor
+            usort($lista, function($a, $b) {
+                return $b['puntuacion'] <=> $a['puntuacion'];
+            });
+        ?>
             <div class="status-section">
                 <h2 class="status-title"><?php echo isset($nombresEstados[$estado]) ? $nombresEstados[$estado] : 'Reading'; ?></h2>                
                 <table class="anime-table">
@@ -143,9 +153,10 @@ require_once '../FUNCIONALIDADES/logica_animelist.php';
                         </tr>
                     </thead>
                     <tbody>
-<?php foreach ($lista as $item): 
-                            // Calculamos qué ID usar (MyAnimeList o TMDB) según el tipo
-                            $id_para_link = (strtolower($item['type']) === 'anime') ? $item['mal_id'] : $item['tmdb_id']; 
+                        <?php foreach ($lista as $item): 
+                            // Corrección del ID para que use mal_id tanto en anime como en manga si es necesario
+                            $tipoLower = strtolower($item['type']);
+                            $id_para_link = ($tipoLower === 'anime' || $tipoLower === 'manga') ? $item['mal_id'] : $item['tmdb_id']; 
                         ?>
                             <tr>
                                 <td>
@@ -157,7 +168,9 @@ require_once '../FUNCIONALIDADES/logica_animelist.php';
                                     </div>
                                 </td>
                                 <td class="center-text">
-                                    <?php echo ($item['puntuacion'] > 0) ? $item['puntuacion'] : '-'; ?>
+                                    <strong style="color: #ffcc00;">
+                                        <?php echo ($item['puntuacion'] > 0) ? $item['puntuacion'] : '-'; ?>
+                                    </strong>
                                 </td>
                                 <td class="center-text">
                                     <?php echo $item['episodios_vistos']; ?> / <?php echo ($item['episodios_totales'] > 0) ? $item['episodios_totales'] : '?'; ?>

@@ -174,7 +174,7 @@ require_once '../FUNCIONALIDADES/perfil.php';
     <div class="profile-user-info">
         <h2 class="profile-username"><?php echo htmlspecialchars($datosVisitado['username']); ?></h2>
         <div class="profile-meta">
-            <span>Joined <?php echo date('M j, Y', strtotime($datosVisitado['created_at'])); ?></span>
+            <span>Desde <?php echo date('M j, Y', strtotime($datosVisitado['created_at'])); ?></span>
         </div>
     </div>
     <div class="profile-actions">
@@ -197,12 +197,12 @@ require_once '../FUNCIONALIDADES/perfil.php';
 </div>
 
 <div class="profile-subnav">
-    <a href="listaperfil.php?id=<?php echo $id_perfil_visitado; ?>" class="active">Overview</a>
+    <a href="listaperfil.php?id=<?php echo $id_perfil_visitado; ?>" class="active">General</a>
     <a href="animelistusuario.php?id=<?php echo $id_perfil_visitado; ?>">Anime List</a>
     <a href="mangalistusuario.php?id=<?php echo $id_perfil_visitado; ?>">Manga List</a>
     <a href="peliculatvlistusuario.php?id=<?php echo $id_perfil_visitado; ?>">TV List</a>
-    <a href="amigos.php?id=<?php echo $id_perfil_visitado; ?>">Friends</a>
-    <a href="reseñasperfil.php?id=<?php echo $id_perfil_visitado; ?>">Reviews</a>
+    <a href="amigos.php?id=<?php echo $id_perfil_visitado; ?>">Social</a>
+    <a href="reseñasperfil.php?id=<?php echo $id_perfil_visitado; ?>">Reseñas</a>
 </div>
 
 <div class="profile-body-container">
@@ -231,7 +231,7 @@ require_once '../FUNCIONALIDADES/perfil.php';
         $counts = $stmt->fetch(PDO::FETCH_ASSOC);
         $counts = array_map(fn($v) => $v ?? 0, $counts); 
         
-        $titulo_stats = ucfirst($tipo_seleccionado) . " Stats";
+        $titulo_stats = ucfirst($tipo_seleccionado) . " ";
         ?>
         
         <div class="content-card">
@@ -255,11 +255,11 @@ require_once '../FUNCIONALIDADES/perfil.php';
                 </div>
                 <div class="stat-box">
                     <span class="stat-value" style="color: #4ade80;"><?php echo $counts['completed']; ?></span>
-                    <span class="stat-label">Completed</span>
+                    <span class="stat-label">Completado</span>
                 </div>
                 <div class="stat-box">
                     <span class="stat-value"><?php echo number_format($counts['mean_score'], 2); ?></span>
-                    <span class="stat-label">Mean Score</span>
+                    <span class="stat-label">Nota Media</span>
                 </div>
             </div>
 
@@ -270,9 +270,9 @@ require_once '../FUNCIONALIDADES/perfil.php';
             </div>
 
             <div class="stats-legend">
-                <span><div class="legend-dot completed"></div> <?php echo $counts['completed']; ?> Completed</span>
-                <span><div class="legend-dot watching"></div> <?php echo $counts['watching']; ?> Watching</span>
-                <span><div class="legend-dot planned"></div> <?php echo $counts['planned']; ?> Planned</span>
+                <span><div class="legend-dot completed"></div> <?php echo $counts['completed']; ?> Completado</span>
+                <span><div class="legend-dot watching"></div> <?php echo $counts['watching']; ?> Viendo</span>
+                <span><div class="legend-dot planned"></div> <?php echo $counts['planned']; ?> Planeando</span>
                 <span><div class="legend-dot dropped"></div> <?php echo $counts['dropped']; ?> Dropped</span>
             </div>
         </div>
@@ -281,7 +281,7 @@ require_once '../FUNCIONALIDADES/perfil.php';
     <div class="profile-right-col">
         
 <div class="content-section">
-            <h3 class="section-title">Currently Watching</h3>
+            <h3 class="section-title">Viendo Actualmente</h3>
             <div class="cover-row">
                 <?php if(empty($watchingList)): ?>
                     <p class="empty-text">No estás viendo nada actualmente.</p>
@@ -303,10 +303,10 @@ require_once '../FUNCIONALIDADES/perfil.php';
 
     <div class="content-section">
         <div class="section-header-flex">
-            <h3 class="section-title">Favorites</h3>
+            <h3 class="section-title">Favoritos</h3>
             <div class="favorite-tabs">
-                <span class="tab active" onclick="cambiarPestaña('anime', this)">Anime</span>
-                <span class="tab" onclick="cambiarPestaña('personajes', this)">Characters</span>
+                <span class="tab active" onclick="cambiarPestaña('anime', this)">Media</span>
+                <span class="tab" onclick="cambiarPestaña('personajes', this)">Personajes</span>
             </div>
         </div>
         
