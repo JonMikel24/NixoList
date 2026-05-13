@@ -430,6 +430,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+document.getElementById('search-input').addEventListener('input', function() {
+    let query = this.value;
+    let type = document.getElementById('search-type').value;
+    let resultsContainer = document.getElementById('search-results');
+
+    if (query.length >= 3) {
+        fetch(`buscar_sugerencias.php?q=${query}&type=${type}`)
+            .then(response => response.text())
+            .then(data => {
+                resultsContainer.innerHTML = data;
+                resultsContainer.style.display = 'block'; // Lo mostramos
+            });
+    } else {
+        resultsContainer.style.display = 'none'; // Lo ocultamos si no hay texto
+    }
+});
 </script>
 
 </body>

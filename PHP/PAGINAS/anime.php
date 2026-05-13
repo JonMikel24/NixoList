@@ -126,17 +126,20 @@ if ($seccion == 'inicio') {
         </div>
     </div>
 
+    <div class="search-wrapper" style="position: relative;"> 
     <div class="search-container">
-        <select class="search-select">
+        <select class="search-select" id="search-type">
             <option value="all">All</option>
             <option value="anime">Anime</option>
             <option value="manga">Manga</option>
+            <option value="movie">Películas</option>
+            <option value="tv">Series</option>
         </select>
-        <input type="text" placeholder="Search Anime, Manga, and more..." class="search-input">
-        <button type="submit" class="search-button">
-            <i>🔍</i> 
-        </button>
+        <input type="text" id="search-input" placeholder="Search..." class="search-input" autocomplete="off">
+        <button type="submit" class="search-button"><i>🔍</i></button>
     </div>
+    <div id="search-results" class="search-results-dropdown"></div>
+</div>
 </nav>
 
 
@@ -441,6 +444,23 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(err => console.error("Error:", err));
         });
     });
+});
+
+document.getElementById('search-input').addEventListener('input', function() {
+    let query = this.value;
+    let type = document.getElementById('search-type').value;
+    let resultsContainer = document.getElementById('search-results');
+
+    if (query.length >= 3) {
+        fetch(`buscar_sugerencias.php?q=${query}&type=${type}`)
+            .then(response => response.text())
+            .then(data => {
+                resultsContainer.innerHTML = data;
+                resultsContainer.style.display = 'block'; // Lo mostramos
+            });
+    } else {
+        resultsContainer.style.display = 'none'; // Lo ocultamos si no hay texto
+    }
 });
 </script>
 
