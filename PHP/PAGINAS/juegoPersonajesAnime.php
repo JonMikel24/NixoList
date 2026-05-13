@@ -147,7 +147,7 @@ session_start();
                     </div>
 
                 <p id="resultado-texto" style="margin-top: 20px; font-weight: bold; font-size: 1.2rem; text-align: center;">Conectando con MyAnimeList...</p>
-                <button id="btn-siguiente" class="btn-siguiente" style="display:none; margin-top: 15px; width: 100%;" onclick="proximaRonda()">Siguiente Personaje ➔</button>
+                <button id="btn-siguiente" class="btn-siguiente" style="display:none; margin-top: 15px; width: 100%;" onclick="proximaRonda()">Siguiente Personaje</button>
             </div>
         </div>
 
@@ -289,7 +289,7 @@ function verificarRespuesta(botonElegido, nombreElegido) {
     actualizarMarcador();
     
     const btnSiguiente = document.getElementById('btn-siguiente');
-    btnSiguiente.innerText = (ronda === MAX_RONDAS) ? "Ver Resultados Finales ➔" : "Siguiente Personaje ➔";
+    btnSiguiente.innerText = (ronda === MAX_RONDAS) ? "Ver Resultados Finales" : "Siguiente Personaje";
     btnSiguiente.style.display = "block";
 }
 
