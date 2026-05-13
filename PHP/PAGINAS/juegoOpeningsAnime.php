@@ -50,10 +50,11 @@ session_start();
 
 <nav class="navbar">
     <div class="nav-links">
+        
         <a href="index.php" class="<?php echo ($pagina_actual == 'index.php') ? 'active' : ''; ?>">Inicio</a>
 
         <div class="menu-desplegable">
-            <a href="anime.php" class="seccion-principal">Anime</a>
+            <a href="anime.php" class="seccion-principal <?php echo ($pagina_actual == 'anime.php') ? 'active' : ''; ?>">Anime</a>
             <div class="sub-menu">
                 <a href="anime.php">Inicio Anime</a>
                 <a href="anime.php?seccion=recomendados">Recomendados</a>
@@ -63,7 +64,17 @@ session_start();
         </div>
 
         <div class="menu-desplegable">
-            <a href="peliculas.php" class="seccion-principal">Películas</a>
+            <a href="manga.php" class="seccion-principal <?php echo ($pagina_actual == 'manga.php') ? 'active' : ''; ?>">Manga</a>
+            <div class="sub-menu">
+                <a href="manga.php">Inicio Manga</a>
+                <a href="manga.php?seccion=recomendados">Recomendados</a>
+                <a href="manga.php?seccion=populares">Más Populares</a>
+                <a href="manga.php?seccion=top">Top Manga</a>
+            </div>
+        </div>
+
+        <div class="menu-desplegable">
+            <a href="peliculas.php" class="seccion-principal <?php echo ($pagina_actual == 'peliculas.php') ? 'active' : ''; ?>">Películas</a>
             <div class="sub-menu">
                 <a href="peliculas.php">Inicio Películas</a>
                 <a href="peliculas.php?seccion=recomendadas">Recomendadas</a>
@@ -73,7 +84,7 @@ session_start();
         </div>
 
         <div class="menu-desplegable">
-            <a href="series.php" class="seccion-principal">Series</a>
+            <a href="series.php" class="seccion-principal <?php echo ($pagina_actual == 'series.php') ? 'active' : ''; ?>">Series</a>
             <div class="sub-menu">
                 <a href="series.php">Inicio Series</a>
                 <a href="series.php?seccion=trending">Trending</a>
@@ -83,33 +94,39 @@ session_start();
         </div>
 
         <div class="menu-desplegable">
-            <a href="juegos.php" class="seccion-principal">Juegos</a>
+            <a href="juegos.php" class="seccion-principal <?php echo (in_array($pagina_actual, ['juegos.php', 'juegoOpeningsAnime.php', 'juegoPersonajesAnime.php', 'juegoWordleAnime.php', 'juegoAhorcadoAnime.php'])) ? 'active' : ''; ?>">Juegos</a>
             <div class="sub-menu">
                 <a href="juegos.php">Inicio Juegos</a>
                 <a href="juegoOpeningsAnime.php">Adivina el Opening</a>
                 <a href="juegoPersonajesAnime.php">Adivina el Personaje</a>
                 <a href="juegoWordleAnime.php">Wordle Anime</a>
+                <a href="juegoAhorcadoAnime.php">Ahorcado Anime</a>
             </div>
         </div>
     </div>
 
-    <div class="search-container">
-        <select class="search-select">
-            <option value="all">All</option>
-            <option value="anime">Anime</option>
-            <option value="manga">Manga</option>
-        </select>
-        <input type="text" placeholder="Search Anime, Manga, and more..." class="search-input">
-        <button type="submit" class="search-button"><i>🔍</i></button>
+    <div class="search-wrapper" style="position: relative;"> 
+        <div class="search-container">
+            <select class="search-select" id="search-type">
+                <option value="all">All</option>
+                <option value="anime">Anime</option>
+                <option value="manga">Manga</option>
+                <option value="movie">Películas</option>
+                <option value="tv">Series</option>
+            </select>
+            <input type="text" id="search-input" placeholder="Search..." class="search-input" autocomplete="off">
+            <button type="submit" class="search-button"><i>🔍</i></button>
+        </div>
+        <div id="search-results" class="search-results-dropdown"></div>
     </div>
 </nav>
 
 <div class="container">
     <div class="game-container">
-        <h2>🎵 ¿De qué Anime es este Opening? 🎵</h2>
+        <h2>¿De qué anime es este Opening?</h2>
 
         <div id="pantalla-inicio">
-            <button class="btn-empezar" onclick="empezarJuegoReal()">¡Empezar Partida! 🎮</button>
+            <button class="btn-empezar" onclick="empezarJuegoReal()">Empezar Partida</button>
         </div>
 
         <div id="zona-juego" style="display: none;">
@@ -155,14 +172,14 @@ const baseDatosOpenings = [
     { nombre: "Fullmetal Alchemist: Brotherhood", audio: "https://v.animethemes.moe/FullmetalAlchemistBrotherhood-OP1.webm" },
     { nombre: "Sword Art Online", audio: "https://v.animethemes.moe/SwordArtOnline-OP1.webm" },
     { nombre: "Cowboy Bebop", audio: "https://v.animethemes.moe/CowboyBebop-OP1.webm" },
-    { nombre: "Bleach", audio: "https://v.animethemes.moe/Bleach-OP1.webm" },
+    { nombre: "Bleach", audio: "https://v.animethemes.moe/Bleach-OP13.webm" },
     { nombre: "Steins;Gate", audio: "https://v.animethemes.moe/SteinsGate-OP1.webm" },
     { nombre: "Code Geass", audio: "https://v.animethemes.moe/CodeGeass-OP1.webm" },
     { nombre: "No Game No Life", audio: "https://v.animethemes.moe/NoGameNoLife-OP1.webm" },
     { nombre: "Hunter x Hunter", audio: "https://v.animethemes.moe/HunterHunter2011-OP1.webm" },
     { nombre: "Dragon Ball Z", audio: "https://v.animethemes.moe/DragonBallZ-OP1.webm" },
     { nombre: "Fairy Tail", audio: "https://v.animethemes.moe/FairyTail-OP1.webm" },
-    { nombre: "JoJo's Bizarre Adventure", audio: "https://v.animethemes.moe/JojoNoKimyouNaBouken-OP1.webm" },
+    { nombre: "JoJo's Bizarre Adventure", audio: "https://v.animethemes.moe/JojoNoKimyouNaBouken-OP2.webm" },
     { nombre: "Chainsaw Man", audio: "https://v.animethemes.moe/ChainsawMan-OP1.webm" },
     { nombre: "Black Clover", audio: "https://v.animethemes.moe/BlackClover-OP3.webm" },
     { nombre: "Vinland Saga", audio: "https://v.animethemes.moe/VinlandSaga-OP1.webm" },
@@ -211,7 +228,7 @@ function iniciarTemporizador() {
     // Reset visual
     barra.style.width = '0%';
     tiempoLabel.innerText = tiempoRestante + 's';
-    resultadoTexto.innerText = "🎵 ¿Adivinas el anime? 🎵";
+    resultadoTexto.innerText = "¿Adivinas el anime?";
 
     intervaloTemporizador = setInterval(() => {
         tiempoRestante--;
@@ -223,7 +240,7 @@ function iniciarTemporizador() {
         if (tiempoRestante <= 0) {
             detenerTemporizador();
             document.getElementById('reproductor').pause();
-            resultadoTexto.innerText = "⏰ ¡Tiempo agotado! Responde ahora.";
+            resultadoTexto.innerText = "Se acabó el tiempo! Responde ahora.";
             resultadoTexto.style.color = "#ffc107";
         }
     }, 1000);
@@ -244,7 +261,7 @@ function iniciarRonda() {
     const contenedor = document.getElementById('contenedor-opciones');
     const reproductor = document.getElementById('reproductor');
 
-    resultadoTexto.innerText = "⏳ Cargando opening...";
+    resultadoTexto.innerText = "Cargando opening...";
     resultadoTexto.style.color = "#ccc";
     btnSiguiente.style.display = 'none';
     contenedor.innerHTML = '';
@@ -282,16 +299,12 @@ function iniciarRonda() {
     reproductor.onerror = function() {
         enlaceRoto = true;
         detenerTemporizador();
-        resultadoTexto.innerText = "⚠️ Servidor lento. Cambiando opening...";
+        resultadoTexto.innerText = "Servidor lento. Cambiando opening...";
         contadorRondas--;
         setTimeout(iniciarRonda, 1000); 
     };
 
-    reproductor.play().catch(error => {
-        if (!enlaceRoto) {
-            resultadoTexto.innerText = "🔇 Haz clic en PLAY para empezar";
-        }
-    });
+    reproductor.play()
 
     opcionesMezcladas.forEach(anime => {
         let btn = document.createElement('button');
@@ -318,12 +331,12 @@ function verificarRespuesta(botonClicado, animeElegido) {
 
     if (animeElegido === animeCorrecto) {
         aciertos++;
-        resultadoTexto.innerText = "¡CORRECTO! 🎉";
+        resultadoTexto.innerText = "CORRECTO!";
         resultadoTexto.style.color = "#28a745";
     } else {
         fallos++;
         botonClicado.classList.add('wrong');
-        resultadoTexto.innerText = "¡FALLASTE! ❌ Era " + animeCorrecto;
+        resultadoTexto.innerText = "FALLASTE! Era " + animeCorrecto;
         resultadoTexto.style.color = "#dc3545";
     }
 
@@ -354,13 +367,13 @@ function mostrarPantallaFinal() {
     resultadoTexto.innerHTML = `
         <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px;">
             <h3 style="color: #fff; margin-bottom: 10px;">¡Partida Terminada!</h3>
-            <p style="font-size: 1.5rem; color: #28a745;">✅ Aciertos: ${aciertos}</p>
-            <p style="font-size: 1.5rem; color: #dc3545;">❌ Fallos: ${fallos}</p>
+            <p style="font-size: 1.5rem; color: #28a745;">Aciertos: ${aciertos}</p>
+            <p style="font-size: 1.5rem; color: #dc3545;">Fallos: ${fallos}</p>
             <p style="margin-top: 10px; color: #ccc;">Tu nota: <strong>${(aciertos / MAX_RONDAS) * 10}/10</strong></p>
         </div>
     `;
 
-    btnSiguiente.innerText = "Jugar de nuevo 🔄";
+    btnSiguiente.innerText = "Jugar de nuevo";
     btnSiguiente.style.display = 'block';
 
     btnSiguiente.onclick = function() {

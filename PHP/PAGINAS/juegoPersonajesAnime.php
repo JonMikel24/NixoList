@@ -51,10 +51,11 @@ session_start();
 
 <nav class="navbar">
     <div class="nav-links">
+        
         <a href="index.php" class="<?php echo ($pagina_actual == 'index.php') ? 'active' : ''; ?>">Inicio</a>
 
         <div class="menu-desplegable">
-            <a href="anime.php" class="seccion-principal">Anime</a>
+            <a href="anime.php" class="seccion-principal <?php echo ($pagina_actual == 'anime.php') ? 'active' : ''; ?>">Anime</a>
             <div class="sub-menu">
                 <a href="anime.php">Inicio Anime</a>
                 <a href="anime.php?seccion=recomendados">Recomendados</a>
@@ -64,7 +65,17 @@ session_start();
         </div>
 
         <div class="menu-desplegable">
-            <a href="peliculas.php" class="seccion-principal">Películas</a>
+            <a href="manga.php" class="seccion-principal <?php echo ($pagina_actual == 'manga.php') ? 'active' : ''; ?>">Manga</a>
+            <div class="sub-menu">
+                <a href="manga.php">Inicio Manga</a>
+                <a href="manga.php?seccion=recomendados">Recomendados</a>
+                <a href="manga.php?seccion=populares">Más Populares</a>
+                <a href="manga.php?seccion=top">Top Manga</a>
+            </div>
+        </div>
+
+        <div class="menu-desplegable">
+            <a href="peliculas.php" class="seccion-principal <?php echo ($pagina_actual == 'peliculas.php') ? 'active' : ''; ?>">Películas</a>
             <div class="sub-menu">
                 <a href="peliculas.php">Inicio Películas</a>
                 <a href="peliculas.php?seccion=recomendadas">Recomendadas</a>
@@ -74,7 +85,7 @@ session_start();
         </div>
 
         <div class="menu-desplegable">
-            <a href="series.php" class="seccion-principal">Series</a>
+            <a href="series.php" class="seccion-principal <?php echo ($pagina_actual == 'series.php') ? 'active' : ''; ?>">Series</a>
             <div class="sub-menu">
                 <a href="series.php">Inicio Series</a>
                 <a href="series.php?seccion=trending">Trending</a>
@@ -84,30 +95,36 @@ session_start();
         </div>
 
         <div class="menu-desplegable">
-            <a href="juegos.php" class="seccion-principal">Juegos</a>
+            <a href="juegos.php" class="seccion-principal <?php echo (in_array($pagina_actual, ['juegos.php', 'juegoOpeningsAnime.php', 'juegoPersonajesAnime.php', 'juegoWordleAnime.php', 'juegoAhorcadoAnime.php'])) ? 'active' : ''; ?>">Juegos</a>
             <div class="sub-menu">
                 <a href="juegos.php">Inicio Juegos</a>
                 <a href="juegoOpeningsAnime.php">Adivina el Opening</a>
                 <a href="juegoPersonajesAnime.php">Adivina el Personaje</a>
                 <a href="juegoWordleAnime.php">Wordle Anime</a>
+                <a href="juegoAhorcadoAnime.php">Ahorcado Anime</a>
             </div>
         </div>
     </div>
 
-    <div class="search-container">
-        <select class="search-select">
-            <option value="all">All</option>
-            <option value="anime">Anime</option>
-            <option value="manga">Manga</option>
-        </select>
-        <input type="text" placeholder="Search Anime, Manga, and more..." class="search-input">
-        <button type="submit" class="search-button"><i>🔍</i></button>
+    <div class="search-wrapper" style="position: relative;"> 
+        <div class="search-container">
+            <select class="search-select" id="search-type">
+                <option value="all">All</option>
+                <option value="anime">Anime</option>
+                <option value="manga">Manga</option>
+                <option value="movie">Películas</option>
+                <option value="tv">Series</option>
+            </select>
+            <input type="text" id="search-input" placeholder="Search..." class="search-input" autocomplete="off">
+            <button type="submit" class="search-button"><i>🔍</i></button>
+        </div>
+        <div id="search-results" class="search-results-dropdown"></div>
     </div>
 </nav>
 
 <div class="container">
     <div class="game-container">
-        <h2>👤 ¿Quién es este Personaje? 👤</h2>
+        <h2>¿Quién es este Personaje?</h2>
 
         <div id="marcador" style="display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; font-weight: bold; font-size: 1.2rem;">
             <span style="color: #007bff;">Ronda: <span id="ronda-actual">0</span>/10</span>
@@ -202,10 +219,10 @@ function finalizarPartida() {
     pantallaFinal.innerHTML = `
         <div style="background: rgba(0,0,0,0.2); padding: 30px; border-radius: 15px; width: 100%; max-width: 500px; margin: 0 auto; text-align: center;">
             <h3 style="color: #fff; margin-bottom: 20px; font-size: 1.8rem;">¡Partida Terminada!</h3>
-            <p style="font-size: 1.5rem; color: #28a745; margin-bottom: 10px;">✅ Aciertos: ${aciertos}</p>
-            <p style="font-size: 1.5rem; color: #dc3545; margin-bottom: 20px;">❌ Fallos: ${fallos}</p>
+            <p style="font-size: 1.5rem; color: #28a745; margin-bottom: 10px;">Aciertos: ${aciertos}</p>
+            <p style="font-size: 1.5rem; color: #dc3545; margin-bottom: 20px;">Fallos: ${fallos}</p>
             <p style="color: #ccc; font-size: 1.2rem; margin-bottom: 30px;">Tu nota final: <strong>${(aciertos / MAX_RONDAS) * 10}/10</strong></p>
-            <button class="btn-siguiente" onclick="cargarPersonajesAPI()" style="margin: 0 auto; display: block;">Jugar de Nuevo 🔄</button>
+            <button class="btn-siguiente" onclick="cargarPersonajesAPI()" style="margin: 0 auto; display: block;">Jugar de nuevo</button>
         </div>
     `;
 }
@@ -220,7 +237,7 @@ function proximaRonda() {
     actualizarMarcador();
 
     document.getElementById('btn-siguiente').style.display = "none";
-    document.getElementById('resultado-texto').innerText = "¿Adivinas quién es?";
+    document.getElementById('resultado-texto').innerText = "Adivinas quién es?";
     document.getElementById('resultado-texto').style.color = "#ccc";
 
     personajeCorrecto = personajesDisponibles.pop();
@@ -259,12 +276,12 @@ function verificarRespuesta(botonElegido, nombreElegido) {
 
     if (nombreElegido === personajeCorrecto.nombre) {
         aciertos++;
-        textoResultado.innerText = "¡CORRECTO! 🎉";
+        textoResultado.innerText = "CORRECTO!";
         textoResultado.style.color = "#28a745";
     } else {
         fallos++;
         botonElegido.classList.add('wrong'); 
-        textoResultado.innerText = "¡FALLASTE! ❌ Era " + personajeCorrecto.nombre;
+        textoResultado.innerText = "FALLASTE! Era " + personajeCorrecto.nombre;
         textoResultado.style.color = "#dc3545";
     }
 

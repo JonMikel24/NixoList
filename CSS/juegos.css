@@ -1,5 +1,5 @@
 /* =========================================
-   ESTILOS DEL HUB DE JUEGOS (juegos.php)
+   ESTILOS DE LA SECCION DE JUEGOS
    ========================================= */
 .juegos-grid {
     display: grid;
@@ -112,31 +112,6 @@
 }
 .btn-siguiente:hover { background-color: #0056b3; }
 
-/* =========================================
-   JUEGO: ADIVINA EL PERSONAJE
-   ========================================= */
-.character-img-container {
-    width: 100%;
-    max-width: 300px;
-    height: 400px;
-    margin: 0 auto 20px;
-    border-radius: 15px;
-    overflow: hidden;
-    border: 3px solid #444;
-    background: #222;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.character-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; 
-}
-
-/* =========================================
-   BOTÓN DE INICIO DE JUEGOS
-   ========================================= */
 .btn-empezar {
     background-color: #28a745; 
     color: white;
@@ -191,16 +166,40 @@
     transition: width 1s linear;
 }
 
+
+/* ============================================
+    ESTILOS DEL JUEGO DE ADIVINAR EL PERSONAJE
+   ============================================ */
+.character-img-container {
+    width: 100%;
+    max-width: 300px;
+    height: 400px;
+    margin: 0 auto 20px;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 3px solid #444;
+    background: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.character-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+}
+
+
 /* =========================================
-   WORDLE ANIME STYLES (ACTUALIZADOS)
+    ESTILOS DEL WORDLE
    ========================================= */
 
 .wordle-game {
     display: flex;
-    flex-direction: row; /* Diseño a dos columnas */
+    flex-direction: row;
     justify-content: center;
     align-items: center;
-    flex-wrap: wrap; /* Colapsa en móvil */
+    flex-wrap: wrap;
     gap: 50px;
     padding: 30px;
 }
@@ -288,13 +287,33 @@
     text-align: center;
 }
 
-/* Estados de colores */
+
 .correct { background-color: #538d4e !important; border-color: #538d4e !important; }
 .present { background-color: #b59f3b !important; border-color: #b59f3b !important; }
 .absent { background-color: #3a3a3c !important; border-color: #3a3a3c !important; }
 
-/* Animaciones */
+
 .animacion-pop {
     transform: scale(1.1);
     border-color: #888;
+}
+
+
+/* =========================================
+   ESTILOS DEL AHORCADO
+   ========================================= */
+.palabra-secreta {
+    font-size: 2.5rem;
+    letter-spacing: 10px;
+    font-weight: bold;
+    margin: 30px 0;
+    word-wrap: break-word;
+    min-height: 50px;
+    text-align: center;
+}
+
+.vidas-container {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    text-align: center;
 }

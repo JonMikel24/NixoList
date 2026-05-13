@@ -12,6 +12,9 @@ function callAPI($url){
 
 $seccion = isset($_GET['seccion']) ? $_GET['seccion'] : 'inicio';
 
+// Variable de paginación
+$pagina = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+
 if ($seccion == 'inicio') {
     // Aumentamos a 2 segundos para que la API de Jikan no nos bloquee (Error 429)
     $topManga = callAPI("https://api.jikan.moe/v4/top/manga?limit=10");
@@ -20,19 +23,18 @@ if ($seccion == 'inicio') {
     $popularManga = callAPI("https://api.jikan.moe/v4/top/manga?filter=bypopularity&limit=10");
     sleep(2); 
 
-
     $recommendedManga = callAPI("https://api.jikan.moe/v4/recommendations/manga"); 
 }
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <title>Manga - NixoList</title>
 <link rel="stylesheet" href="../../CSS/styles.css">
-
 </head>
+<body>
 <header class="header-main">
     <div class="header-top">
         <div class="logo-container">
@@ -66,7 +68,7 @@ if ($seccion == 'inicio') {
         </div>
     </div>
 </header>
-<body>
+
     <?php
     // Obtenemos el nombre del archivo actual (ej: manga.php)
     $pagina_actual = basename($_SERVER['PHP_SELF']);
@@ -81,9 +83,9 @@ if ($seccion == 'inicio') {
             <a href="anime.php" class="seccion-principal <?php echo ($pagina_actual == 'anime.php') ? 'active' : ''; ?>">Anime</a>
             <div class="sub-menu">
                 <a href="anime.php">Inicio Anime</a>
-                <a href="anime.php#recomendados">Recomendados</a>
-                <a href="anime.php#populares">Más Populares</a>
-                <a href="anime.php#top">Top Anime</a>
+                <a href="anime.php?seccion=recomendados">Recomendados</a>
+                <a href="anime.php?seccion=populares">Más Populares</a>
+                <a href="anime.php?seccion=top">Top Anime</a>
             </div>
         </div>
 
@@ -91,9 +93,9 @@ if ($seccion == 'inicio') {
             <a href="manga.php" class="seccion-principal <?php echo ($pagina_actual == 'manga.php') ? 'active' : ''; ?>">Manga</a>
             <div class="sub-menu">
                 <a href="manga.php">Inicio Manga</a>
-                <a href="manga.php#recomendados">Recomendados</a>
-                <a href="manga.php#populares">Más Populares</a>
-                <a href="manga.php#top">Top Manga</a>
+                <a href="manga.php?seccion=recomendados">Recomendados</a>
+                <a href="manga.php?seccion=populares">Más Populares</a>
+                <a href="manga.php?seccion=top">Top Manga</a>
             </div>
         </div>
 
@@ -101,9 +103,9 @@ if ($seccion == 'inicio') {
             <a href="peliculas.php" class="seccion-principal <?php echo ($pagina_actual == 'peliculas.php') ? 'active' : ''; ?>">Películas</a>
             <div class="sub-menu">
                 <a href="peliculas.php">Inicio Películas</a>
-                <a href="peliculas.php#recomendadas">Recomendadas</a>
-                <a href="peliculas.php#populares">Más Populares</a>
-                <a href="peliculas.php#top">Top Rated</a>
+                <a href="peliculas.php?seccion=recomendadas">Recomendadas</a>
+                <a href="peliculas.php?seccion=populares">Más Populares</a>
+                <a href="peliculas.php?seccion=top">Top Rated</a>
             </div>
         </div>
 
@@ -111,19 +113,20 @@ if ($seccion == 'inicio') {
             <a href="series.php" class="seccion-principal <?php echo ($pagina_actual == 'series.php') ? 'active' : ''; ?>">Series</a>
             <div class="sub-menu">
                 <a href="series.php">Inicio Series</a>
-                <a href="series.php#trending">Trending</a>
-                <a href="series.php#populares">Más Populares</a>
-                <a href="series.php#top">Top Rated</a>
+                <a href="series.php?seccion=trending">Trending</a>
+                <a href="series.php?seccion=populares">Más Populares</a>
+                <a href="series.php?seccion=top">Top Rated</a>
             </div>
         </div>
 
         <div class="menu-desplegable">
-            <a href="juegos.php" class="seccion-principal <?php echo (in_array($pagina_actual, ['juegos.php', 'juegoOpeningsAnime.php', 'juegoPersonajesAnime.php', 'juegoWordleAnime.php'])) ? 'active' : ''; ?>">Juegos</a>
+            <a href="juegos.php" class="seccion-principal <?php echo (in_array($pagina_actual, ['juegos.php', 'juegoOpeningsAnime.php', 'juegoPersonajesAnime.php', 'juegoWordleAnime.php', 'juegoAhorcadoAnime.php'])) ? 'active' : ''; ?>">Juegos</a>
             <div class="sub-menu">
                 <a href="juegos.php">Inicio Juegos</a>
                 <a href="juegoOpeningsAnime.php">Adivina el Opening</a>
                 <a href="juegoPersonajesAnime.php">Adivina el Personaje</a>
                 <a href="juegoWordleAnime.php">Wordle Anime</a>
+                <a href="juegoAhorcadoAnime.php">Ahorcado Anime</a>
             </div>
         </div>
     </div>
@@ -228,7 +231,126 @@ if(isset($topManga["data"])) {
 </div>
 
 
-<?php } elseif ($seccion == 'recomendados') {
+<?php } elseif ($seccion == 'populares' || $seccion == 'top') { 
+    // ---- PÁGINAS DE LISTA (POPULARES Y TOP PARA MANGA) ----
+    
+    // 1. Títulos y Endpoints
+    $tituloSeccion = ($seccion == 'populares') ? "Mangas Más Populares" : "Top Manga de Todos los Tiempos";
+    $endpoint = ($seccion == 'populares') ? "top/manga?filter=bypopularity" : "top/manga?";
+    // Ojo: Jikan usa un formato de paginación con '&page='
+    $conector = ($seccion == 'populares') ? "&" : "";
+    
+    // 2. Llamada a la API de Jikan con Paginación
+    $listaDatos = callAPI("https://api.jikan.moe/v4/".$endpoint.$conector."page=".$pagina."&limit=25");
+
+    // 3. Cabecera con título y paginación superior
+    echo "<div class='lista-header'>";
+    echo "<h2>$tituloSeccion</h2>";
+    echo "<div class='paginacion'>";
+    if ($pagina > 1) {
+        echo "<a href='manga.php?seccion=$seccion&page=".($pagina - 1)."' class='btn-pag'>&lt; Prev 25</a>";
+    }
+    echo "<a href='manga.php?seccion=$seccion&page=".($pagina + 1)."' class='btn-pag'>Next 25 &gt;</a>";
+    echo "</div>";
+    echo "</div>";
+
+    // 4. Base de Datos: Comprobar qué mangas tiene el usuario
+    $mis_mangas = [];
+    $mis_estados = [];
+
+    if (isset($_SESSION['id_usuario'])) {
+        require_once(__DIR__ . "/../conexion.php");
+        
+        /* NOTA: Usamos 'tmdb_id' porque es el nombre de la columna en BD (aunque guarde el ID de MAL) */
+        $stmt_user = $conexion->prepare("
+            SELECT m.tmdb_id, mu.status 
+            FROM media_usuario mu 
+            JOIN media m ON mu.id_media = m.id_media 
+            WHERE mu.id_usuario = ? AND m.tmdb_id IS NOT NULL
+        ");
+        $stmt_user->bind_param("i", $_SESSION['id_usuario']);
+        $stmt_user->execute();
+        $res_user = $stmt_user->get_result();
+        
+        while($fila = $res_user->fetch_assoc()) {
+            $mis_mangas[] = $fila['tmdb_id'];
+            $mis_estados[$fila['tmdb_id']] = $fila['status'];
+        }
+    }
+
+    echo "<table class='tabla-nixolist'>";
+    echo "<thead><tr><th style='text-align:center;'>Rank</th><th>Title</th><th style='text-align:center;'>Score</th><th style='text-align:center;'>Status</th></tr></thead>";
+    echo "<tbody>";
+
+    $rank = ($pagina - 1) * 25 + 1; 
+
+    // Mapeo de la data de Manga
+    if(isset($listaDatos["data"]) && is_array($listaDatos["data"])) {
+        foreach($listaDatos["data"] as $manga){
+            $id = $manga["mal_id"];
+            $img = $manga["images"]["jpg"]["image_url"];
+            $title = $manga["title"];
+            // En Manga, usamos 'published -> from' para obtener el año
+            $date = isset($manga["published"]["from"]) ? date('Y', strtotime($manga["published"]["from"])) : 'N/A';
+            $score = isset($manga["score"]) ? $manga["score"] : 'N/A';
+
+            echo "<tr>";
+            echo "<td class='rank-numero'>$rank</td>";
+            echo "<td class='title-cell'>";
+            echo "  <img src='$img' alt='Poster' class='lista-img'>";
+            echo "  <div class='title-info'>";
+            echo "      <a href='media.php?id=$id&type=manga'>$title</a>";
+            echo "      <p class='fecha'>$date</p>";
+            echo "  </div>";
+            echo "</td>";
+            echo "<td class='score-cell'>⭐ $score</td>";
+
+            $titulo_seguro = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
+
+            // Comprobamos si ya está en la lista del usuario
+            $esta_en_lista = in_array($id, $mis_mangas);
+            $estado_actual = $esta_en_lista ? $mis_estados[$id] : '';
+
+            echo "<td class='status-cell' style='text-align: center;'>";
+
+            $btn_display = $esta_en_lista ? "display: none;" : "display: inline-block;";
+            // IMPORTANTE: data-type='manga'
+            echo "<button class='btn-add-list btn-add-ajax' data-id='$id' data-type='manga' data-title='$titulo_seguro' data-img='$img' style='$btn_display'>Add to My List</button>";
+
+            $select_display = $esta_en_lista ? "display: inline-block;" : "display: none;";
+            echo "<select class='status-select-ajax' data-id='$id' data-type='manga' data-title='$titulo_seguro' data-img='$img' style='$select_display background: #222; color: white; border: 1px solid #444; padding: 5px; border-radius: 3px; cursor: pointer;'>";
+
+            $opciones = [
+                'planned'   => 'Planteando leerlo',
+                'watching'  => 'Leyendo',
+                'completed' => 'Completado',
+                'paused'    => 'En espera',
+                'dropped'   => 'Dropeado'
+            ];
+
+            foreach($opciones as $val => $texto) {
+                $sel = ($estado_actual == $val) ? 'selected' : '';
+                echo "<option value='$val' $sel>$texto</option>";
+            }
+            echo "</select>";
+            echo "</td>";
+            echo "</tr>";
+            
+            $rank++;
+        }
+    }
+    echo "</tbody></table>";
+    
+    // Paginación inferior
+    echo "<div class='lista-footer'>";
+    if ($pagina > 1) {
+        echo "<a href='manga.php?seccion=$seccion&page=".($pagina - 1)."' class='btn-pag'>&lt; Prev 25</a>";
+    }
+    echo "<a href='manga.php?seccion=$seccion&page=".($pagina + 1)."' class='btn-pag'>Next 25 &gt;</a>";
+    echo "</div>";
+
+} elseif ($seccion == 'recomendados') {
+    // ---- PÁGINA RECOMENDADOS (Se queda en CUADRÍCULA) ----
     echo "<h2>Mangas Recomendados</h2>";
     echo "<div class='grid-galeria'>";
     $paginaRecomendados = callAPI("https://api.jikan.moe/v4/recommendations/manga");
@@ -242,55 +364,101 @@ if(isset($topManga["data"])) {
         }
     }
     echo "</div>";
-
-} elseif ($seccion == 'populares') {
-    echo "<h2>Mangas Más Populares</h2>";
-    echo "<div class='grid-galeria'>";
-    $paginaPopulares = callAPI("https://api.jikan.moe/v4/top/manga?filter=bypopularity&limit=10");
-    
-    if(isset($paginaPopulares["data"])) {
-        foreach($paginaPopulares["data"] as $manga){
-            $id = $manga["mal_id"];
-            $img = $manga["images"]["jpg"]["image_url"];
-            echo "<div class='card'><a href='media.php?id=$id&type=manga'><img src='$img'></a><p>{$manga['title']}</p></div>";
-        }
-    }
-    echo "</div>";
-
-} elseif ($seccion == 'top') {
-    echo "<h2>Top Manga de Todos los Tiempos</h2>";
-    echo "<div class='grid-galeria'>";
-    $paginaTop = callAPI("https://api.jikan.moe/v4/top/manga?limit=10");
-    
-    if(isset($paginaTop["data"])) {
-        foreach($paginaTop["data"] as $manga){
-            $id = $manga["mal_id"];
-            $img = $manga["images"]["jpg"]["image_url"];
-            echo "<div class='card'><a href='media.php?id=$id&type=manga'><img src='$img'></a><p>{$manga['title']}</p></div>";
-        }
-    }
-    echo "</div>";
 }
 ?>
 
 </div>
-<script>
-    document.getElementById('search-input').addEventListener('input', function() {
-    let query = this.value;
-    let type = document.getElementById('search-type').value;
-    let resultsContainer = document.getElementById('search-results');
 
-    if (query.length >= 3) {
-        fetch(`buscar_sugerencias.php?q=${query}&type=${type}`)
-            .then(response => response.text())
-            .then(data => {
-                resultsContainer.innerHTML = data;
-                resultsContainer.style.display = 'block'; 
-            });
-    } else {
-        resultsContainer.style.display = 'none'; 
+<script>
+// SCIPT UNIFICADO: Búsqueda y funcionalidad AJAX para listas
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // -- BUSCADOR --
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            let query = this.value;
+            let type = document.getElementById('search-type').value;
+            let resultsContainer = document.getElementById('search-results');
+
+            if (query.length >= 3) {
+                fetch(`buscar_sugerencias.php?q=${query}&type=${type}`)
+                    .then(response => response.text())
+                    .then(data => {
+                        resultsContainer.innerHTML = data;
+                        resultsContainer.style.display = 'block'; 
+                    });
+            } else {
+                resultsContainer.style.display = 'none'; 
+            }
+        });
     }
+
+    // -- AÑADIR A LA LISTA (AJAX) --
+    const botonesAdd = document.querySelectorAll('.btn-add-ajax');
+    botonesAdd.forEach(boton => {
+        boton.addEventListener('click', function(e) {
+            e.preventDefault();
+            const botonActual = this;
+            
+            const datos = new FormData();
+            datos.append('id_api', botonActual.dataset.id);
+            datos.append('type', botonActual.dataset.type);
+            datos.append('titulo', botonActual.dataset.title);
+            datos.append('portada', botonActual.dataset.img);
+            datos.append('action', 'add_list');
+            datos.append('nuevo_status', 'planned'); 
+
+            fetch('../FUNCIONALIDADES/procesar_interaccion.php', {
+                method: 'POST',
+                body: datos
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.status === 'success' && res.result === 'added') {
+                    botonActual.style.display = 'none';
+                    const selectAsociado = botonActual.nextElementSibling;
+                    if(selectAsociado) {
+                        selectAsociado.style.display = 'inline-block';
+                        selectAsociado.value = 'planned';
+                    }
+                } else {
+                    alert("Hubo un problema al añadir a la lista.");
+                }
+            })
+            .catch(err => console.error("Error:", err));
+        });
+    });
+
+    // -- ACTUALIZAR ESTADO DE LA LISTA (AJAX) --
+    const selectsStatus = document.querySelectorAll('.status-select-ajax');
+    selectsStatus.forEach(select => {
+        select.addEventListener('change', function() {
+            const nuevoEstado = this.value;
+
+            const datos = new FormData();
+            datos.append('id_api', this.dataset.id);
+            datos.append('type', this.dataset.type);
+            datos.append('titulo', this.dataset.title);
+            datos.append('portada', this.dataset.img);
+            datos.append('action', 'update_status');
+            datos.append('nuevo_status', nuevoEstado);
+
+            fetch('../FUNCIONALIDADES/procesar_interaccion.php', {
+                method: 'POST',
+                body: datos
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.status !== 'success') {
+                    alert("Error al actualizar el estado.");
+                }
+            })
+            .catch(err => console.error("Error:", err));
+        });
+    });
 });
 </script>
+
 </body>
 </html>

@@ -1,16 +1,14 @@
 <?php
 session_start();
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>NixoList - Juegos</title>
-<link rel="stylesheet" href="../../CSS/styles.css">
-<link rel="stylesheet" href="../../CSS/juegos.css">
+    <meta charset="UTF-8">
+    <title>Ahorcado Anime - NixoList</title>
+    <link rel="stylesheet" href="../../CSS/styles.css">
+    <link rel="stylesheet" href="../../CSS/juegos.css">
 </head>
-
 <body>
 
 <header class="header-main">
@@ -20,7 +18,8 @@ session_start();
                 <h1 class="logo-texto">NixoList</h1>
             </a>
         </div>
-        <div class="PerfilContenedor"> <?php
+        <div class="PerfilContenedor">
+            <?php
             if (isset($_SESSION['Usuario'])) {
                 $Foto = (!empty($_SESSION['Foto'])) ? $_SESSION['Foto'] : '/Recursos/fotousuario.png';
                 echo '
@@ -29,17 +28,14 @@ session_start();
                         <div class="perfil-info">
                             <p class="perfil-nombre nombre-mio">' . htmlspecialchars($_SESSION['Usuario']) . ' <span class="flecha">▼</span></p>
                         </div>
-                        <img src="' . htmlspecialchars($Foto) . '" class="profile-pic foto-mia" id="perfilImagen">
+                        <img src="' . htmlspecialchars($Foto) . '" class="profile-pic foto-mia">
                     </div>
-                </a>
-                ';
+                </a>';
             } else {
                 echo '
                 <div class="auth-buttons">
                     <a href="../Login/Index.php"><button class="login-btn">Iniciar Sesión</button></a>
-                    <a href="../Login/registrarse.php"><button class="register-btn">Registrarse</button></a>
-                </div>
-                ';
+                </div>';
             }
             ?>
         </div>
@@ -122,52 +118,149 @@ session_start();
 </nav>
 
 <div class="container">
-    <h2 style="text-align: center; margin-top: 20px;">Zona de Juegos de NixoList</h2>
-    <p style="text-align: center; color: #ccc;">Pon a prueba tus conocimientos otaku con nuestros minijuegos</p>
-
-    <div class="juegos-grid">
-        <div class="juego-card">
-            <h3>Adivina el Opening</h3>
-            <p>Escucha un fragmento de audio y adivina a qué anime pertenece el opening</p>
-            <a href="juegoOpeningsAnime.php" class="btn-jugar">Jugar Ahora</a>
+    <div class="game-container wordle-game">
+        
+        <div class="wordle-left">
+            <h2>Ahorcado Anime</h2>
+            <p>Adivina el anime</p>
+            <div id="ahorcado-vidas" class="vidas-container"></div>
+            <div id="ahorcado-palabra" class="palabra-secreta"></div>
         </div>
 
-        <div class="juego-card">
-            <h3>Adivina el Personaje</h3>
-            <p>Adivina el personaje de anime por su imagen</p>
-            <a href="juegoPersonajesAnime.php" class="btn-jugar">Jugar Ahora</a>
+        <div class="wordle-right">
+            <div id="ahorcado-mensaje" class="mensaje-alerta"></div>
+            <div id="ahorcado-keyboard" class="keyboard-container"></div>
+            <button id="btn-reset-ahorcado" class="btn-siguiente" onclick="iniciarAhorcado()" style="display:none;">Jugar de nuevo</button>
         </div>
 
-        <div class="juego-card">
-            <h3>Wordle Anime</h3>
-            <p>Descifra el personaje de anime de 5 letras en 6 intentos</p>
-            <a href="juegoWordleAnime.php" class="btn-jugar">Jugar Ahora</a>
-        </div>
-
-        <div class="juego-card">
-            <h3>Ahorcado Anime</h3>
-            <p>Descubre el anime letra por letra antes de perder tus vidas</p>
-            <a href="juegoAhorcadoAnime.php" class="btn-jugar">Jugar Ahora</a>
-        </div>
     </div>
 </div>
-<script>
-    document.getElementById('search-input').addEventListener('input', function() {
-    let query = this.value;
-    let type = document.getElementById('search-type').value;
-    let resultsContainer = document.getElementById('search-results');
 
-    if (query.length >= 3) {
-        fetch(`buscar_sugerencias.php?q=${query}&type=${type}`)
-            .then(response => response.text())
-            .then(data => {
-                resultsContainer.innerHTML = data;
-                resultsContainer.style.display = 'block'; 
-            });
+<script>
+const diccionarioAnime = [
+    "ONE PIECE", "NARUTO", "DRAGON BALL", "DEATH NOTE",
+    "EVANGELION", "BLEACH", "FULLMETAL ALCHEMIST",
+    "HUNTER X HUNTER", "ATTACK ON TITAN", "TOKYO GHOUL",
+    "MY HERO ACADEMIA", "JUJUTSU KAISEN", "DEMON SLAYER",
+    "COWBOY BEBOP", "STEINS GATE", "CHAINSAW MAN",
+    "VINLAND SAGA", "ONE PUNCH MAN", "CODE GEASS"
+];
+
+let palabraObjetivo = "";
+let letrasAdivinadas = [];
+let errores = 0;
+const MAX_ERRORES = 6;
+let juegoTerminado = false;
+
+function iniciarAhorcado() {
+    palabraObjetivo = diccionarioAnime[Math.floor(Math.random() * diccionarioAnime.length)].toUpperCase();
+    letrasAdivinadas = [];
+    errores = 0;
+    juegoTerminado = false;
+    
+    document.getElementById('ahorcado-mensaje').innerText = "";
+    document.getElementById('btn-reset-ahorcado').style.display = "none";
+    
+    actualizarVidas();
+    dibujarPalabra();
+    dibujarTeclado();
+}
+
+function actualizarVidas() {
+    const vidasRestantes = MAX_ERRORES - errores;
+    document.getElementById('ahorcado-vidas').innerText = "Vidas: " + "❤️".repeat(vidasRestantes) + "🖤".repeat(errores);
+}
+
+function dibujarPalabra() {
+    const contenedor = document.getElementById('ahorcado-palabra');
+    let mostrar = "";
+    let victoria = true;
+
+    for (let i = 0; i < palabraObjetivo.length; i++) {
+        let letra = palabraObjetivo[i];
+        
+        if (letra === " ") {
+            mostrar += " \u00A0 "; 
+        } else if (letrasAdivinadas.includes(letra)) {
+            mostrar += letra;
+        } else {
+            mostrar += "_";
+            victoria = false; 
+        }
+    }
+
+    contenedor.innerText = mostrar;
+
+    if (victoria) {
+        document.getElementById('ahorcado-mensaje').innerText = "Ganaste!";
+        finalizarJuego();
+    }
+}
+
+function dibujarTeclado() {
+    const tecladoContenedor = document.getElementById('ahorcado-keyboard');
+    tecladoContenedor.innerHTML = "";
+    const filas = ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"];
+
+    filas.forEach(fila => {
+        const divFila = document.createElement("div");
+        divFila.className = "key-row";
+        
+        fila.split("").forEach(t => {
+            const boton = document.createElement("button");
+            boton.id = `tecla-${t}`;
+            boton.innerText = t;
+            boton.className = "tecla-wordle"; 
+            
+            boton.onclick = () => manejarEntrada(t);
+            divFila.appendChild(boton);
+        });
+        tecladoContenedor.appendChild(divFila);
+    });
+}
+
+function manejarEntrada(tecla) {
+    if (juegoTerminado || letrasAdivinadas.includes(tecla)) return;
+
+    letrasAdivinadas.push(tecla);
+    const botonVirtual = document.getElementById(`tecla-${tecla}`);
+
+    if (palabraObjetivo.includes(tecla)) {
+        if (botonVirtual) botonVirtual.classList.add("correct");
+        dibujarPalabra();
     } else {
-        resultsContainer.style.display = 'none'; 
+        if (botonVirtual) botonVirtual.classList.add("absent");
+        errores++;
+        actualizarVidas();
+
+        if (errores >= MAX_ERRORES) {
+            document.getElementById('ahorcado-mensaje').innerText = "Perdiste. Era " + palabraObjetivo;
+            finalizarJuego();
+        }
+    }
+}
+
+window.addEventListener("keydown", (e) => {
+    if (juegoTerminado) return;
+    if (e.key.length === 1 && /[a-zA-Z]/.test(e.key)) {
+        manejarEntrada(e.key.toUpperCase());
     }
 });
+
+function finalizarJuego() {
+    juegoTerminado = true;
+    document.getElementById('btn-reset-ahorcado').style.display = "block";
+    
+    const todasLasTeclas = document.querySelectorAll('.tecla-wordle');
+    todasLasTeclas.forEach(tecla => {
+        if (!tecla.classList.contains('correct') && !tecla.classList.contains('absent')) {
+            tecla.style.opacity = "0.5";
+            tecla.style.cursor = "not-allowed";
+        }
+    });
+}
+
+window.onload = iniciarAhorcado;
 </script>
 </body>
 </html>
