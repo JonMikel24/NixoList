@@ -109,13 +109,13 @@ session_start();
     <div class="search-wrapper" style="position: relative;"> 
         <div class="search-container">
             <select class="search-select" id="search-type">
-                <option value="all">All</option>
+                <option value="all">Todos</option>
                 <option value="anime">Anime</option>
                 <option value="manga">Manga</option>
                 <option value="movie">Películas</option>
                 <option value="tv">Series</option>
             </select>
-            <input type="text" id="search-input" placeholder="Search..." class="search-input" autocomplete="off">
+            <input type="text" id="search-input" placeholder="Buscar..." class="search-input" autocomplete="off">
             <button type="submit" class="search-button"><i>🔍</i></button>
         </div>
         <div id="search-results" class="search-results-dropdown"></div>
@@ -170,7 +170,7 @@ async function cargarPersonajesAPI() {
     // Elegimos una página al azar entre la 1 y la 20 (Top 500 personajes)
     let paginaAleatoria = Math.floor(Math.random() * 20) + 1;
     
-    textoResultado.innerText = "Reclutando personajes de todo el mundo... 🌍";
+    textoResultado.innerText = "Cargando el siguiente personaje...";
     textoResultado.style.color = "#ccc";
     document.getElementById('contenedor-imagen').style.display = "none"; 
     
@@ -185,7 +185,7 @@ async function cargarPersonajesAPI() {
 
         iniciarJuego(); 
     } catch (error) {
-        textoResultado.innerText = "⚠️ Error al cargar los personajes. Comprueba tu conexión.";
+        textoResultado.innerText = "Error al cargar los personajes. Comprueba tu conexión.";
         textoResultado.style.color = "#dc3545";
         console.error("Error en la API:", error);
     }
@@ -237,7 +237,7 @@ function proximaRonda() {
     actualizarMarcador();
 
     document.getElementById('btn-siguiente').style.display = "none";
-    document.getElementById('resultado-texto').innerText = "Adivinas quién es?";
+    document.getElementById('resultado-texto').innerText = "¿Adivinas quién es?";
     document.getElementById('resultado-texto').style.color = "#ccc";
 
     personajeCorrecto = personajesDisponibles.pop();

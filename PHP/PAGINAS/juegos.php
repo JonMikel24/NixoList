@@ -108,13 +108,13 @@ session_start();
     <div class="search-wrapper" style="position: relative;"> 
         <div class="search-container">
             <select class="search-select" id="search-type">
-                <option value="all">All</option>
+                <option value="all">Todos</option>
                 <option value="anime">Anime</option>
                 <option value="manga">Manga</option>
                 <option value="movie">Películas</option>
                 <option value="tv">Series</option>
             </select>
-            <input type="text" id="search-input" placeholder="Search..." class="search-input" autocomplete="off">
+            <input type="text" id="search-input" placeholder="Buscar..." class="search-input" autocomplete="off">
             <button type="submit" class="search-button"><i>🔍</i></button>
         </div>
         <div id="search-results" class="search-results-dropdown"></div>
@@ -140,7 +140,7 @@ session_start();
 
         <div class="juego-card">
             <h3>Wordle Anime</h3>
-            <p>Descifra el personaje de anime de 5 letras en 6 intentos</p>
+            <p>Descifra el personaje de anime de 6 letras en 6 intentos</p>
             <a href="juegoWordleAnime.php" class="btn-jugar">Jugar Ahora</a>
         </div>
 
