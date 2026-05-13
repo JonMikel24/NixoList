@@ -1,5 +1,3 @@
-/* --- PAGINA DE DETALLE (ESTILO MYANIMELIST) --- */
-
 .main-wrapper {
     max-width: 1100px;
     margin: 20px auto;
@@ -8,7 +6,6 @@
     padding: 0 20px;
 }
 
-/* Columna Lateral (Poster e Info técnica) */
 .side-info {
     width: 225px;
     flex-shrink: 0;
@@ -22,13 +19,12 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.5);
 }
 
-/* BOTONES AMARILLOS CON LETRAS NEGRAS */
 .btn-action-list {
     width: 100%;
-    margin-top: 10px; /* Un poco de margen superior */
+    margin-top: 10px; 
     padding: 12px;
-    background: #ffdd1c; /* Tu amarillo */
-    color: rgb(0, 0, 0);  /* Letras negras */
+    background: #ffdd1c; 
+    color: rgb(0, 0, 0); 
     border: none;
     border-radius: 4px;
     font-weight: bold;
@@ -39,7 +35,7 @@
 }
 
 .btn-action-list:hover {
-    background: #e5c619; /* Oscurece un poco al pasar el ratón, sin volverse rojo */
+    background: #e5c619; 
     transform: translateY(-2px);
 }
 
@@ -67,7 +63,6 @@
     margin-bottom: 2px;
 }
 
-/* Columna Principal */
 .main-content {
     flex-grow: 1;
     background: #1a1a1a;
@@ -143,7 +138,6 @@
     border: 1px solid #555;
 }
 
-/* --- ESTILOS PARA LAS PESTAÑAS (TABS) --- */
 .media-tabs {
     display: flex;
     gap: 5px;
@@ -167,10 +161,9 @@
 .media-tabs a.active {
     color: #ffdd1c;
     border-bottom: 3px solid #ffdd1c;
-    margin-bottom: -2px; /* Alinea con el borde inferior */
+    margin-bottom: -2px; 
 }
 
-/* --- TABLA DE PERSONAJES (CHARACTERS) --- */
 .characters-table {
     width: 100%;
     border-collapse: collapse;
@@ -218,7 +211,6 @@
     color: #666;
 }
 
-/* --- TABLA DE EPISODIOS --- */
 .ep-table {
     width: 100%;
     border-collapse: collapse;
@@ -239,7 +231,6 @@
     font-size: 14px;
 }
 
-/* --- GRID DE VIDEOS --- */
 .videos-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -257,7 +248,6 @@
     border-radius: 4px;
 }
 
-/* --- ESTADÍSTICAS (STATS) --- */
 .stats-list p {
     display: flex;
     justify-content: space-between;
@@ -271,7 +261,6 @@
     color: #ffdd1c;
 }
 
-/* --- REVIEWS (RESREÑAS) --- */
 .review-card {
     background: #222;
     padding: 20px;

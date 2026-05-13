@@ -382,7 +382,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const botonesAdd = document.querySelectorAll('.btn-add-ajax');
     const selectsStatus = document.querySelectorAll('.status-select-ajax');
 
-    // 1. Lógica para el botón "Add to My List"
+   
     botonesAdd.forEach(boton => {
         boton.addEventListener('click', function(e) {
             e.preventDefault();
@@ -394,7 +394,7 @@ document.addEventListener('DOMContentLoaded', function() {
             datos.append('titulo', botonActual.dataset.title);
             datos.append('portada', botonActual.dataset.img);
             datos.append('action', 'add_list');
-            datos.append('nuevo_status', 'planned'); // Valor por defecto al añadir
+            datos.append('nuevo_status', 'planned'); 
 
             fetch('../FUNCIONALIDADES/procesar_interaccion.php', {
                 method: 'POST',
@@ -418,7 +418,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 2. Lógica para actualizar el estado con el <select>
+   
     selectsStatus.forEach(select => {
         select.addEventListener('change', function() {
             const nuevoEstado = this.value;
@@ -456,10 +456,10 @@ document.getElementById('search-input').addEventListener('input', function() {
             .then(response => response.text())
             .then(data => {
                 resultsContainer.innerHTML = data;
-                resultsContainer.style.display = 'block'; // Lo mostramos
+                resultsContainer.style.display = 'block'; 
             });
     } else {
-        resultsContainer.style.display = 'none'; // Lo ocultamos si no hay texto
+        resultsContainer.style.display = 'none'; 
     }
 });
 </script>

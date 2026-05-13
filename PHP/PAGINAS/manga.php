@@ -285,10 +285,10 @@ if(isset($topManga["data"])) {
             .then(response => response.text())
             .then(data => {
                 resultsContainer.innerHTML = data;
-                resultsContainer.style.display = 'block'; // Lo mostramos
+                resultsContainer.style.display = 'block'; 
             });
     } else {
-        resultsContainer.style.display = 'none'; // Lo ocultamos si no hay texto
+        resultsContainer.style.display = 'none'; 
     }
 });
 </script>

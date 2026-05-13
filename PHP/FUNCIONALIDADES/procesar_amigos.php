@@ -9,10 +9,9 @@ if (!isset($_SESSION['id_usuario'])) {
 
 $mi_id = $_SESSION['id_usuario'];
 
-// --- BÚSQUEDA ---
 if (isset($_GET['q'])) {
     $q = "%" . $_GET['q'] . "%";
-    // Corregido a 'username' y 'avatar'
+
     $sql = "SELECT id_usuario, username, avatar FROM usuarios WHERE username LIKE ? AND id_usuario != ? LIMIT 5";
     $stmt = $conexion->prepare($sql);
     $stmt->bind_param("si", $q, $mi_id);
@@ -47,7 +46,7 @@ if (isset($_GET['q'])) {
     exit;
 }
 
-// --- ACCIONES POST ---
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id_amigo = $_POST['id_amigo'];
     $accion = $_POST['accion'];
