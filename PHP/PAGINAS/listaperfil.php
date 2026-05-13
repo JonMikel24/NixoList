@@ -254,11 +254,11 @@ require_once '../FUNCIONALIDADES/perfil.php';
                 </div>
                 <div class="stat-box">
                     <span class="stat-value" style="color: #4ade80;"><?php echo $counts['completed']; ?></span>
-                    <span class="stat-label">Completed</span>
+                    <span class="stat-label">Completado</span>
                 </div>
                 <div class="stat-box">
                     <span class="stat-value"><?php echo number_format($counts['mean_score'], 2); ?></span>
-                    <span class="stat-label">Mean Score</span>
+                    <span class="stat-label">Nota Media</span>
                 </div>
             </div>
 
@@ -269,9 +269,9 @@ require_once '../FUNCIONALIDADES/perfil.php';
             </div>
 
             <div class="stats-legend">
-                <span><div class="legend-dot completed"></div> <?php echo $counts['completed']; ?> Completed</span>
-                <span><div class="legend-dot watching"></div> <?php echo $counts['watching']; ?> Watching</span>
-                <span><div class="legend-dot planned"></div> <?php echo $counts['planned']; ?> Planned</span>
+                <span><div class="legend-dot completed"></div> <?php echo $counts['completed']; ?> Completado</span>
+                <span><div class="legend-dot watching"></div> <?php echo $counts['watching']; ?> Viendo</span>
+                <span><div class="legend-dot planned"></div> <?php echo $counts['planned']; ?> Planeando</span>
                 <span><div class="legend-dot dropped"></div> <?php echo $counts['dropped']; ?> Dropped</span>
             </div>
         </div>
