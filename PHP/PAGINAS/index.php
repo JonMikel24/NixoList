@@ -59,7 +59,7 @@ $topSeries = callAPI("https://api.themoviedb.org/3/trending/tv/week?api_key=".$t
     </div>
 </header>
     <?php
-    // Obtenemos el nombre del archivo actual (ej: anime.php)
+    
     $pagina_actual = basename($_SERVER['PHP_SELF']);
     ?>
 
@@ -220,9 +220,8 @@ document.getElementById('search-input').addEventListener('input', function() {
     }
 });
 
-// Cerrar buscador al hacer clic fuera
+
 document.addEventListener('click', function(e) {
-    // Ahora comprobamos si el clic fue fuera del wrapper
     if (!document.querySelector('.search-wrapper').contains(e.target)) {
         document.getElementById('search-results').style.display = 'none';
     }

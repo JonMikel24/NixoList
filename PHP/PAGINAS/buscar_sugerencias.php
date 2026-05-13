@@ -5,13 +5,12 @@ $tmdb_key = "0537b412710df9a2b7790cada44e494e";
 
 $results = [];
 
-// Función auxiliar para evitar errores de conexión
 function get_api_data($url) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Evita problemas de certificados en local
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
@@ -19,7 +18,6 @@ function get_api_data($url) {
     return ($httpCode === 200) ? json_decode($response, true) : null;
 }
 
-// 1. Lógica para Anime/Manga (Jikan)
 if ($type == 'all' || $type == 'anime' || $type == 'manga') {
     $jikan_type = ($type == 'all') ? 'anime' : $type;
     $data = get_api_data("https://api.jikan.moe/v4/$jikan_type?q=$query&limit=5");
@@ -35,7 +33,7 @@ if ($type == 'all' || $type == 'anime' || $type == 'manga') {
     }
 }
 
-// 2. Lógica para Películas/Series (TMDB)
+
 if ($type == 'all' || $type == 'movie' || $type == 'tv') {
     $tmdb_endpoint = ($type == 'all') ? 'multi' : $type;
     $data = get_api_data("https://api.themoviedb.org/3/search/$tmdb_endpoint?api_key=$tmdb_key&query=$query");
@@ -56,14 +54,11 @@ if ($type == 'all' || $type == 'movie' || $type == 'tv') {
     }
 }
 
-// 3. Renderizar resultados con estructura de lista limpia
+
 if (empty($results)) {
     echo "<div style='padding:20px; text-align:center; color:#8ba0b2; font-size:14px;'>No se encontraron resultados para \"".htmlspecialchars($_GET['q'])."\"</div>";
 } else {
-    foreach ($results as $res) {
-        // Obtenemos el año si existe en la URL (a veces viene de TMDB) para darle contexto
-        // Esto es opcional, si no tienes el año, no pasa nada.
-        
+    foreach ($results as $res) {        
         echo "
         <a href='{$res['url']}' class='result-item'>
             <div class='result-poster-wrapper'>

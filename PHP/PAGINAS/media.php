@@ -19,7 +19,7 @@ $view = $_GET['view'] ?? 'details';
 $pagina_actual = basename($_SERVER['PHP_SELF']);
 $title = ""; $img = ""; $desc = ""; $score = ""; $status = "N/A"; $genres = []; $extra_info = [];
 
-// 1. OBTENER DATOS PRINCIPALES
+
 if($type == "anime"){
     $media = callAPI("https://api.jikan.moe/v4/anime/".$id);
     $data = $media["data"] ?? null;
@@ -39,7 +39,6 @@ if($type == "anime"){
         ];
     }
 } elseif ($type == "manga") {
-    // NUEVA LÓGICA PARA MANGA
     $media = callAPI("https://api.jikan.moe/v4/manga/".$id);
     $data = $media["data"] ?? null;
     if($data){
@@ -49,7 +48,6 @@ if($type == "anime"){
         $score = $data["score"] ?? "N/A";
         $status = $data["status"];
         $genres = $data["genres"];
-        // Los mangas no tienen trailers ni estudios, sino autores, capítulos y volúmenes
         $trailer_url = ""; 
         $extra_info = [
             "Tipo" => $data["type"] ?? "Manga", 
@@ -75,7 +73,7 @@ $mi_nota = 0;
 $en_lista = false;
 $es_fav = false;
 
-require_once("../conexion.php"); // Asegúrate de que la ruta a tu conexión es correcta
+require_once("../conexion.php"); 
 
 if (isset($_SESSION['id_usuario']) && isset($conexion)) {
     $stmt_user = $conexion->prepare("SELECT mu.puntuacion, mu.status, mu.es_favorito 
@@ -92,7 +90,6 @@ if (isset($_SESSION['id_usuario']) && isset($conexion)) {
     }
 }
 
-// 2. LOGICA ESPECIFICA DE CADA PESTAÑA
 $characters = []; $episodes_list = []; $videos_list = []; $reviews_list = []; $stats = [];
 
 switch($view) {
@@ -103,14 +100,13 @@ switch($view) {
         break;
     case 'episodes':
         if($type == 'anime') $episodes_list = callAPI("https://api.jikan.moe/v4/anime/".$id."/episodes")["data"] ?? [];
-        // Jikan no tiene listado de capítulos para manga, así que se queda vacío
         break;
     case 'videos':
         if($type == 'anime') {
             $res = callAPI("https://api.jikan.moe/v4/anime/".$id."/videos");
             $videos_list = $res["data"]["promo"] ?? []; 
         } elseif ($type == 'manga') {
-            // Los mangas no tienen trailers en la API
+
             $videos_list = [];
         } else {
             $videos_list = callAPI("https://api.themoviedb.org/3/".$type."/".$id."/videos?api_key=".$tmdb_key)["results"] ?? [];
@@ -302,7 +298,7 @@ case 'reviews':
                                 $opciones = [
                                     'watching'  => 'Viendo',
                                     'completed' => 'Completado',
-                                    'paused'    => 'En espera', // Cambiado a 'paused' por tu base de datos
+                                    'paused'    => 'En espera', 
                                     'dropped'   => 'Dropeado',
                                     'planned'   => 'Planteando verlo'
                                 ];
@@ -395,7 +391,6 @@ case 'reviews':
             <?php elseif($view == 'characters'): ?>
                 <h2 class="section-title">Characters & Staff</h2>
                 <?php 
-                    // Lógica para obtener favoritos usando $conexion (MySQLi)
                     $ids_favoritos = [];
                     if (isset($_SESSION['id_usuario']) && isset($conexion)) {
                         $stmt_favs = $conexion->prepare("
@@ -467,7 +462,7 @@ document.addEventListener('DOMContentLoaded', function() {
     datos.append('action', tipoAccion);
 
     if (tipoAccion === 'add_list') {
-    datos.append('nuevo_status', 'planned'); // Valor por defecto al añadir
+    datos.append('nuevo_status', 'planned');
 
 }
 
@@ -483,18 +478,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 boton.style.color = 'white';
                 boton.innerText = (tipoAccion === 'favorite') ? '❤ EN FAVORITOS' : '✓ EN MI LISTA';
                 
-                // --- ESTO ES LO QUE FALTA ---
                 if (tipoAccion === 'add_list' && statusContainer) {
                     statusContainer.style.display = 'block';
                 }
-                // -----------------------------
-                
+              
             } else {
                 boton.style.backgroundColor = '';
                 boton.style.color = '';
                 boton.innerText = (tipoAccion === 'favorite') ? '❤ AÑADIR A FAVORITOS' : '+ AÑADIR A MI LISTA';
                 
-                // Ocultar si se quita de la lista y no hay nota puesta
                 if (tipoAccion === 'add_list' && statusContainer && currentRating === 0) {
                     statusContainer.style.display = 'none';
                 }
@@ -508,11 +500,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if(btnFav) btnFav.addEventListener('click', () => enviarSolicitud('favorite', btnFav));
 
     const stars = document.querySelectorAll('#star-rating-container .star');
-    // Forzamos que sea un número entero
     let currentRating = parseInt(<?php echo (int)$mi_nota; ?>) || 0; 
 
     function highlightStars(value) {
-        // Convertimos el valor a número para evitar el error del "1" y "10"
         const numValue = parseInt(value);
         
         stars.forEach(s => {
@@ -525,7 +515,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Ejecutar inmediatamente al cargar para limpiar la estrella 10
     highlightStars(currentRating);
 
     stars.forEach(star => {
@@ -539,7 +528,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         star.addEventListener('click', function() {
             currentRating = parseInt(this.dataset.value);
-            highlightStars(currentRating); // Refrescar visualmente al hacer clic
+            highlightStars(currentRating); 
             enviarNota(currentRating);
         });
     });
@@ -587,7 +576,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Inicialización de estados al cargar la página
     if (<?php echo $en_lista ? 'true' : 'false'; ?>) {
         const bL = document.getElementById('btnAddList');
         if(bL) { bL.style.backgroundColor = '#2ecc71'; bL.style.color = 'white'; bL.innerText = '✓ EN MI LISTA'; }
@@ -598,7 +586,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if(bF) { bF.style.backgroundColor = '#2ecc71'; bF.style.color = 'white'; bF.innerText = '❤ EN FAVORITOS'; }
     }
 
-// Lógica para Personaje Favorito
     document.querySelectorAll('.btn-fav-char').forEach(btn => {
         btn.addEventListener('click', function() {
             const datos = new FormData();
@@ -619,22 +606,20 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(res => res.json())
             .then(res => {
                 if (res.status === 'success') {
-                    // Solo cambiamos el estado del botón que hemos clicado
                     if (res.result === 'added') {
-                        this.style.color = '#e74c3c'; // Se pone rojo al añadir
+                        this.style.color = '#e74c3c'; 
                     } else if (res.result === 'removed') {
-                        this.style.color = '#444'; // Se vuelve gris al quitar
+                        this.style.color = '#444'; 
                     }
                 }
             })
-            // ... dentro del fetch ...
             .then(res => {
                 if (res.status === 'success') {
                     if (res.result === 'added') {
-                        this.style.color = '#e74c3c'; // Se marca en rojo
+                        this.style.color = '#e74c3c'; 
                         console.log("Añadido a favoritos");
                     } else if (res.result === 'removed') {
-                        this.style.color = '#444'; // Se vuelve gris
+                        this.style.color = '#444'; 
                         console.log("Eliminado de favoritos");
                     }
                 }
@@ -655,14 +640,14 @@ function verDetallesPersonaje(charId, type) {
     if (type === 'anime') {
         url = `https://api.jikan.moe/v4/characters/${charId}/full`;
     } else {
-        // TMDB requiere el API Key que ya tienes en PHP
+      
         url = `https://api.themoviedb.org/3/person/${charId}?api_key=0537b412710df9a2b7790cada44e494e&language=es-ES`;
     }
 
     fetch(url)
     .then(res => res.json())
     .then(res => {
-        const data = res.data || res; // Jikan usa .data, TMDB devuelve directo
+        const data = res.data || res; 
         
         let nombre = data.name;
         let imagen = type === 'anime' ? data.images.jpg.image_url : (data.profile_path ? `https://image.tmdb.org/t/p/w500${data.profile_path}` : '../../Recursos/no-image.png');
@@ -689,13 +674,11 @@ function cerrarModal() {
     document.getElementById('characterModal').style.display = 'none';
 }
 
-// Cerrar modal si se hace clic fuera de la caja negra
 window.onclick = function(event) {
     const modal = document.getElementById('characterModal');
     if (event.target == modal) { cerrarModal(); }
 }
 
-// // --- Lógica para enviar Review (Unificada) ---
 const btnSendReview = document.getElementById('btnSendReview');
 if (btnSendReview) {
     btnSendReview.addEventListener('click', function() {

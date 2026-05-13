@@ -13,7 +13,6 @@ if (!isset($conexion)) {
 
 $mi_id = $_SESSION['id_usuario'];
 
-// 1. Solicitudes PENDIENTES (Corregido a 'username' y 'avatar')
 $sql_req = "SELECT a.id_usuario, u.username, u.avatar 
             FROM amigos a 
             JOIN usuarios u ON a.id_usuario = u.id_usuario 
@@ -23,7 +22,7 @@ $stmt_req->bind_param("i", $mi_id);
 $stmt_req->execute();
 $solicitudes = $stmt_req->get_result();
 
-// 2. Amigos ACEPTADOS (Corregido a 'username' y 'avatar')
+
 $sql_amigos = "SELECT u.id_usuario, u.username, u.avatar 
                FROM amigos a 
                JOIN usuarios u ON (a.id_amigo_usuario = u.id_usuario OR a.id_usuario = u.id_usuario)
@@ -79,7 +78,7 @@ $mis_amigos = $stmt_ami->get_result();
 </header>
 <body>
     <?php
-    // Obtenemos el nombre del archivo actual (ej: anime.php)
+    
     $pagina_actual = basename($_SERVER['PHP_SELF']);
     ?>
 
