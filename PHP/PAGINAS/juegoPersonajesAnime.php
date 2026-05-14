@@ -165,10 +165,11 @@ let fallos = 0;
 let ronda = 0;
 const MAX_RONDAS = 10;
 
+// LLAMADA A LA API PARA COGER PERSONAJES DE UNA PAGINA AL AZAR
 async function cargarPersonajesAPI() {
     const textoResultado = document.getElementById('resultado-texto');
     
-    // Elegimos una página al azar entre la 1 y la 20 (Top 500 personajes)
+    // Pagina aleatoria entre 1 y 20 para que no salgan siempre los mismos
     let paginaAleatoria = Math.floor(Math.random() * 20) + 1;
     
     textoResultado.innerText = "Cargando el siguiente personaje...";
@@ -197,7 +198,6 @@ function iniciarJuego() {
     fallos = 0;
     ronda = 0;
     
-    // Mostramos las dos columnas y ocultamos la pantalla final
     document.getElementById('area-juego').style.display = "flex";
     document.getElementById('pantalla-final').style.display = "none";
     
@@ -212,10 +212,8 @@ function finalizarPartida() {
     const areaJuego = document.getElementById('area-juego');
     const pantallaFinal = document.getElementById('pantalla-final');
     
-    // Ocultamos las dos columnas del juego
     areaJuego.style.display = "none";
 
-    // Mostramos la pantalla final centrada
     pantallaFinal.style.display = "block";
     pantallaFinal.innerHTML = `
         <div style="background: rgba(0,0,0,0.2); padding: 30px; border-radius: 15px; width: 100%; max-width: 500px; margin: 0 auto; text-align: center;">
@@ -243,6 +241,7 @@ function proximaRonda() {
 
     personajeCorrecto = personajesDisponibles.pop();
 
+    // COGEMOS 3 INCORRECTOS AL AZAR Y LOS MEZCLAMOS CON EL BUENO
     let incorrectos = personajesBase
         .filter(p => p.nombre !== personajeCorrecto.nombre) 
         .sort(() => 0.5 - Math.random())                    
@@ -268,6 +267,7 @@ function verificarRespuesta(botonElegido, nombreElegido) {
     const botones = document.querySelectorAll('.btn-opcion');
     const textoResultado = document.getElementById('resultado-texto');
 
+    // DESACTIVAMOS TODOS Y MARCAMOS EL CORRECTO
     botones.forEach(btn => {
         btn.disabled = true;
         if (btn.innerText === personajeCorrecto.nombre) {
@@ -293,6 +293,7 @@ function verificarRespuesta(botonElegido, nombreElegido) {
     btnSiguiente.style.display = "block";
 }
 
+// MUESTRA EL MARCADOR DE ARRIBA
 function actualizarMarcador() {
     document.getElementById('ronda-actual').innerText = ronda;
     document.getElementById('puntos-aciertos').innerText = aciertos;

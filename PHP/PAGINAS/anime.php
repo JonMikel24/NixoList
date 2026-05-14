@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+// FUNCION PARA LA API
 function callAPI($url){
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL,$url);
@@ -12,7 +13,7 @@ function callAPI($url){
 
 $seccion = isset($_GET['seccion']) ? $_GET['seccion'] : 'inicio';
 
-// Variable de paginación
+// TEMA PAGINACION
 $pagina = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 
 if ($seccion == 'inicio') {
@@ -27,7 +28,7 @@ if ($seccion == 'inicio') {
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Anime</title>
+<title>Anime - NixoList</title>
 <link rel="stylesheet" href="../../CSS/styles.css">
 <link rel="icon" type="image/png" href="../../Recursos/icono/icononixo.png">
 
@@ -66,6 +67,7 @@ if ($seccion == 'inicio') {
         </div>
     </div>
 </header>
+
 <body>
     <?php
     $pagina_actual = basename($_SERVER['PHP_SELF']);
@@ -158,8 +160,8 @@ foreach(array_slice($recommendedAnime["data"],0,10) as $anime){
 
     $title = $entry["title"];
     $img = $entry["images"]["jpg"]["image_url"];
-    $id = $entry["mal_id"]; // id de MyAnimeList
-    $type = "anime"; // tipo fijo
+    $id = $entry["mal_id"];
+    $type = "anime";
 
     echo "
     <div class='card'>
@@ -182,7 +184,7 @@ foreach($popularAnime["data"] as $anime){
 
     $title = $anime["title"];
     $img = $anime["images"]["jpg"]["image_url"];
-    $id = $anime["mal_id"]; // <--- importante
+    $id = $anime["mal_id"];
     $type = "anime";
 
     echo "
@@ -245,18 +247,15 @@ foreach(array_slice($upcomingAnime["data"],0,10) as $anime){
 </div>
 
 <?php } elseif ($seccion == 'populares' || $seccion == 'top') { 
-    // ---- PÁGINAS DE LISTA (POPULARES Y TOP) ----
     
-    // 1. Títulos y Endpoints
-    $tituloSeccion = ($seccion == 'populares') ? "Animes Más Populares" : "Top Anime de Todos los Tiempos";
+    // LISTAS DE POPULARES O TOP
+    $tituloSeccion = ($seccion == 'populares') ? "Animes Más Populares" : "Top Animes de Todos los Tiempos";
     $endpoint = ($seccion == 'populares') ? "top/anime?filter=bypopularity" : "top/anime?";
-    // Ojo: Jikan usa un formato de paginación con '&page='
     $conector = ($seccion == 'populares') ? "&" : "";
     
-    // 2. Llamada a la API de Jikan con Paginación
+    // LLAMADA API
     $listaDatos = callAPI("https://api.jikan.moe/v4/".$endpoint.$conector."page=".$pagina."&limit=25");
 
-    // 3. Cabecera con título y paginación superior
     echo "<div class='lista-header'>";
     echo "<h2>$tituloSeccion</h2>";
     echo "<div class='paginacion'>";
@@ -267,16 +266,13 @@ foreach(array_slice($upcomingAnime["data"],0,10) as $anime){
     echo "</div>";
     echo "</div>";
 
-    // 4. Base de Datos: Comprobar qué animes tiene el usuario
+    // COMPROBAR SI EL USUARIO YA TIENE ESTOS ANIMES
     $mis_animes = [];
     $mis_estados = [];
 
     if (isset($_SESSION['id_usuario'])) {
         require_once(__DIR__ . "/../conexion.php");
         
-        /* NOTA: Uso 'tmdb_id' porque es el nombre de la columna que tienes en BD, 
-           aunque aquí se guarde el ID de MyAnimeList. Si tu BD tiene otro nombre 
-           para la columna de IDs de Anime, cámbialo aquí. */
         $stmt_user = $conexion->prepare("
             SELECT m.tmdb_id, mu.status 
             FROM media_usuario mu 
@@ -299,13 +295,12 @@ foreach(array_slice($upcomingAnime["data"],0,10) as $anime){
 
     $rank = ($pagina - 1) * 25 + 1; 
 
-    // Ojo: Jikan usa ["data"] en vez de ["results"]
     if(isset($listaDatos["data"]) && is_array($listaDatos["data"])) {
         foreach($listaDatos["data"] as $anime){
             $id = $anime["mal_id"];
             $img = $anime["images"]["jpg"]["image_url"];
             $title = $anime["title"];
-            $date = isset($anime["year"]) ? $anime["year"] : 'N/A'; // Usamos el año para el Anime
+            $date = isset($anime["year"]) ? $anime["year"] : 'N/A';
             $score = isset($anime["score"]) ? $anime["score"] : 'N/A';
 
             echo "<tr>";
@@ -321,7 +316,7 @@ foreach(array_slice($upcomingAnime["data"],0,10) as $anime){
 
             $titulo_seguro = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
 
-            // Comprobamos si ya está en la lista
+            // MIRAR SI ESTA EN LA LISTA
             $esta_en_lista = in_array($id, $mis_animes);
             $estado_actual = $esta_en_lista ? $mis_estados[$id] : '';
 
@@ -354,7 +349,7 @@ foreach(array_slice($upcomingAnime["data"],0,10) as $anime){
     }
     echo "</tbody></table>";
     
-    // Paginación inferior
+    // PAGINACION DE ABAJO
     echo "<div class='lista-footer'>";
     if ($pagina > 1) {
         echo "<a href='anime.php?seccion=$seccion&page=".($pagina - 1)."' class='btn-pag'>&lt; Ant 25</a>";
@@ -363,7 +358,7 @@ foreach(array_slice($upcomingAnime["data"],0,10) as $anime){
     echo "</div>";
 
 } elseif ($seccion == 'recomendados') {
-    // ---- PÁGINA RECOMENDADOS (Se queda en CUADRÍCULA) ----
+    // SECCION RECOMENDADOS
     echo "<h2>Animes Recomendados</h2>";
     echo "<div class='grid-galeria'>";
     $paginaRecomendados = callAPI("https://api.jikan.moe/v4/recommendations/anime");
@@ -384,7 +379,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const botonesAdd = document.querySelectorAll('.btn-add-ajax');
     const selectsStatus = document.querySelectorAll('.status-select-ajax');
 
-   
+    // BOTONES DE LISTA
     botonesAdd.forEach(boton => {
         boton.addEventListener('click', function(e) {
             e.preventDefault();
@@ -405,7 +400,6 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(res => res.json())
             .then(res => {
                 if (res.status === 'success' && res.result === 'added') {
-                    // Ocultamos el botón y mostramos el <select>
                     botonActual.style.display = 'none';
                     const selectAsociado = botonActual.nextElementSibling;
                     if(selectAsociado) {
@@ -420,7 +414,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-   
+
     selectsStatus.forEach(select => {
         select.addEventListener('change', function() {
             const nuevoEstado = this.value;
@@ -448,6 +442,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// BUSCADOR
 document.getElementById('search-input').addEventListener('input', function() {
     let query = this.value;
     let type = document.getElementById('search-type').value;

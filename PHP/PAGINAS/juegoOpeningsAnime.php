@@ -138,7 +138,6 @@ session_start();
                 <span style="color: #dc3545;">Fallos: <span id="puntos-fallos">0</span></span>
             </div>
 
-            <!-- El audio real queda oculto; el reproductor-custom es lo que ve el jugador -->
             <audio id="reproductor" style="display:none;">
                 Tu navegador no soporta el audio.
             </audio>
@@ -161,6 +160,7 @@ session_start();
 </div>
 
 <script>
+// LISTA DE OPENINGS CON SU AUDIO
 const baseDatosOpenings = [
     { nombre: "Naruto", audio: "https://v.animethemes.moe/Naruto-OP2.webm" },
     { nombre: "Death Note", audio: "https://v.animethemes.moe/DeathNote-OP1.webm" },
@@ -193,13 +193,14 @@ let aciertos = 0;
 let fallos = 0;
 let contadorRondas = 0;
 const MAX_RONDAS = 10;
-const TIEMPO_LIMITE = 30; // Segundos
+const TIEMPO_LIMITE = 30;
 
 let openingsDisponibles = [];
 let cancionesJugadas = [];
 let intervaloTemporizador = null;
 let tiempoRestante = TIEMPO_LIMITE;
 
+// MEZCLA EL ARRAY PARA QUE SALGAN EN ORDEN ALEATORIO
 function mezclarArray(array) {
     let arrayMezclado = [...array];
     for (let i = arrayMezclado.length - 1; i > 0; i--) {
@@ -209,6 +210,7 @@ function mezclarArray(array) {
     return arrayMezclado;
 }
 
+// MUESTRA EL MARCADOR DE ARRIBA
 function actualizarMarcador() {
     document.getElementById('puntos-aciertos').innerText = aciertos;
     document.getElementById('puntos-fallos').innerText = fallos;
@@ -219,6 +221,7 @@ function detenerTemporizador() {
     if (intervaloTemporizador) clearInterval(intervaloTemporizador);
 }
 
+// ARRANCA LA CUENTA ATRAS DE 30 SEGUNDOS
 function iniciarTemporizador() {
     detenerTemporizador();
     tiempoRestante = TIEMPO_LIMITE;
@@ -227,7 +230,6 @@ function iniciarTemporizador() {
     const tiempoLabel = document.getElementById('tiempo-restante');
     const resultadoTexto = document.getElementById('resultado-texto');
 
-    // Reset visual
     barra.style.width = '0%';
     tiempoLabel.innerText = tiempoRestante + 's';
     resultadoTexto.innerText = "¿Adivinas el anime?";
@@ -271,6 +273,7 @@ function iniciarRonda() {
     document.getElementById('barra-progreso').style.width = '0%';
     document.getElementById('tiempo-restante').innerText = '30s';
 
+    // SI YA SE USARON TODOS LOS OPENINGS, SE REINICIA EL POOL
     if (openingsDisponibles.length === 0) {
         let opcionesRestantes = baseDatosOpenings.filter(anime => !cancionesJugadas.includes(anime.nombre));
         if (opcionesRestantes.length === 0) {
@@ -284,6 +287,7 @@ function iniciarRonda() {
     animeCorrecto = animeGanador.nombre;
     cancionesJugadas.push(animeCorrecto);
 
+    // COGEMOS 3 INCORRECTOS Y LOS MEZCLAMOS CON EL CORRECTO
     let opcionesIncorrectas = baseDatosOpenings.filter(anime => anime.nombre !== animeCorrecto);
     opcionesIncorrectas = mezclarArray(opcionesIncorrectas).slice(0, 3);
     let opcionesMezcladas = mezclarArray([animeGanador, ...opcionesIncorrectas]);
@@ -293,11 +297,12 @@ function iniciarRonda() {
     reproductor.src = animeGanador.audio;
     reproductor.volume = 0.3;
 
-    // EVENTO CLAVE: Solo empieza el tiempo cuando el audio suena
+    // SOLO EMPIEZA EL TIEMPO CUANDO EL AUDIO SUENA DE VERDAD
     reproductor.onplaying = () => {
         if (!enlaceRoto) iniciarTemporizador();
     };
 
+    // SI EL AUDIO FALLA PASAMOS A OTRO OPENING
     reproductor.onerror = function() {
         enlaceRoto = true;
         detenerTemporizador();
@@ -326,6 +331,7 @@ function verificarRespuesta(botonClicado, animeElegido) {
     const botones = document.querySelectorAll('.btn-opcion');
     const btnSiguiente = document.getElementById('btn-siguiente');
 
+    // DESACTIVAMOS TODOS Y MARCAMOS EL CORRECTO EN VERDE
     botones.forEach(btn => {
         btn.disabled = true;
         if (btn.innerText === animeCorrecto) btn.classList.add('correct');
@@ -344,6 +350,7 @@ function verificarRespuesta(botonClicado, animeElegido) {
 
     actualizarMarcador();
 
+    // SI ES LA ULTIMA RONDA EL BOTON VA A RESULTADOS
     if (contadorRondas === MAX_RONDAS) {
         btnSiguiente.innerText = "Ver Resultados Finales";
         btnSiguiente.onclick = mostrarPantallaFinal;
@@ -378,6 +385,7 @@ function mostrarPantallaFinal() {
     btnSiguiente.innerText = "Jugar de nuevo";
     btnSiguiente.style.display = 'block';
 
+    // REINICIAMOS TODO PARA NUEVA PARTIDA
     btnSiguiente.onclick = function() {
         aciertos = 0;
         fallos = 0;
@@ -392,20 +400,17 @@ function mostrarPantallaFinal() {
     };
 }
 
+// OCULTAMOS EL BOTON DE INICIO Y ARRANCAMOS
 function empezarJuegoReal() {
-    // Ocultamos el botón de inicio y mostramos la zona de juego
     document.getElementById('pantalla-inicio').style.display = 'none';
     document.getElementById('zona-juego').style.display = 'block';
     
-    // Ahora sí, inicializamos la lógica
     openingsDisponibles = mezclarArray([...baseDatosOpenings]);
     iniciarRonda();
 }
 
-// IMPORTANTE: Cambiamos el window.onload para que NO inicie la ronda solo
 window.onload = function() {
-    // Aquí podrías precargar algo si quisieras, 
-    // pero dejamos que el usuario pulse el botón para empezar.
+    // ESPERAMOS A QUE EL USUARIO PULSE EL BOTON PARA EMPEZAR
 };
 </script>
 

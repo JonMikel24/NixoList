@@ -139,6 +139,7 @@ session_start();
 </div>
 
 <script>
+// LISTA DE ANIMES PARA EL JUEGO
 const diccionarioAnime = [
     "ONE PIECE", "NARUTO", "DRAGON BALL", "DEATH NOTE",
     "EVANGELION", "BLEACH", "FULLMETAL ALCHEMIST",
@@ -149,6 +150,7 @@ const diccionarioAnime = [
     "SWORD ART ONLINE", "FIRE FORCE", "FAIRY TAIL"
 ];
 
+// VARIABLES DEL JUEGO
 let palabraObjetivo = "";
 let letrasAdivinadas = [];
 let errores = 0;
@@ -156,6 +158,7 @@ const MAX_ERRORES = 5;
 let juegoTerminado = false;
 
 function iniciarAhorcado() {
+    // COGEMOS UNA PALABRA AL AZAR Y RESETEAMOS TODO
     palabraObjetivo = diccionarioAnime[Math.floor(Math.random() * diccionarioAnime.length)].toUpperCase();
     letrasAdivinadas = [];
     errores = 0;
@@ -182,6 +185,7 @@ function dibujarPalabra() {
     for (let i = 0; i < palabraObjetivo.length; i++) {
         let letra = palabraObjetivo[i];
         
+        // LOS ESPACIOS SE QUEDAN COMO ESPACIOS
         if (letra === " ") {
             mostrar += " \u00A0 "; 
         } else if (letrasAdivinadas.includes(letra)) {
@@ -194,6 +198,7 @@ function dibujarPalabra() {
 
     contenedor.innerText = mostrar;
 
+    // SI NO QUEDAN GUIONES ES QUE GANO
     if (victoria) {
         document.getElementById('ahorcado-mensaje').innerText = "Ganaste!";
         finalizarJuego();
@@ -228,6 +233,7 @@ function manejarEntrada(tecla) {
     letrasAdivinadas.push(tecla);
     const botonVirtual = document.getElementById(`tecla-${tecla}`);
 
+    // SI LA LETRA ESTA EN LA PALABRA BIEN, SI NO ERROR
     if (palabraObjetivo.includes(tecla)) {
         if (botonVirtual) botonVirtual.classList.add("correct");
         dibujarPalabra();
@@ -236,6 +242,7 @@ function manejarEntrada(tecla) {
         errores++;
         actualizarVidas();
 
+        // SE ACABO SI LLEGA A LOS ERRORES MAXIMOS
         if (errores >= MAX_ERRORES) {
             document.getElementById('ahorcado-mensaje').innerText = "Perdiste. Era " + palabraObjetivo;
             finalizarJuego();
@@ -243,6 +250,7 @@ function manejarEntrada(tecla) {
     }
 }
 
+// TECLADO FISICO
 window.addEventListener("keydown", (e) => {
     if (juegoTerminado) return;
     if (e.key.length === 1 && /[a-zA-Z]/.test(e.key)) {
@@ -254,6 +262,7 @@ function finalizarJuego() {
     juegoTerminado = true;
     document.getElementById('btn-reset-ahorcado').style.display = "block";
     
+    // DEJAMOS LAS TECLAS QUE NO SE USARON UN POCO APAGADAS
     const todasLasTeclas = document.querySelectorAll('.tecla-wordle');
     todasLasTeclas.forEach(tecla => {
         if (!tecla.classList.contains('correct') && !tecla.classList.contains('absent')) {

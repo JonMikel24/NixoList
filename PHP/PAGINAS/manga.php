@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+// FUNCION PARA LA API
 function callAPI($url){
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL,$url);
@@ -12,13 +13,13 @@ function callAPI($url){
 
 $seccion = isset($_GET['seccion']) ? $_GET['seccion'] : 'inicio';
 
-// Variable de paginación
+// TEMA PAGINACION
 $pagina = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 
 if ($seccion == 'inicio') {
-    // Aumentamos a 2 segundos para que la API de Jikan no nos bloquee (Error 429)
+
     $topManga = callAPI("https://api.jikan.moe/v4/top/manga?limit=10");
-    sleep(2); 
+    sleep(2); // USAMOS SLEEP PARA QUE SALGAN MAS TARDE Y EVITAR QUE NO SAQUE NADA
 
     $popularManga = callAPI("https://api.jikan.moe/v4/top/manga?filter=bypopularity&limit=10");
     sleep(2); 
@@ -72,7 +73,6 @@ if ($seccion == 'inicio') {
 </header>
 
     <?php
-    // Obtenemos el nombre del archivo actual (ej: manga.php)
     $pagina_actual = basename($_SERVER['PHP_SELF']);
     ?>
 
@@ -164,8 +164,8 @@ if(isset($recommendedManga["data"])) {
 
         $title = $entry["title"];
         $img = $entry["images"]["jpg"]["image_url"];
-        $id = $entry["mal_id"]; // id de MyAnimeList
-        $type = "manga"; // tipo fijo
+        $id = $entry["mal_id"];
+        $type = "manga";
 
         echo "
         <div class='card'>
@@ -234,18 +234,15 @@ if(isset($topManga["data"])) {
 
 
 <?php } elseif ($seccion == 'populares' || $seccion == 'top') { 
-    // ---- PÁGINAS DE LISTA (POPULARES Y TOP PARA MANGA) ----
+    // LISTAS DE POPULARES O TOP
     
-    // 1. Títulos y Endpoints
-    $tituloSeccion = ($seccion == 'populares') ? "Mangas Más Populares" : "Top Manga de Todos los Tiempos";
+    $tituloSeccion = ($seccion == 'populares') ? "Mangas Más Populares" : "Top Mangas de Todos los Tiempos";
     $endpoint = ($seccion == 'populares') ? "top/manga?filter=bypopularity" : "top/manga?";
-    // Ojo: Jikan usa un formato de paginación con '&page='
     $conector = ($seccion == 'populares') ? "&" : "";
     
-    // 2. Llamada a la API de Jikan con Paginación
+    // LLAMADA API
     $listaDatos = callAPI("https://api.jikan.moe/v4/".$endpoint.$conector."page=".$pagina."&limit=25");
 
-    // 3. Cabecera con título y paginación superior
     echo "<div class='lista-header'>";
     echo "<h2>$tituloSeccion</h2>";
     echo "<div class='paginacion'>";
@@ -256,14 +253,13 @@ if(isset($topManga["data"])) {
     echo "</div>";
     echo "</div>";
 
-    // 4. Base de Datos: Comprobar qué mangas tiene el usuario
+    // COMPROBAR SI EL USUARIO YA TIENE ESTOS MANGAS
     $mis_mangas = [];
     $mis_estados = [];
 
     if (isset($_SESSION['id_usuario'])) {
         require_once(__DIR__ . "/../conexion.php");
         
-        /* NOTA: Usamos 'tmdb_id' porque es el nombre de la columna en BD (aunque guarde el ID de MAL) */
         $stmt_user = $conexion->prepare("
             SELECT m.tmdb_id, mu.status 
             FROM media_usuario mu 
@@ -280,20 +276,17 @@ if(isset($topManga["data"])) {
         }
     }
 
-    // Traducción de las cabeceras de la tabla
     echo "<table class='tabla-nixolist'>";
     echo "<thead><tr><th style='text-align:center;'>Puesto</th><th>Título</th><th style='text-align:center;'>Puntuación</th><th style='text-align:center;'>Estado</th></tr></thead>";
     echo "<tbody>";
 
     $rank = ($pagina - 1) * 25 + 1; 
 
-    // Mapeo de la data de Manga
     if(isset($listaDatos["data"]) && is_array($listaDatos["data"])) {
         foreach($listaDatos["data"] as $manga){
             $id = $manga["mal_id"];
             $img = $manga["images"]["jpg"]["image_url"];
             $title = $manga["title"];
-            // En Manga, usamos 'published -> from' para obtener el año
             $date = isset($manga["published"]["from"]) ? date('Y', strtotime($manga["published"]["from"])) : 'N/A';
             $score = isset($manga["score"]) ? $manga["score"] : 'N/A';
 
@@ -310,14 +303,13 @@ if(isset($topManga["data"])) {
 
             $titulo_seguro = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
 
-            // Comprobamos si ya está en la lista del usuario
+            // MIRAR SI ESTA EN LA LISTA
             $esta_en_lista = in_array($id, $mis_mangas);
             $estado_actual = $esta_en_lista ? $mis_estados[$id] : '';
 
             echo "<td class='status-cell' style='text-align: center;'>";
 
             $btn_display = $esta_en_lista ? "display: none;" : "display: inline-block;";
-            // IMPORTANTE: data-type='manga'
             echo "<button class='btn-add-list btn-add-ajax' data-id='$id' data-type='manga' data-title='$titulo_seguro' data-img='$img' style='$btn_display'>Añadir a mi lista</button>";
 
             $select_display = $esta_en_lista ? "display: inline-block;" : "display: none;";
@@ -344,7 +336,7 @@ if(isset($topManga["data"])) {
     }
     echo "</tbody></table>";
     
-    // Paginación inferior
+    // PAGINACION DE ABAJO
     echo "<div class='lista-footer'>";
     if ($pagina > 1) {
         echo "<a href='manga.php?seccion=$seccion&page=".($pagina - 1)."' class='btn-pag'>&lt; Ant 25</a>";
@@ -353,7 +345,7 @@ if(isset($topManga["data"])) {
     echo "</div>";
 
 } elseif ($seccion == 'recomendados') {
-    // ---- PÁGINA RECOMENDADOS (Se queda en CUADRÍCULA) ----
+    // SECCION RECOMENDADOS
     echo "<h2>Mangas Recomendados</h2>";
     echo "<div class='grid-galeria'>";
     $paginaRecomendados = callAPI("https://api.jikan.moe/v4/recommendations/manga");
@@ -373,10 +365,9 @@ if(isset($topManga["data"])) {
 </div>
 
 <script>
-// SCIPT UNIFICADO: Búsqueda y funcionalidad AJAX para listas
 document.addEventListener('DOMContentLoaded', function() {
     
-    // -- BUSCADOR --
+    // BUSCADOR
     const searchInput = document.getElementById('search-input');
     if (searchInput) {
         searchInput.addEventListener('input', function() {
@@ -397,7 +388,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // -- AÑADIR A LA LISTA (AJAX) --
+    // BOTONES DE LISTA
     const botonesAdd = document.querySelectorAll('.btn-add-ajax');
     botonesAdd.forEach(boton => {
         boton.addEventListener('click', function(e) {
@@ -433,7 +424,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // -- ACTUALIZAR ESTADO DE LA LISTA (AJAX) --
     const selectsStatus = document.querySelectorAll('.status-select-ajax');
     selectsStatus.forEach(select => {
         select.addEventListener('change', function() {

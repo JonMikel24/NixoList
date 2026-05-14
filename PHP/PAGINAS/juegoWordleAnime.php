@@ -139,7 +139,7 @@ session_start();
 </div>
 
 <script>
-// Diccionario estricto de 6 letras
+// DICCIONARIO DE PERSONAJES DE 6 LETRAS
 const diccionarioAnime = [
     "NARUTO", "SASUKE", "VEGETA", "ITACHI", "SAKURA",
     "KANEKI", "ICHIGO", "MIKASA", "EDWARD", "NEZUKO",
@@ -165,6 +165,7 @@ function iniciarWordle() {
     dibujarTeclado();
 }
 
+// CREA LA CUADRICULA DE INTENTOS
 function dibujarTablero() {
     const contenedor = document.getElementById('wordle-board');
     contenedor.innerHTML = "";
@@ -181,6 +182,7 @@ function dibujarTablero() {
     }
 }
 
+// CREA EL TECLADO VIRTUAL
 function dibujarTeclado() {
     const tecladoContenedor = document.getElementById('wordle-keyboard');
     tecladoContenedor.innerHTML = "";
@@ -194,7 +196,7 @@ function dibujarTeclado() {
         
         teclas.forEach(t => {
             const boton = document.createElement("button");
-            // ASIGNAMOS ID A CADA TECLA PARA PODER PINTARLA LUEGO
+            // ID POR TECLA PARA PODER ENSEÑARLA LUEGO
             boton.id = `tecla-${t}`;
             boton.innerText = t;
             boton.className = "tecla-wordle";
@@ -222,7 +224,7 @@ function manejarEntrada(tecla) {
     }
 }
 
-// Soporte para teclado de PC
+// TECLADO FISICO
 window.addEventListener("keydown", (e) => {
     if (juegoTerminado) return;
     if (e.key === "Enter") manejarEntrada("ENTER");
@@ -236,7 +238,7 @@ function insertarLetra(letra) {
         cuadro.innerText = letra;
         cuadro.classList.add("animacion-pop");
         
-        // Quitamos la clase de animacion rapido para poder reutilizarla
+        // QUITAMOS LA ANIMACION RAPIDO PARA PODER REUTILIZARLA
         setTimeout(() => cuadro.classList.remove("animacion-pop"), 150);
         
         letraActual++;
@@ -264,9 +266,9 @@ function verificarPalabra() {
     }
 
     let tempObjetivo = palabraObjetivo.split("");
-    let filaColores = new Array(LONGITUD_PALABRA).fill("absent"); // Adaptado a la nueva longitud
+    let filaColores = new Array(LONGITUD_PALABRA).fill("absent");
 
-    // 1. Verdes (correct)
+    // VERDES (letra en posicion correcta)
     for (let i = 0; i < LONGITUD_PALABRA; i++) {
         if (palabraIntento[i] === tempObjetivo[i]) {
             filaColores[i] = "correct";
@@ -274,7 +276,7 @@ function verificarPalabra() {
         }
     }
 
-    // 2. Amarillos (present)
+    // AMARILLOS (letra existe pero en otra posicion)
     for (let i = 0; i < LONGITUD_PALABRA; i++) {
         if (filaColores[i] === "absent" && tempObjetivo.includes(palabraIntento[i])) {
             filaColores[i] = "present";
@@ -282,19 +284,16 @@ function verificarPalabra() {
         }
     }
 
-    // Aplicar clases al Tablero y al Teclado
+    // MOSTRAMOS EL TABLERO Y EL TECLADO VIRTUAL
     for (let i = 0; i < LONGITUD_PALABRA; i++) {
-        // Tablero
         const cuadro = document.getElementById(`cuadro-${intentoActual}-${i}`);
         cuadro.classList.add(filaColores[i]);
 
-        // Teclado Virtual
         let letra = palabraIntento[i];
         let claseColor = filaColores[i];
         let teclaVirtual = document.getElementById(`tecla-${letra}`);
 
         if (teclaVirtual) {
-            // Evitar pisar una letra que ya era verde con un color inferior
             if (teclaVirtual.classList.contains("correct")) {
                 continue;
             }
@@ -307,7 +306,6 @@ function verificarPalabra() {
         }
     }
 
-    // Evaluar victoria o derrota
     if (palabraIntento === palabraObjetivo) {
         document.getElementById('wordle-mensaje').innerText = "Ganaste!";
         finalizarJuego();

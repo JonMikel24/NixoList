@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+// FUNCION PARA LA API
 function callAPI($url){
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL,$url);
@@ -14,6 +15,7 @@ $tmdb_key="0537b412710df9a2b7790cada44e494e";
 
 $seccion = isset($_GET['seccion']) ? $_GET['seccion'] : 'inicio';
 
+// TEMA PAGINACION
 $pagina = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 
 if ($seccion == 'inicio') {
@@ -28,7 +30,7 @@ if ($seccion == 'inicio') {
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Películas</title>
+<title>Películas - NixoList</title>
 <link rel="stylesheet" href="../../CSS/styles.css">
 <link rel="icon" type="image/png" href="../../Recursos/icono/icononixo.png">
 
@@ -234,16 +236,14 @@ foreach(array_slice($upcoming["results"],0,10) as $movie){
 </div>
 
 <?php } elseif ($seccion == 'populares' || $seccion == 'top') { 
-    // ---- PÁGINAS DE LISTA (POPULARES Y TOP) ----
-    
-    // 1. Definimos el título y la URL según la sección
+    // LISTAS DE POPULARES O TOP
+
     $tituloSeccion = ($seccion == 'populares') ? "Películas Más Populares" : "Top Películas de Todos los Tiempos";
     $endpoint = ($seccion == 'populares') ? "movie/popular" : "movie/top_rated";
     
-    // 2. Llamada a la API con la página actual
+    // LLAMADA API
     $listaDatos = callAPI("https://api.themoviedb.org/3/".$endpoint."?api_key=".$tmdb_key."&page=".$pagina);
 
-    // 3. Cabecera con título y paginación superior
     echo "<div class='lista-header'>";
     echo "<h2>$tituloSeccion</h2>";
     echo "<div class='paginacion'>";
@@ -254,13 +254,13 @@ foreach(array_slice($upcoming["results"],0,10) as $movie){
     echo "</div>";
     echo "</div>";
 
-    // 4. Estructura de la Tabla Adaptada
-    // Comprobar qué películas tiene ya el usuario en su lista
+    // COMPROBAR SI EL USUARIO YA TIENE ESTAS PELICULAS
     $mis_peliculas = [];
     $mis_estados = [];
 
     if (isset($_SESSION['id_usuario'])) {
-        require_once(__DIR__ . "/../conexion.php"); // Ruta corregida igual que en series.php
+        require_once(__DIR__ . "/../conexion.php");
+        
         $stmt_user = $conexion->prepare("
             SELECT m.tmdb_id, mu.status 
             FROM media_usuario mu 
@@ -286,8 +286,8 @@ foreach(array_slice($upcoming["results"],0,10) as $movie){
     foreach($listaDatos["results"] as $movie){
         $id = $movie["id"];
         $img = "https://image.tmdb.org/t/p/w92" . $movie["poster_path"]; 
-        $title = $movie["title"]; // En películas es 'title'
-        $date = isset($movie["release_date"]) ? $movie["release_date"] : 'N/A'; // En películas es 'release_date'
+        $title = $movie["title"];
+        $date = isset($movie["release_date"]) ? $movie["release_date"] : 'N/A';
         $score = round($movie["vote_average"], 2);
 
         echo "<tr>";
@@ -303,17 +303,15 @@ foreach(array_slice($upcoming["results"],0,10) as $movie){
 
         $titulo_seguro = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
 
-        // Comprobamos si esta película ya está en nuestro array de la BD
+        // MIRAR SI ESTA EN LA LISTA
         $esta_en_lista = in_array($id, $mis_peliculas);
         $estado_actual = $esta_en_lista ? $mis_estados[$id] : '';
 
         echo "<td class='status-cell' style='text-align: center;'>";
 
-        // 1. El botón de añadir
         $btn_display = $esta_en_lista ? "display: none;" : "display: inline-block;";
         echo "<button class='btn-add-list btn-add-ajax' data-id='$id' data-type='movie' data-title='$titulo_seguro' data-img='$img' style='$btn_display'>Añadir a mi lista</button>";
 
-        // 2. El selector de estado
         $select_display = $esta_en_lista ? "display: inline-block;" : "display: none;";
         echo "<select class='status-select-ajax' data-id='$id' data-type='movie' data-title='$titulo_seguro' data-img='$img' style='$select_display background: #222; color: white; border: 1px solid #444; padding: 5px; border-radius: 3px; cursor: pointer;'>";
 
@@ -339,7 +337,7 @@ foreach(array_slice($upcoming["results"],0,10) as $movie){
     }
     echo "</tbody></table>";
     
-    // 5. Paginación inferior
+    // PAGINACION DE ABAJO
     echo "<div class='lista-footer'>";
     if ($pagina > 1) {
         echo "<a href='peliculas.php?seccion=$seccion&page=".($pagina - 1)."' class='btn-pag'>&lt; Ant 20</a>";
@@ -348,7 +346,7 @@ foreach(array_slice($upcoming["results"],0,10) as $movie){
     echo "</div>";
 
 } elseif ($seccion == 'recomendadas') {
-    // ---- PÁGINA RECOMENDADAS (Se queda en CUADRÍCULA) ----
+    // SECCION RECOMENDADAS
     echo "<h2>Películas Recomendadas</h2>";
     echo "<div class='grid-galeria'>";
     $paginaRecomendadas = callAPI("https://api.themoviedb.org/3/trending/movie/week?api_key=".$tmdb_key);
@@ -370,7 +368,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const botonesAdd = document.querySelectorAll('.btn-add-ajax');
     const selectsStatus = document.querySelectorAll('.status-select-ajax');
 
-    // 1. Lógica para el botón "Add to My List"
+    // BOTONES DE LISTA
     botonesAdd.forEach(boton => {
         boton.addEventListener('click', function(e) {
             e.preventDefault();
@@ -382,7 +380,7 @@ document.addEventListener('DOMContentLoaded', function() {
             datos.append('titulo', botonActual.dataset.title);
             datos.append('portada', botonActual.dataset.img);
             datos.append('action', 'add_list');
-            datos.append('nuevo_status', 'planned'); // Valor por defecto al añadir
+            datos.append('nuevo_status', 'planned'); 
 
             fetch('../FUNCIONALIDADES/procesar_interaccion.php', {
                 method: 'POST',
@@ -391,7 +389,6 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(res => res.json())
             .then(res => {
                 if (res.status === 'success' && res.result === 'added') {
-                    // Ocultamos el botón y mostramos el <select> asociado
                     botonActual.style.display = 'none';
                     const selectAsociado = botonActual.nextElementSibling;
                     if(selectAsociado) {
@@ -406,7 +403,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 2. Lógica para actualizar el estado con el <select>
+
     selectsStatus.forEach(select => {
         select.addEventListener('change', function() {
             const nuevoEstado = this.value;
@@ -433,6 +430,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// BUSCADOR
 document.getElementById('search-input').addEventListener('input', function() {
     let query = this.value;
     let type = document.getElementById('search-type').value;
