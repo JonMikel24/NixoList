@@ -1,7 +1,5 @@
 # NixoList
 
-Aquí tienes una propuesta de README.md profesional y equilibrada. Está redactada en plural, reflejando el trabajo en equipo y cubriendo todos los módulos que hemos ido ajustando (filtros de medios, amistades, seguridad y diseño).
-
 NixoList 🎬📖
 NixoList es una plataforma web integral diseñada para que los entusiastas del contenido multimedia puedan organizar, puntuar y compartir sus listas de Anime, Manga, Películas y Series. El proyecto nace con el objetivo de ofrecer una experiencia personalizada y social, permitiendo a los usuarios conectar entre sí mientras mantienen un registro detallado de su progreso.
 
