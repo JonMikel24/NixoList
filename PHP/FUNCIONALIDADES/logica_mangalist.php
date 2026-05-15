@@ -15,7 +15,6 @@ if (!isset($_SESSION['id_usuario'])) {
     $_SESSION['id_usuario'] = $userRow['id_usuario'];
 }
 
-// 👇 EL CAMBIO CLAVE ESTÁ AQUÍ 👇
 // Leemos la ID de la URL (si es que estás visitando a un amigo). Si no, usamos la tuya.
 $id_usuario_lista = isset($_GET['id']) ? (int)$_GET['id'] : $_SESSION['id_usuario'];
 

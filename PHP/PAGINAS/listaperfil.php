@@ -36,7 +36,6 @@ if (!$es_mi_perfil) {
 }
 
 // 5. IMPORTAR LÓGICA DE LISTAS
-// ⚠️ ATENCIÓN AQUÍ: Tienes que editar este archivo 'perfil.php' para que use 
 // la variable $id_perfil_visitado en lugar de usar $_SESSION['id_usuario']
 require_once '../FUNCIONALIDADES/perfil.php';
 

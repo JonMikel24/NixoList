@@ -13,8 +13,8 @@ function callAPI($url){
 $tmdb_key = "0537b412710df9a2b7790cada44e494e";
 
 $topAnime = callAPI("https://api.jikan.moe/v4/top/anime?limit=10");
-$topMovies = callAPI("https://api.themoviedb.org/3/trending/movie/week?api_key=".$tmdb_key);
-$topSeries = callAPI("https://api.themoviedb.org/3/trending/tv/week?api_key=".$tmdb_key);
+$topMovies = callAPI("https://api.themoviedb.org/3/movie/top_rated?api_key=".$tmdb_key);
+$topSeries = callAPI("https://api.themoviedb.org/3/tv/top_rated?api_key=".$tmdb_key);
 
 ?>
 <!DOCTYPE html>

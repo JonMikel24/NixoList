@@ -7,6 +7,11 @@ if (!isset($_SESSION['id_usuario'])) {
     exit;
 }
 
+if (!isset($conexion)) {
+    echo json_encode(['status' => 'error', 'message' => 'Database connection failed']);
+    exit;
+}
+
 $id_user  = $_SESSION['id_usuario'];
 $id_api   = $_POST['id_api'];
 $type     = $_POST['type'];
